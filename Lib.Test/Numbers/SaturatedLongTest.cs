@@ -473,5 +473,15 @@ namespace Utilities.Net.Test.Numbers
             Assert.True( si1.CompareTo( 15 ) == 0 );
             Assert.True( si1.CompareTo( 16 ) < 0 );
         }
+
+        [Fact]
+        public void ToStringConversion()
+        {
+            var si1 = new SaturatedLong( 15, 10, 100 );
+            var si2 = new SaturatedLong( 15000 );
+
+            Assert.Equal( "15", si1.ToString() );
+            Assert.Equal( "15000", si2.ToString() );
+        }
     }
 }

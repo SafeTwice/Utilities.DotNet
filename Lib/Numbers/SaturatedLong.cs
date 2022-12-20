@@ -321,6 +321,11 @@ namespace Utilities.Net.Numbers
             }
         }
 
+        public override string ToString()
+        {
+            return m_value.ToString();
+        }
+
         //===========================================================================
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
