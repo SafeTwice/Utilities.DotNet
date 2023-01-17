@@ -1,3 +1,7 @@
+/// @file
+/// @copyright  Copyright (c) 2022 SafeTwice S.L. All rights reserved.
+/// @license    See LICENSE.txt
+
 using System;
 using Utilities.Net.Numbers;
 using Xunit;

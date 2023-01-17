@@ -1,3 +1,7 @@
+/// @file
+/// @copyright  Copyright (c) 2022 SafeTwice S.L. All rights reserved.
+/// @license    See LICENSE.txt
+
 using System;
 using Utilities.Net.Numbers;
 using Xunit;
@@ -448,8 +452,8 @@ namespace Utilities.Net.Test.Numbers
             Assert.True( si1.Equals( 15 ) );
             Assert.False( si1.Equals( 20 ) );
 
-            Assert.True( si1.Equals( (object) 15l ) );
-            Assert.False( si1.Equals( (object) 20l ) );
+            Assert.True( si1.Equals( (object) 15L ) );
+            Assert.False( si1.Equals( (object) 20L ) );
 
             Assert.True( si1.Equals( (object) si5 ) );
             Assert.False( si1.Equals( (object) si2 ) );

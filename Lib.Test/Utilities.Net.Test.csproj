@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
     <IsPackable>false</IsPackable>
+    <Configurations>Debug;Release;Debug I18N;Release I18N</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
