@@ -2,6 +2,9 @@
 /// @copyright  Copyright (c) 2019-2021 SafeTwice S.L. All rights reserved.
 /// @license    MIT (https://opensource.org/licenses/MIT)
 
+using System;
+using System.Text;
+
 namespace Utilities.Net
 {
     /// <summary>
@@ -59,6 +62,43 @@ namespace Utilities.Net
             array.CopyTo( clonedArray, 0 );
 
             return clonedArray;
+        }
+
+        /// <summary>
+        /// Decodes an ASCII string from a byte array.
+        /// </summary>
+        /// <param name="array">Array to decode the string from</param>
+        /// <returns>An string decoded from its ASCII representation in the array</returns>
+        public static string DecodeASCII( this byte[] array )
+        {
+            return array.DecodeASCII( 0, array.Length );
+        }
+
+        /// <summary>
+        /// Decodes an ASCII string from a byte array.
+        /// </summary>
+        /// <param name="array">Array to decode the string from</param>
+        /// <param name="offset">Offset to start decoding from</param>
+        /// <param name="length">Length to decode</param>
+        /// <returns>An string decoded from its ASCII representation in the array</returns>
+        public static string DecodeASCII( this byte[] array, int offset, int length )
+        {
+            var firstNULindex = Array.IndexOf( array, (byte) 0, offset, length );
+            if( firstNULindex != -1 )
+            {
+                length = firstNULindex - offset;
+            }
+            return Encoding.ASCII.GetString( array, offset, length );
+        }
+
+        /// <summary>
+        /// Encodes the ASCII representation of a string into a byte array.
+        /// </summary>
+        /// <param name="str">String to encode</param>
+        /// <returns>A byte array with the ASCII representation of the string</returns>
+        public static byte[] EncodeASCII( this string str )
+        {
+            return Encoding.ASCII.GetBytes( str );
         }
     }
 }

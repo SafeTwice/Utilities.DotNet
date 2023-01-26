@@ -26,7 +26,7 @@ namespace Utilities.Net.Test
         {
             var array = new long[ 89 ];
 
-            ArrayUtilities.Fill( array, 543898876L );
+            array.Fill( 543898876L );
 
             Assert.Equal( 89, array.Length );
             foreach( var item in array )
@@ -44,13 +44,30 @@ namespace Utilities.Net.Test
                 initialArray[ i ] = DateTime.Now.AddDays( i );
             }
 
-            var clonedArray = ArrayUtilities.ShallowClone( initialArray );
+            var clonedArray = initialArray.ShallowClone();
 
             Assert.Equal( initialArray.Length, clonedArray.Length );
             for( int i = 0; i < initialArray.Length; i++ )
             {
                 Assert.Equal( initialArray[ i ], clonedArray[ i ] );
             }
+        }
+
+        [Theory]
+        [InlineData( new byte[] { 0x46, 0x6F, 0x6F }, "Foo" )]
+        [InlineData( new byte[] { 0x46, 0x6F, 0x6F, 0x00, 0x46, 0x00 }, "Foo" )]
+        [InlineData( new byte[] { 0x00, 0x46, 0x6F, 0x6F }, "" )]
+        public void DecodeASCII( byte[] input, string expectedOutput )
+        {
+            var result = input.DecodeASCII();
+
+            Assert.Equal( expectedOutput, result );
+        }
+
+        [Fact]
+        public void EncodeASCII()
+        {
+            Assert.Equal( new byte[] { 0x46, 0x6F, 0x6F }, "Foo".EncodeASCII() );
         }
     }
 }
