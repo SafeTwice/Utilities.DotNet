@@ -6,6 +6,7 @@
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <Configurations>Debug;Release;Debug I18N;Release I18N</Configurations>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration.EndsWith(`I18N`))' == 'true'">
