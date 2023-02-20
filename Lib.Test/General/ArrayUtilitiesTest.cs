@@ -155,5 +155,16 @@ namespace Utilities.Net.Test
         {
             Assert.Equal( new byte[] { 0x46, 0x6F, 0x6F }, "Foo".EncodeASCII() );
         }
+
+        [Theory]
+        [InlineData( new byte[] { 0x46, 0x6F, 0x6F }, "", "466F6F" )]
+        [InlineData( new byte[] { 0x46, 0x6F, 0x6F, 0x00, 0x46, 0x00 }, " ", "46 6F 6F 00 46 00" )]
+        [InlineData( new byte[] { 0x00, 0x46, 0x6F, 0x6F }, ".", "00.46.6F.6F" )]
+        [InlineData( new byte[] { }, ".", "" )]
+        public void ToHexString( byte[] input, string separator, string expectedOutput )
+        {
+            var result = input.ToHexString( separator );
+            Assert.Equal( expectedOutput, result );
+        }
     }
 }

@@ -199,5 +199,36 @@ namespace Utilities.Net
         {
             return Encoding.ASCII.GetBytes( str );
         }
+
+        /// <summary>
+        /// Converts a byte array to its corresponding hexadecimal representation.
+        /// </summary>
+        /// <param name="value">A byte array</param>
+        /// <param name="separator">An optional string to include between byte's representations</param>
+        /// <returns>String containing the hexadecimal representation of the input array</returns>
+        public static string ToHexString( this byte[] value, string separator = "" )
+        {
+            if( value.Length == 0 )
+            {
+                return string.Empty;
+            }
+
+            StringBuilder result = new StringBuilder( ( value.Length * 2 ) + ( ( value.Length - 1 ) * separator.Length ) );
+            bool addSeparator = false;
+
+            foreach( byte b in value )
+            {
+                if( addSeparator )
+                {
+                    result.Append( separator );
+                }
+
+                result.AppendFormat( "{0:X2}", b );
+
+                addSeparator = true;
+            }
+
+            return result.ToString();
+        }
     }
 }
