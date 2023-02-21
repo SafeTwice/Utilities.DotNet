@@ -95,15 +95,18 @@ namespace Utilities.Net.Logs
         /// </summary>
         public void Close()
         {
-            m_fileWriter?.Close();
-            m_fileStream?.Close();
+            lock( m_fileLock )
+            {
+                m_fileWriter?.Close();
+                m_fileStream?.Close();
 
-            m_fileWriter?.Dispose();
-            m_fileStream?.Dispose();
+                m_fileWriter?.Dispose();
+                m_fileStream?.Dispose();
 
-            m_fileWriter = null;
-            m_fileStream = null;
-            m_filename = null;
+                m_fileWriter = null;
+                m_fileStream = null;
+                m_filename = null;
+            }
         }
 
         public void AddLogEntry( TLogEntryType entryType, string category, string? message = null )
@@ -152,16 +155,19 @@ namespace Utilities.Net.Logs
         {
             var dateTime = DateTime.Now.ToString( "yyyy-MM-dd HH:mm:ss.fff" );
 
-            m_fileWriter!.Write( dateTime );
-            m_fileWriter.Write( ',' );
-            m_fileWriter.Write( logEntryType.ToString() );
-            m_fileWriter.Write( "," );
-            m_fileWriter.Write( category );
-            m_fileWriter.Write( "," );
-            m_fileWriter.WriteLine( message );
-            m_fileWriter.Flush();
+            lock( m_fileLock)
+            {
+                m_fileWriter!.Write( dateTime );
+                m_fileWriter.Write( ',' );
+                m_fileWriter.Write( logEntryType.ToString() );
+                m_fileWriter.Write( "," );
+                m_fileWriter.Write( category );
+                m_fileWriter.Write( "," );
+                m_fileWriter.WriteLine( message );
+                m_fileWriter.Flush();
 
-            m_fileStream!.Flush( true );
+                m_fileStream!.Flush( true );
+            }
         }
 
         private void TryOpenFile()
@@ -173,12 +179,15 @@ namespace Utilities.Net.Logs
 
             FileUtilities.EnsureFilePathIsAvailable( m_filename );
 
-            m_fileStream = new FileStream( m_filename, FileMode.Append, FileAccess.Write, FileShare.Read );
-            m_fileWriter = new StreamWriter( m_fileStream );
+            lock( m_fileLock )
+            {
+                m_fileStream = new FileStream( m_filename, FileMode.Append, FileAccess.Write, FileShare.Read );
+                m_fileWriter = new StreamWriter( m_fileStream );
 
-            m_fileWriter.WriteLine( "TIME,TYPE,CATEGORY,MESSAGE" );
-            m_fileWriter.Flush();
-            m_fileStream.Flush( true );
+                m_fileWriter.WriteLine( "TIME,TYPE,CATEGORY,MESSAGE" );
+                m_fileWriter.Flush();
+                m_fileStream.Flush( true );
+            }
         }
 
         //===========================================================================
@@ -187,6 +196,7 @@ namespace Utilities.Net.Logs
 
         private FileStream? m_fileStream;
         private StreamWriter? m_fileWriter;
+        private object m_fileLock = new();
 
         private string? m_filename;
         private TLogEntryType m_enabledEntryTypes = default;
