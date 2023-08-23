@@ -2,10 +2,10 @@
 /// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using Utilities.Net.Converters;
+using Utilities.DotNet.Converters;
 using Xunit;
 
-namespace Utilities.Net.Test.Converters
+namespace Utilities.DotNet.Test.Converters
 {
     public class BigEndianBitConverterTest
     {

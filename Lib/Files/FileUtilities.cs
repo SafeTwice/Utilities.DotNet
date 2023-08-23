@@ -5,7 +5,7 @@
 using System;
 using System.IO;
 
-namespace Utilities.Net.Files
+namespace Utilities.DotNet.Files
 {
     /// <summary>
     /// File utilities.

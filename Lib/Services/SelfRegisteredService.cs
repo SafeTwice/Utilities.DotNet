@@ -5,7 +5,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Utilities.Net.Services
+namespace Utilities.DotNet.Services
 {
     /// <summary>
     /// Base class for services that registers themselves.

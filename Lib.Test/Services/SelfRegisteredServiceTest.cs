@@ -2,10 +2,10 @@
 /// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using Utilities.Net.Services;
+using Utilities.DotNet.Services;
 using Xunit;
 
-namespace Utilities.Net.Test.Services
+namespace Utilities.DotNet.Test.Services
 {
     /// <summary>
     /// {Enter brief class description here...}

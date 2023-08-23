@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Utilities.Net.Converters
+namespace Utilities.DotNet.Converters
 {
     /// <summary>
     /// Bit converter that converts from numeric values stored big-endian order.

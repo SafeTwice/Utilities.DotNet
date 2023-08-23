@@ -4,10 +4,10 @@
 
 using System;
 using System.IO;
-using Utilities.Net.Files;
+using Utilities.DotNet.Files;
 using Xunit;
 
-namespace Utilities.Net.Test.Files
+namespace Utilities.DotNet.Test.Files
 {
     public class FileUtilitiesTest
     {

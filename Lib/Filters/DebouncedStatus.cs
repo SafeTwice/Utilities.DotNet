@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Utilities.Net.Filters
+namespace Utilities.DotNet.Filters
 {
     /// <summary>
     /// Represents an status value that is debounced using a counter-based hysteresis filter.

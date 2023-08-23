@@ -4,14 +4,12 @@
 
 #if DEBUG_I18N || RELEASE_I18N
 #define USE_I18N_LIB
-using I18N.Net;
+using I18N.DotNet;
+using System;
 #endif
 
-using System;
-/// @file
-/// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
-/// @license    See LICENSE.txt
-namespace Utilities.Net.I18N
+
+namespace Utilities.DotNet.I18N
 {
     /// <summary>
     /// Global localizer for the library.
@@ -26,7 +24,7 @@ namespace Utilities.Net.I18N
 #if USE_I18N_LIB
         public static void SetLocalizer( ILocalizer localizer )
         {
-            m_localizer = localizer;
+            g_localizer = localizer;
         }
 #endif
 
@@ -34,14 +32,14 @@ namespace Utilities.Net.I18N
         //                            INTERNAL METHODS
         //===========================================================================
 
-        internal static string Localize( PlainString text ) => m_localizer?.Localize( text ) ?? text.Value;
-        internal static string Localize( FormattableString text ) => m_localizer?.Localize( text ) ?? text.ToString();
+        internal static string Localize( PlainString text ) => g_localizer?.Localize( text ) ?? text.Value;
+        internal static string Localize( FormattableString text ) => g_localizer?.Localize( text ) ?? text.ToString();
 
         //===========================================================================
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private static ILocalizer? m_localizer;
+        private static ILocalizer? g_localizer;
     }
 #else
     internal static class LibraryLocalizer

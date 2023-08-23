@@ -3,10 +3,10 @@
 /// @license    See LICENSE.txt
 
 using System;
-using Utilities.Net.Exceptions;
+using Utilities.DotNet.Exceptions;
 using Xunit;
 
-namespace Utilities.Net.Test.Exceptions
+namespace Utilities.DotNet.Test.Exceptions
 {
     public class RuntimeExceptionTest
     {

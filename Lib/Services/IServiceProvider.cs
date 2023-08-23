@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Utilities.Net.Services
+namespace Utilities.DotNet.Services
 {
     /// <summary>
     /// Represents a class that provides registered services.

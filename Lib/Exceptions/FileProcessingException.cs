@@ -3,9 +3,9 @@
 /// @license    See LICENSE.txt
 
 using System;
-using static Utilities.Net.I18N.LibraryLocalizer;
+using static Utilities.DotNet.I18N.LibraryLocalizer;
 
-namespace Utilities.Net.Exceptions
+namespace Utilities.DotNet.Exceptions
 {
     /// <summary>
     /// Represents an error raised while processing a file.

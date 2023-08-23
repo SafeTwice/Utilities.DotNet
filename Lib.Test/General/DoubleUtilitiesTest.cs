@@ -4,7 +4,7 @@
 
 using Xunit;
 
-namespace Utilities.Net.Test
+namespace Utilities.DotNet.Test
 {
     public class DoubleUtilitiesTest
     {

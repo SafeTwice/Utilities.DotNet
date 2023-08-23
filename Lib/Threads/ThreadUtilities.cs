@@ -5,7 +5,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Utilities.Net.Threads
+namespace Utilities.DotNet.Threads
 {
     /// <summary>
     /// Thread utilities.

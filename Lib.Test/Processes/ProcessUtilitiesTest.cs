@@ -3,10 +3,10 @@
 /// @license    See LICENSE.txt
 
 using System.Linq;
-using Utilities.Net.Processes;
+using Utilities.DotNet.Processes;
 using Xunit;
 
-namespace Utilities.Net.Test.Processes
+namespace Utilities.DotNet.Test.Processes
 {
     public static class ProcessUtilitiesTest
     {
@@ -34,7 +34,7 @@ namespace Utilities.Net.Test.Processes
 
             // Assert
 
-            var testAssembly = result.Where( ai => ( ai.name == "Utilities.Net.Test" ) );
+            var testAssembly = result.Where( ai => ( ai.name == "Utilities.DotNet.Test" ) );
 
             Assert.True( testAssembly.Count() == 1 );
             Assert.True( testAssembly.First().version == "1.0.0.0" );

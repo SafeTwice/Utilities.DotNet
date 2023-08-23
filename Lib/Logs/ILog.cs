@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Utilities.Net.Logs
+namespace Utilities.DotNet.Logs
 {
     /// <summary>
     /// Represents a log.

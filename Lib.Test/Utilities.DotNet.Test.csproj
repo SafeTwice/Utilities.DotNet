@@ -6,6 +6,7 @@
     <LangVersion>10</LangVersion>
     <IsPackable>false</IsPackable>
     <Configurations>Debug;Release;Debug I18N;Release I18N</Configurations>
+    <NoWarn>NETSDK1138</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lib\Utilities.Net.csproj" />
+    <ProjectReference Include="..\Lib\Utilities.DotNet.csproj" />
   </ItemGroup>
 
 </Project>

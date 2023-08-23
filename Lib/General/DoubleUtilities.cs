@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Utilities.Net
+namespace Utilities.DotNet
 {
     /// <summary>
     /// Utilities for working with double precision real numbers.

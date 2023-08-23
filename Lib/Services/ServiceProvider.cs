@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Utilities.Net.Services
+namespace Utilities.DotNet.Services
 {
     /// <summary>
     /// Implements a class that provides registered services.

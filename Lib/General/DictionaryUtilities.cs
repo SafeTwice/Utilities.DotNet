@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-namespace Utilities.Net
+namespace Utilities.DotNet
 {
     /// <summary>
     /// Dictionary utilities.

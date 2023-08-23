@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Utilities.Net.Numbers
+namespace Utilities.DotNet.Numbers
 {
     /// <summary>
     /// Integer number which value (and the result from arithmetic operations) are saturated between the given bounds.
