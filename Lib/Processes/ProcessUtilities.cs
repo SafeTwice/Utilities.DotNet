@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Utilities.Net.Processes
+namespace Utilities.DotNet.Processes
 {
     /// <summary>
     /// Process utilities.

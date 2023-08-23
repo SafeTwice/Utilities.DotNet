@@ -5,11 +5,11 @@
 using System;
 using System.IO;
 using System.Xml.Linq;
-using Utilities.Net.Exceptions;
-using Utilities.Net.XML;
+using Utilities.DotNet.Exceptions;
+using Utilities.DotNet.XML;
 using Xunit;
 
-namespace Utilities.Net.Test.XML
+namespace Utilities.DotNet.Test.XML
 {
     public class XmlUtilitiesTest
     {

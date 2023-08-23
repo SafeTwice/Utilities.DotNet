@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Utilities.Net.Exceptions
+namespace Utilities.DotNet.Exceptions
 {
     /// <summary>
     /// Represents a "controlled" error raised during processing.

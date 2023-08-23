@@ -2,7 +2,7 @@
 /// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-namespace Utilities.Net.Converters
+namespace Utilities.DotNet.Converters
 {
     /// <summary>
     /// Bit converter that converts from numeric values stored big-endian or little-endian order.

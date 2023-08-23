@@ -6,10 +6,10 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
-using Utilities.Net.Logs;
+using Utilities.DotNet.Logs;
 using Xunit;
 
-namespace Utilities.Net.Test.Logs
+namespace Utilities.DotNet.Test.Logs
 {
     public class FileLogTest : IDisposable
     {

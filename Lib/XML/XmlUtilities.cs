@@ -8,10 +8,10 @@ using System.Globalization;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Utilities.Net.Exceptions;
-using static Utilities.Net.I18N.LibraryLocalizer;
+using Utilities.DotNet.Exceptions;
+using static Utilities.DotNet.I18N.LibraryLocalizer;
 
-namespace Utilities.Net.XML
+namespace Utilities.DotNet.XML
 {
     public static class XmlUtilities
     {

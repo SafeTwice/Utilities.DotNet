@@ -3,10 +3,10 @@
 /// @license    See LICENSE.txt
 
 using System;
-using Utilities.Net.Services;
+using Utilities.DotNet.Services;
 using Xunit;
 
-namespace Utilities.Net.Test.Services
+namespace Utilities.DotNet.Test.Services
 {
     public class ServiceProviderTest
     {

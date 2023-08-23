@@ -4,9 +4,9 @@
 
 using System;
 using System.IO;
-using Utilities.Net.Files;
+using Utilities.DotNet.Files;
 
-namespace Utilities.Net.Logs
+namespace Utilities.DotNet.Logs
 {
     /// <summary>
     /// Log that writes log entries to a file.

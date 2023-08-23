@@ -5,7 +5,7 @@
 using System;
 using System.Text;
 
-namespace Utilities.Net
+namespace Utilities.DotNet
 {
     /// <summary>
     /// Array utilities.
