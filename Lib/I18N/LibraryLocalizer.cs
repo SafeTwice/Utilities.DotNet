@@ -21,12 +21,10 @@ namespace Utilities.DotNet.I18N
         //                            PUBLIC METHODS
         //===========================================================================
 
-#if USE_I18N_LIB
         public static void SetLocalizer( ILocalizer localizer )
         {
             g_localizer = localizer;
         }
-#endif
 
         //===========================================================================
         //                            INTERNAL METHODS
