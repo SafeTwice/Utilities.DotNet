@@ -135,13 +135,14 @@ namespace Utilities.DotNet.XML
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="ignoreCase"><see langword="true"/> to ignore case; <see langword="false"/> to consider case.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
-        public static T MandatoryAttributeEnum<T>( this XElement element, string attributeName ) where T : struct, Enum
+        public static T MandatoryAttributeEnum<T>( this XElement element, string attributeName, bool ignoreCase = false ) where T : struct, Enum
         {
             var attrStr = element.MandatoryAttribute( attributeName );
 
-            if( !Enum.TryParse( attrStr, out T attrValue ) )
+            if( !Enum.TryParse( attrStr, ignoreCase, out T attrValue ) )
             {
                 var enumValues = string.Join( ", ", Enum.GetNames( typeof( T ) ) );
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected one of: {enumValues})" ),
@@ -328,12 +329,13 @@ namespace Utilities.DotNet.XML
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
+        /// <param name="ignoreCase"><see langword="true"/> to ignore case; <see langword="false"/> to consider case.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
 #if !NETFRAMEWORK
         [return: NotNullIfNotNull( nameof( defaultValue ) )]
 #endif
-        public static T? OptionalAttributeEnum<T>( this XElement element, string attributeName, T? defaultValue ) where T : struct, Enum
+        public static T? OptionalAttributeEnum<T>( this XElement element, string attributeName, T? defaultValue, bool ignoreCase = false ) where T : struct, Enum
         {
             var attrStr = element.OptionalAttribute( attributeName );
             if( attrStr is null )
@@ -341,7 +343,7 @@ namespace Utilities.DotNet.XML
                 return defaultValue;
             }
 
-            if( !Enum.TryParse( attrStr, out T attrValue ) )
+            if( !Enum.TryParse( attrStr, ignoreCase, out T attrValue ) )
             {
                 var enumValues = string.Join( ", ", Enum.GetNames( typeof( T ) ) );
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected one of: {enumValues})" ),
@@ -352,9 +354,9 @@ namespace Utilities.DotNet.XML
         }
 
         /// <inheritdoc cref="OptionalAttributeEnum{T}(XElement, string, T?)"/>/>
-        public static T OptionalAttributeEnum<T>( this XElement element, string attributeName, T defaultValue = default ) where T : struct, Enum
+        public static T OptionalAttributeEnum<T>( this XElement element, string attributeName, T defaultValue = default, bool ignoreCase = false ) where T : struct, Enum
         {
-            return element.OptionalAttributeEnum<T>( attributeName, null ) ?? defaultValue;
+            return element.OptionalAttributeEnum<T>( attributeName, null, ignoreCase ) ?? defaultValue;
         }
 
         /// <summary>
