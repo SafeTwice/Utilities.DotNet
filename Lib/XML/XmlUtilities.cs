@@ -92,12 +92,12 @@ namespace Utilities.Net.XML
             return attrValue;
         }
 
-        public static T MandatoryAttributeEnum<T>( this XElement element, string attributeName ) where T : struct, Enum
+        public static T MandatoryAttributeEnum<T>( this XElement element, string attributeName, bool ignoreCase = false ) where T : struct, Enum
         {
             var attrStr = element.MandatoryAttribute( attributeName );
 
             T attrValue;
-            if( !Enum.TryParse( attrStr, out attrValue ) )
+            if( !Enum.TryParse( attrStr, ignoreCase, out attrValue ) )
             {
                 var enumValues = string.Join( ", ", Enum.GetNames( typeof( T ) ) );
                 throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected one of: {enumValues})" ),
@@ -184,13 +184,13 @@ namespace Utilities.Net.XML
             return attrValue;
         }
 
-        public static T OptionalAttributeEnum<T>( this XElement element, string attributeName, T defaultValue = default ) where T : struct, Enum
+        public static T OptionalAttributeEnum<T>( this XElement element, string attributeName, T defaultValue = default, bool ignoreCase = false ) where T : struct, Enum
         {
             var attrStr = element.OptionalAttribute( attributeName );
 
             T attrValue = defaultValue;
 
-            if( ( attrStr != null ) && !Enum.TryParse( attrStr, out attrValue ) )
+            if( ( attrStr != null ) && !Enum.TryParse( attrStr, ignoreCase, out attrValue ) )
             {
                 var enumValues = string.Join( ", ", Enum.GetNames( typeof( T ) ) );
                 throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected one of: {enumValues})" ),
