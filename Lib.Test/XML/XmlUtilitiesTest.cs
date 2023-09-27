@@ -30,6 +30,7 @@ namespace Utilities.Net.Test.XML
                 "<Bool true='true' false='false' empty='' invalid='bar'/>",
                 "<Enum value1='OPTION1' value2=' OPTION2 ' empty='' invalid='bar'/>",
                 "<EnumFlags value1='OPTION1' value2='OPTION1, OPTION2' empty='' invalid='bar'/>",
+                "<Int value='450'/>",
                 "</Root>",
             };
 
@@ -44,7 +45,7 @@ namespace Utilities.Net.Test.XML
 
         private XElement GetElement( string name )
         {
-            return m_doc.Element( "Root" ).Element( name );
+            return m_doc.Element( "Root" )!.Element( name )!;
         }
 
         [Fact]
@@ -536,6 +537,84 @@ namespace Utilities.Net.Test.XML
             Assert.Equal( $"XML element 'String' lacks one of mandatory attributes ('bar', 'baz') or are empty", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 2, exception.Line );
+        }
+
+        [Fact]
+        public void MandatoryUniqueElement_Existing()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var element = rootElement.MandatoryUniqueElement( "String" );
+
+            Assert.Equal( "String", element.Name );
+            Assert.Equal( "foo", element.MandatoryAttribute( "value" ) );
+        }
+
+        [Fact]
+        public void MandatoryUniqueElement_NotExisting()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var exception = Assert.Throws<FileProcessingException>( () =>
+            {
+                var element = rootElement.MandatoryUniqueElement( "Foo" );
+            } );
+
+            Assert.Equal( $"XML element 'Root' lacks mandatory child element 'Foo'", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 1, exception.Line );
+        }
+
+        [Fact]
+        public void MandatoryUniqueElement_NotUnique()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var exception = Assert.Throws<FileProcessingException>( () =>
+            {
+                var element = rootElement.MandatoryUniqueElement( "Int" );
+            } );
+
+            Assert.Equal( $"XML element 'Root' has more than 1 child element 'Int'", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 3, exception.Line );
+        }
+
+        [Fact]
+        public void OptionalUniqueElement_Existing()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var element = rootElement.OptionalUniqueElement( "String" );
+
+            Assert.NotNull( element );
+            Assert.Equal( "String", element.Name );
+            Assert.Equal( "foo", element.MandatoryAttribute( "value" ) );
+        }
+
+        [Fact]
+        public void OptionalUniqueElement_NotExisting()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var element = rootElement.OptionalUniqueElement( "Foo" );
+
+            Assert.Null( element );
+        }
+
+        [Fact]
+        public void OptionalUniqueElement_NotUnique()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var exception = Assert.Throws<FileProcessingException>( () =>
+            {
+                var element = rootElement.OptionalUniqueElement( "Int" );
+            } );
+
+            Assert.Equal( $"XML element 'Root' has more than 1 child element 'Int'", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 3, exception.Line );
         }
     }
 }

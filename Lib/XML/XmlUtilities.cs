@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Utilities.Net.Exceptions;
@@ -215,6 +216,39 @@ namespace Utilities.Net.XML
             var attrNameList = string.Join( "', '", attributeNames );
             throw new FileProcessingException( Localize( $"XML element '{element.Name}' lacks one of mandatory attributes ('{attrNameList}') or are empty" ),
                                                element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+        }
+
+        public static XElement MandatoryUniqueElement( this XElement element, string name )
+        {
+            var childElement = element.OptionalUniqueElement( name );
+
+            if( childElement == null )
+            {
+                throw new FileProcessingException( Localize( $"XML element '{element.Name}' lacks mandatory child element '{name}'" ),
+                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+            }
+
+            return childElement;
+        }
+
+        public static XElement? OptionalUniqueElement( this XElement element, string name )
+        {
+            var elements = element.Elements( name );
+
+            if( elements.Count() > 1 )
+            {
+                var childElement = elements.First();
+                throw new FileProcessingException( Localize( $"XML element '{element.Name}' has more than 1 child element '{childElement.Name}'" ),
+                                                   childElement.BaseUri, ( (IXmlLineInfo) childElement ).LineNumber );
+            }
+            else if( elements.Count() == 1 )
+            {
+                return elements.First();
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
