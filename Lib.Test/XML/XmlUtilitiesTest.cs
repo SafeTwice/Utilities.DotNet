@@ -616,5 +616,59 @@ namespace Utilities.Net.Test.XML
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 3, exception.Line );
         }
+
+        [Fact]
+        public void AddUnique_NotExisting()
+        {
+            var container = new XElement( "Container" );
+
+            var child = new XElement( "Child" );
+
+            container.AddUnique( child );
+
+            Assert.Equal( container, child.Parent );
+            Assert.Collection( container.Elements(), new Action<XElement>[]
+            {
+                element => Assert.Equal( child, element )
+            } );
+        }
+
+        [Fact]
+        public void AddUnique_AlredyExisting()
+        {
+            var container = new XElement( "Container" );
+
+            var child = new XElement( "Child" );
+
+            container.Add( child );
+
+            container.AddUnique( child );
+
+            Assert.Equal( container, child.Parent );
+            Assert.Collection( container.Elements(), new Action<XElement>[]
+            {
+                element => Assert.Equal( child, element )
+            } );
+        }
+
+        [Fact]
+        public void AddUnique_Move()
+        {
+            var container1 = new XElement( "Container1" );
+            var container2 = new XElement( "Container2" );
+
+            var child = new XElement( "Child" );
+
+            container1.Add( child );
+
+            container2.AddUnique( child );
+
+            Assert.Equal( container2, child.Parent );
+            Assert.Empty( container1.Elements() );
+            Assert.Collection( container2.Elements(), new Action<XElement>[]
+            {
+                element => Assert.Equal( child, element )
+            } );
+        }
     }
 }
