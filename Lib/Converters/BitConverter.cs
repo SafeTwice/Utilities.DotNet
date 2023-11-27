@@ -13,6 +13,10 @@ namespace Utilities.DotNet.Converters
         //                          PUBLIC CONSTRUCTORS
         //===========================================================================
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="reverse">Indicates if the values to convert have different byte order (endianness) than the one used in the processing computer architecture</param>
         public BitConverter( bool reverse )
         {
             m_reverse = reverse;
@@ -22,7 +26,13 @@ namespace Utilities.DotNet.Converters
         //                            PUBLIC METHODS
         //===========================================================================
 
-        public ushort ToUInt16( byte[] value, int startIndex )
+        /// <summary>
+        /// Converts a value stored using 2 bytes at the specified position of a byte array to a 16-bit unsigned integer.
+        /// </summary>
+        /// <param name="value">Array storing the value to be converted</param>
+        /// <param name="startIndex">Index in the array at which the value is stored</param>
+        /// <returns>Converted value</returns>
+        public ushort ToUInt16( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
             {
@@ -32,7 +42,13 @@ namespace Utilities.DotNet.Converters
             return System.BitConverter.ToUInt16( value, startIndex );
         }
 
-        public uint ToUInt32( byte[] value, int startIndex )
+        /// <summary>
+        /// Converts a value stored using 4 bytes at the specified position of a byte array to a 32-bit unsigned integer.
+        /// </summary>
+        /// <param name="value">Array storing the value to be converted</param>
+        /// <param name="startIndex">Index in the array at which the value is stored</param>
+        /// <returns>Converted value</returns>
+        public uint ToUInt32( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
             {
@@ -42,7 +58,13 @@ namespace Utilities.DotNet.Converters
             return System.BitConverter.ToUInt32( value, startIndex );
         }
 
-        public ulong ToUInt64( byte[] value, int startIndex )
+        /// <summary>
+        /// Converts a value stored using 8 bytes at the specified position of a byte array to a 64-bit unsigned integer.
+        /// </summary>
+        /// <param name="value">Array storing the value to be converted</param>
+        /// <param name="startIndex">Index in the array at which the value is stored</param>
+        /// <returns>Converted value</returns>
+        public ulong ToUInt64( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
             {
@@ -52,7 +74,13 @@ namespace Utilities.DotNet.Converters
             return System.BitConverter.ToUInt64( value, startIndex );
         }
 
-        public short ToInt16( byte[] value, int startIndex )
+        /// <summary>
+        /// Converts a value stored using 2 bytes at the specified position of a byte array to a 16-bit signed integer.
+        /// </summary>
+        /// <param name="value">Array storing the value to be converted</param>
+        /// <param name="startIndex">Index in the array at which the value is stored</param>
+        /// <returns>Converted value</returns>
+        public short ToInt16( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
             {
@@ -62,7 +90,13 @@ namespace Utilities.DotNet.Converters
             return System.BitConverter.ToInt16( value, startIndex );
         }
 
-        public int ToInt32( byte[] value, int startIndex )
+        /// <summary>
+        /// Converts a value stored using 4 bytes at the specified position of a byte array to a 32-bit signed integer.
+        /// </summary>
+        /// <param name="value">Array storing the value to be converted</param>
+        /// <param name="startIndex">Index in the array at which the value is stored</param>
+        /// <returns>Converted value</returns>
+        public int ToInt32( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
             {
@@ -72,7 +106,13 @@ namespace Utilities.DotNet.Converters
             return System.BitConverter.ToInt32( value, startIndex );
         }
 
-        public long ToInt64( byte[] value, int startIndex )
+        /// <summary>
+        /// Converts a value stored using 8 bytes at the specified position of a byte array to a 64-bit signed integer.
+        /// </summary>
+        /// <param name="value">Array storing the value to be converted</param>
+        /// <param name="startIndex">Index in the array at which the value is stored</param>
+        /// <returns>Converted value</returns>
+        public long ToInt64( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
             {
@@ -82,7 +122,13 @@ namespace Utilities.DotNet.Converters
             return System.BitConverter.ToInt64( value, startIndex );
         }
 
-        public float ToSingle( byte[] value, int startIndex )
+        /// <summary>
+        /// Converts a value stored using 4 bytes at the specified position of a byte array to a 32-bit flpating-point number.
+        /// </summary>
+        /// <param name="value">Array storing the value to be converted</param>
+        /// <param name="startIndex">Index in the array at which the value is stored</param>
+        /// <returns>Converted value</returns>
+        public float ToSingle( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
             {
@@ -92,7 +138,13 @@ namespace Utilities.DotNet.Converters
             return System.BitConverter.ToSingle( value, startIndex );
         }
 
-        public double ToDouble( byte[] value, int startIndex )
+        /// <summary>
+        /// Converts a value stored using 8 bytes at the specified position of a byte array to a 64-bit flpating-point number.
+        /// </summary>
+        /// <param name="value">Array storing the value to be converted</param>
+        /// <param name="startIndex">Index in the array at which the value is stored</param>
+        /// <returns>Converted value</returns>
+        public double ToDouble( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
             {
@@ -106,6 +158,6 @@ namespace Utilities.DotNet.Converters
         //                           PRIVATE PROPERTIES
         //===========================================================================
 
-        private bool m_reverse;
+        private readonly bool m_reverse;
     }
 }
