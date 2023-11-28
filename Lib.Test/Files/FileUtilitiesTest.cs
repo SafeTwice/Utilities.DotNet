@@ -75,7 +75,7 @@ namespace Utilities.DotNet.Test.Files
         }
 
         [Fact]
-        public void SanitizeFilename()
+        public void SanitizeFilename_DeleteInvalidCharacters()
         {
             // Act
 
@@ -84,6 +84,33 @@ namespace Utilities.DotNet.Test.Files
             // Assert
 
             Assert.Equal( "Filename@$", result );
+        }
+
+        [Fact]
+        public void SanitizeFilename_ReplaceInvalidCharacters()
+        {
+            // Act
+
+            var result = FileUtilities.SanitizeFilename( "F|i\\l/e:name@$", '-' );
+
+            // Assert
+
+            Assert.Equal( "F-i-l-e-name@$", result );
+        }
+
+        [Fact]
+        public void SanitizeFilename_InvalidReplacementCharacter()
+        {
+            // Act
+
+            var exception = Assert.Throws<Exception>( () =>
+            {
+                var result = FileUtilities.SanitizeFilename( "F|i\\l/e:name@$", '|' );
+            } );
+
+            // Assert
+
+            Assert.Equal( "Invalid replacement character", exception.Message );
         }
     }
 }

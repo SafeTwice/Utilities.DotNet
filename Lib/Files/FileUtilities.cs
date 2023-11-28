@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Utilities.DotNet.Files
 {
@@ -35,16 +36,36 @@ namespace Utilities.DotNet.Files
             {
                 throw new ArgumentException( "The specified path does not have directory information" );
             }
-
         }
 
-        public static string SanitizeFilename( string filename )
+        /// <summary>
+        /// Sanitizes the given filename, replacing charactars invalid for file names with the given replacement character.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="replacement">Character to use to replace invalid file name characters, or <c>null</c> to delete them</param>
+        /// <returns>Sanitized filename</returns>
+        /// <exception cref="Exception">Thrown when the replacement character is invalid for file names</exception>
+        public static string SanitizeFilename( string filename, char? replacement = null )
         {
             string ret = filename;
 
-            foreach( var invalidChar in Path.GetInvalidFileNameChars() )
+            char[] invalidChars = Path.GetInvalidFileNameChars();
+
+            string replacementStr = string.Empty;
+
+            if( replacement != null )
             {
-                ret = ret.Replace( $"{invalidChar}", "" );
+                if( invalidChars.Contains( replacement.Value ) )
+                {
+                    throw new Exception( "Invalid replacement character" );
+                }
+
+                replacementStr = $"{replacement}";
+            }
+
+            foreach( var invalidChar in invalidChars )
+            {
+                ret = ret.Replace( $"{invalidChar}", replacementStr );
             }
 
             return ret;

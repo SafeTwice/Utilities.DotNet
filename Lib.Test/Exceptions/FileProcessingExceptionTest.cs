@@ -11,57 +11,89 @@ namespace Utilities.DotNet.Test.Exceptions
     public class FileProcessingExceptionTest
     {
         [Fact]
-        public void New()
+        public void FilenameAndLine()
         {
-            var exception = new FileProcessingException( "foo", "bar", 44 );
+            var exception = new FileProcessingException( "foo11", "bar22", 234 );
 
-            Assert.Equal( "foo", exception.ShortMessage );
-            Assert.Equal( "bar", exception.Filename );
-            Assert.Equal( 44, exception.Line );
+            Assert.Equal( "foo11", exception.ShortMessage );
+            Assert.Equal( "bar22", exception.Filename );
+            Assert.Equal( 234, exception.Line );
+
+            Assert.Null( exception.InnerException );
+
+            Assert.Equal( "[bar22 @ Line 234] foo11", exception.Message );
         }
 
         [Fact]
-        public void New_InnerException()
+        public void FilenameAndNoLine()
+        {
+            var exception = new FileProcessingException( "foo43", "bar54", 0 );
+
+            Assert.Equal( "foo43", exception.ShortMessage );
+            Assert.Equal( "bar54", exception.Filename );
+            Assert.Equal( 0, exception.Line );
+
+            Assert.Null( exception.InnerException );
+
+            Assert.Equal( "[bar54] foo43", exception.Message );
+        }
+
+        [Fact]
+        public void NoFilenameAndLine()
+        {
+            var exception = new FileProcessingException( "foo89", 773 );
+
+            Assert.Equal( "foo89", exception.ShortMessage );
+            Assert.Null( exception.Filename );
+            Assert.Equal( 773, exception.Line );
+
+            Assert.Null( exception.InnerException );
+
+            Assert.Equal( "[Line 773] foo89", exception.Message );
+        }
+
+        [Fact]
+        public void NoFilenameAndNoLine()
+        {
+            var exception = new FileProcessingException( "foo31", 0 );
+
+            Assert.Equal( "foo31", exception.ShortMessage );
+            Assert.Null( exception.Filename );
+            Assert.Equal( 0, exception.Line );
+
+            Assert.Null( exception.InnerException );
+
+            Assert.Equal( "foo31", exception.Message );
+        }
+
+        [Fact]
+        public void FilenameAndLine_InnerException()
         {
             var innerException = new Exception( "chazz" );
-            var exception = new FileProcessingException( "foo", "bar", 55, innerException );
+            var exception = new FileProcessingException( "foo90", "bar57", 55, innerException );
 
-            Assert.Equal( "foo", exception.ShortMessage );
-            Assert.Equal( "bar", exception.Filename );
+            Assert.Equal( "foo90", exception.ShortMessage );
+            Assert.Equal( "bar57", exception.Filename );
             Assert.Equal( 55, exception.Line );
-            Assert.Equal( innerException, exception.InnerException );
+
+            Assert.Same( innerException, exception.InnerException );
+
+            Assert.Equal( "[bar57 @ Line 55] foo90", exception.Message );
         }
 
         [Fact]
-        public void Message_FilenameAndLine()
+        public void NoFilenameAndLine_InnerException()
         {
-            var exception = new FileProcessingException( "foo", "bar", 234 );
+            var innerException = new Exception( "chazz" );
+            var exception = new FileProcessingException( "foo55",  5987765, innerException );
 
-            Assert.Equal( "[bar @ Line 234] foo", exception.Message );
-        }
+            Assert.Equal( "foo55", exception.ShortMessage );
+            Assert.Null( exception.Filename );
+            Assert.Equal( 5987765, exception.Line );
 
-        [Fact]
-        public void Message_FilenameAndNoLine()
-        {
-            var exception = new FileProcessingException( "foo", "bar", 0 );
+            Assert.Same( innerException, exception.InnerException );
 
-            Assert.Equal( "[bar] foo", exception.Message );
-        }
-
-        [Fact]
-        public void Message_NoFilenameAndLine()
-        {
-            var exception = new FileProcessingException( "foo", null, 773 );
-
-            Assert.Equal( "[Line 773] foo", exception.Message );
-        }
-
-        [Fact]
-        public void Message_NoFilenameAndNoLine()
-        {
-            var exception = new FileProcessingException( "foo", null, 0 );
-
-            Assert.Equal( "foo", exception.Message );
+            Assert.Equal( "[Line 5987765] foo55", exception.Message );
         }
     }
 }
