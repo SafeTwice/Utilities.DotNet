@@ -12,31 +12,6 @@ namespace Utilities.DotNet.Test.Files
     public class FileUtilitiesTest
     {
         [Fact]
-        public void EnsureDirectoryExists()
-        {
-            // Arrange
-
-            var testDirPath = Path.GetTempPath() + $"/{nameof( FileUtilitiesTest )}";
-
-            if( Directory.Exists( testDirPath ) )
-            {
-                Directory.Delete( testDirPath, true );
-            }
-
-            // Act
-
-            FileUtilities.EnsureDirectoryExists( testDirPath );
-
-            // Assert
-
-            Assert.True( Directory.Exists( testDirPath ) );
-
-            // Cleanup
-
-            Directory.Delete( testDirPath, true );
-        }
-
-        [Fact]
         public void EnsureFilePathIsAvailable()
         {
             // Arrange
@@ -71,7 +46,7 @@ namespace Utilities.DotNet.Test.Files
 
             // Assert
 
-            Assert.Equal( "The specified path does not have directory information", exception.Message );
+            Assert.Contains( "The specified path does not have directory information", exception.Message );
         }
 
         [Fact]
@@ -103,14 +78,14 @@ namespace Utilities.DotNet.Test.Files
         {
             // Act
 
-            var exception = Assert.Throws<Exception>( () =>
+            var exception = Assert.Throws<ArgumentException>( () =>
             {
                 var result = FileUtilities.SanitizeFilename( "F|i\\l/e:name@$", '|' );
             } );
 
             // Assert
 
-            Assert.Equal( "Invalid replacement character", exception.Message );
+            Assert.Contains( "Invalid replacement character", exception.Message );
         }
     }
 }

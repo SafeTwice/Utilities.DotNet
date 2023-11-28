@@ -17,24 +17,21 @@ namespace Utilities.DotNet.Files
         //                            PUBLIC METHODS
         //===========================================================================
 
-        public static void EnsureDirectoryExists( string dirPath )
-        {
-            if( !Directory.Exists( dirPath ) )
-            {
-                Directory.CreateDirectory( dirPath );
-            }
-        }
-
+        /// <summary>
+        /// Creates the directory and subdirectories where the file would be stored if they don't exist.
+        /// </summary>
+        /// <param name="path">Path to a file</param>
+        /// <exception cref="ArgumentException">Thrown when the path does not have directory information</exception>
         public static void EnsureFilePathIsAvailable( string path )
         {
             var dirName = Path.GetDirectoryName( path );
             if( dirName?.Length > 0 )
             {
-                EnsureDirectoryExists( dirName );
+                Directory.CreateDirectory( dirName );
             }
             else
             {
-                throw new ArgumentException( "The specified path does not have directory information" );
+                throw new ArgumentException( "The specified path does not have directory information", nameof( path ) );
             }
         }
 
@@ -44,7 +41,7 @@ namespace Utilities.DotNet.Files
         /// <param name="filename"></param>
         /// <param name="replacement">Character to use to replace invalid file name characters, or <c>null</c> to delete them</param>
         /// <returns>Sanitized filename</returns>
-        /// <exception cref="Exception">Thrown when the replacement character is invalid for file names</exception>
+        /// <exception cref="ArgumentException">Thrown when the replacement character is invalid for file names</exception>
         public static string SanitizeFilename( string filename, char? replacement = null )
         {
             string ret = filename;
@@ -57,7 +54,7 @@ namespace Utilities.DotNet.Files
             {
                 if( invalidChars.Contains( replacement.Value ) )
                 {
-                    throw new Exception( "Invalid replacement character" );
+                    throw new ArgumentException( "Invalid replacement character", nameof( replacement ) );
                 }
 
                 replacementStr = $"{replacement}";
