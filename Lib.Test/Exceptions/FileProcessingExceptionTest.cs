@@ -63,6 +63,5 @@ namespace Utilities.Net.Test.Exceptions
 
             Assert.Equal( "foo", exception.Message );
         }
-
     }
 }

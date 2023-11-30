@@ -10,7 +10,7 @@ namespace Utilities.Net.Exceptions
     /// <summary>
     /// Represents an error raised while processing a file.
     /// </summary>
-    public class FileProcessingException : Exception
+    public class FileProcessingException : RuntimeException
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
