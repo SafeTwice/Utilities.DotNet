@@ -11,7 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration.EndsWith(`I18N`))' == 'true'">
-    <PackageReference Include="I18N.DotNet" Version="1.1.1" />
+    <PackageReference Include="I18N.DotNet" Version="1.2" />
+    <EmbeddedResource Include="Resources\I18N.xml" />
   </ItemGroup>
 
 </Project>

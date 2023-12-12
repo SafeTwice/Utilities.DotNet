@@ -3,6 +3,7 @@
 /// @license    See LICENSE.txt
 
 using System;
+using System.Globalization;
 using Utilities.DotNet.Exceptions;
 using Xunit;
 
@@ -10,6 +11,11 @@ namespace Utilities.DotNet.Test.Exceptions
 {
     public class FileProcessingExceptionTest
     {
+        public FileProcessingExceptionTest()
+        {
+            CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+        }
+
         [Fact]
         public void FilenameAndLine()
         {
