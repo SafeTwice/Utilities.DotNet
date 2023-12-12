@@ -8,7 +8,6 @@ using I18N.DotNet;
 using System;
 #endif
 
-
 namespace Utilities.DotNet.I18N
 {
     /// <summary>
@@ -18,26 +17,17 @@ namespace Utilities.DotNet.I18N
     public static class LibraryLocalizer
     {
         //===========================================================================
-        //                            PUBLIC METHODS
+        //                           PUBLIC PROPERTIES
         //===========================================================================
 
-        public static void SetLocalizer( ILocalizer localizer )
-        {
-            g_localizer = localizer;
-        }
+        public static ILocalizer Localizer { get; set; } = new AutoLoadLocalizer();
 
         //===========================================================================
         //                            INTERNAL METHODS
         //===========================================================================
 
-        internal static string Localize( PlainString text ) => g_localizer?.Localize( text ) ?? text.Value;
-        internal static string Localize( FormattableString text ) => g_localizer?.Localize( text ) ?? text.ToString();
-
-        //===========================================================================
-        //                           PRIVATE ATTRIBUTES
-        //===========================================================================
-
-        private static ILocalizer? g_localizer;
+        internal static string Localize( PlainString text ) => Localizer.Localize( text );
+        internal static string Localize( FormattableString text ) => Localizer.Localize( text );
     }
 #else
     internal static class LibraryLocalizer
