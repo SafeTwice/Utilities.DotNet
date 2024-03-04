@@ -6,7 +6,7 @@
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <Configurations>Debug;Release;Debug I18N;Release I18N</Configurations>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
     <NoWarn>NETSDK1138</NoWarn>
   </PropertyGroup>
 
