@@ -161,12 +161,24 @@ namespace Utilities.Net.Logs
                 m_fileWriter.Write( ',' );
                 m_fileWriter.Write( logEntryType.ToString() );
                 m_fileWriter.Write( "," );
-                m_fileWriter.Write( category );
+                m_fileWriter.Write( EscapeMessage( category ) );
                 m_fileWriter.Write( "," );
-                m_fileWriter.WriteLine( message );
+                m_fileWriter.WriteLine( EscapeMessage( message ) );
                 m_fileWriter.Flush();
 
                 m_fileStream!.Flush( true );
+            }
+        }
+
+        private string EscapeMessage( string message )
+        {
+            if( message.Contains( "," ) )
+            {
+                return "\"" + message.Replace( "\"", "\"\"" ) + "\"";
+            }
+            else
+            {
+                return message;
             }
         }
 
