@@ -3,14 +3,14 @@
   <Entry>
     <!-- Found in: Lib\Exceptions\FileProcessingException.cs -->
     <Key>[{0} @ Line {1}] {2}</Key>
-    <Value lang="es">[{0} @ Linea {1}] {2}</Value>
+    <Value lang="es">[{0} @ Línea {1}] {2}</Value>
     <Value lang="ca">[{0} @ Línia {1}] {2}</Value>
     <Value lang="fr">[{0} @ Ligne {1}] {2}</Value>
   </Entry>
   <Entry>
     <!-- Found in: Lib\Exceptions\FileProcessingException.cs -->
     <Key>[Line {0}] {1}</Key>
-    <Value lang="es">[Linea {0}] {1}</Value>
+    <Value lang="es">[Línea {0}] {1}</Value>
     <Value lang="ca">[Línia {0}] {1}</Value>
     <Value lang="fr">[Ligne {0}] {1}</Value>
   </Entry>
