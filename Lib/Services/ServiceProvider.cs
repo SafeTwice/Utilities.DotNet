@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Utilities.DotNet.Services
 {
@@ -18,6 +17,9 @@ namespace Utilities.DotNet.Services
         //                           PUBLIC PROPERTIES
         //===========================================================================
 
+        /// <summary>
+        /// Global services provider.
+        /// </summary>
         public static IServiceProvider GlobalServices { get; } = new ServiceProvider();
 
         //===========================================================================
@@ -26,7 +28,7 @@ namespace Utilities.DotNet.Services
 
         static ServiceProvider()
         {
-            var registererInterfaceType = typeof( IStaticServiceRegisterer );
+            var registererInterfaceType = typeof( IGlobalServiceRegisterer );
 
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -49,7 +51,7 @@ namespace Utilities.DotNet.Services
 
             foreach( var subType in registererTypes )
             {
-                var serviceRegisterer = (IStaticServiceRegisterer) Activator.CreateInstance( subType )!;
+                var serviceRegisterer = (IGlobalServiceRegisterer) Activator.CreateInstance( subType )!;
                 serviceRegisterer.RegisterServices( GlobalServices );
             }
         }
@@ -58,6 +60,7 @@ namespace Utilities.DotNet.Services
         //                            PUBLIC METHODS
         //===========================================================================
 
+        /// <inheritdoc/>
         public void RegisterService( Type serviceType, object serviceInstance )
         {
             if( !serviceType.IsAssignableFrom( serviceInstance.GetType() ) )
@@ -68,11 +71,13 @@ namespace Utilities.DotNet.Services
             DoRegisterService( serviceType, serviceInstance );
         }
 
+        /// <inheritdoc/>
         public void RegisterService<TService>( TService serviceInstance ) where TService : class
         {
             DoRegisterService( typeof( TService ), serviceInstance );
         }
 
+        /// <inheritdoc/>
         public void RegisterServiceByInterface( object serviceInstance )
         {
             var serviceInstanceType = serviceInstance.GetType();
@@ -89,6 +94,7 @@ namespace Utilities.DotNet.Services
             }
         }
 
+        /// <inheritdoc/>
         public TService GetService<TService>() where TService : class
         {
             var service = m_services.GetValue( typeof( TService ) ) as TService;
@@ -105,7 +111,7 @@ namespace Utilities.DotNet.Services
         //                            PRIVATE METHODS
         //===========================================================================
 
-        public void DoRegisterService( Type serviceType, object serviceInstance )
+        private void DoRegisterService( Type serviceType, object serviceInstance )
         {
             if( m_services.ContainsKey( serviceType ) )
             {

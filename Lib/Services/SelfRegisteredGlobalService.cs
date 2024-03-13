@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -8,17 +8,19 @@ using System.Diagnostics.CodeAnalysis;
 namespace Utilities.DotNet.Services
 {
     /// <summary>
-    /// Base class for services that registers themselves.
+    /// Base class for services that registers themselves with the <see cref="ServiceProvider.GlobalServices">global service provider</see>.
     /// </summary>
     /// <remarks>
     /// The derived class must implement <typeparamref name="TService"/>.
     /// </remarks>
-    public abstract class SelfRegisteredService<TService> : IStaticServiceRegisterer where TService : class
+    /// <typeparam name="TService">Type of service.</typeparam>
+    public abstract class SelfRegisteredGlobalService<TService> : IGlobalServiceRegisterer where TService : class
     {
         //===========================================================================
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
+        /// <inheritdoc/>
         public void RegisterServices( IServiceProvider serviceProvider )
         {
             var service = GetServiceInstance();
