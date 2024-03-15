@@ -13,479 +13,596 @@ namespace Utilities.DotNet.Test.Numbers
         [Fact]
         public void ConstructorBetweenBounds()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
 
-            Assert.Equal( 50, si1.Value );
-            Assert.Equal( 25, si1.Minimum );
-            Assert.Equal( 100, si1.Maximum );
+            Assert.Equal( 50L, sn1.Value );
+            Assert.Equal( -25L, sn1.Minimum );
+            Assert.Equal( 100L, sn1.Maximum );
         }
 
         [Fact]
         public void ConstructorLowerThanMinimum()
         {
-            var si1 = new SaturatedLong( 5, 25, 100 );
+            var sn1 = new SaturatedLong( -25L, -5L, 100L );
 
-            Assert.Equal( 25, si1.Value );
-            Assert.Equal( 25, si1.Minimum );
-            Assert.Equal( 100, si1.Maximum );
+            Assert.Equal( -5L, sn1.Value );
+            Assert.Equal( -5L, sn1.Minimum );
+            Assert.Equal( 100L, sn1.Maximum );
         }
 
         [Fact]
         public void ConstructorGreaterThanMaximum()
         {
-            var si1 = new SaturatedLong( 8000, 25, 100 );
+            var sn1 = new SaturatedLong( 8000L, -125L, -100L );
 
-            Assert.Equal( 100, si1.Value );
-            Assert.Equal( 25, si1.Minimum );
-            Assert.Equal( 100, si1.Maximum );
+            Assert.Equal( -100L, sn1.Value );
+            Assert.Equal( -125L, sn1.Minimum );
+            Assert.Equal( -100L, sn1.Maximum );
         }
 
         [Fact]
         public void ConstructorInvalidBounds()
         {
-            Assert.Throws<ArgumentException>( () => new SaturatedLong( 50, 125, 100 ) );
+            Assert.Throws<ArgumentException>( () => new SaturatedLong( 50L, -100L, -125L ) );
         }
 
         [Fact]
         public void ConstructorLimitBounds()
         {
-            var si1 = new SaturatedLong( 500 );
+            var sn1 = new SaturatedLong( 500L );
 
-            Assert.Equal( 500, si1.Value );
-            Assert.Equal( long.MinValue, si1.Minimum );
-            Assert.Equal( long.MaxValue, si1.Maximum );
+            Assert.Equal( 500L, sn1.Value );
+            Assert.Equal( long.MinValue, sn1.Minimum );
+            Assert.Equal( long.MaxValue, sn1.Maximum );
         }
 
         [Fact]
         public void ConstructorFromOther()
         {
-            var si1 = new SaturatedLong( 18000, 9000, 800000 );
-            var si2 = new SaturatedLong( si1 );
+            var sn1 = new SaturatedLong( 18000L, -9000L, 800000L );
+            var sn2 = new SaturatedLong( sn1 );
 
-            Assert.Equal( 18000, si1.Value );
-            Assert.Equal( 9000, si1.Minimum );
-            Assert.Equal( 800000, si1.Maximum );
+            Assert.Equal( 18000L, sn2.Value );
+            Assert.Equal( -9000L, sn2.Minimum );
+            Assert.Equal( 800000L, sn2.Maximum );
         }
 
         [Fact]
         public void ImplicitConversionToLong()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            long value = si1;
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
+            long value = sn1;
 
-            Assert.Equal( 50, value );
-            Assert.Equal( 25, si1.Minimum );
-            Assert.Equal( 100, si1.Maximum );
+            Assert.Equal( 50L, value );
+            Assert.Equal( -25L, sn1.Minimum );
+            Assert.Equal( 100L, sn1.Maximum );
         }
 
         [Fact]
         public void IncrementNoSaturation()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            si1++;
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
+            sn1++;
 
-            Assert.Equal( 51, si1.Value );
-            Assert.Equal( 25, si1.Minimum );
-            Assert.Equal( 100, si1.Maximum );
+            Assert.Equal( 51L, sn1.Value );
+            Assert.Equal( -25L, sn1.Minimum );
+            Assert.Equal( 100L, sn1.Maximum );
         }
 
         [Fact]
         public void DecrementNoSaturation()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            si1--;
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
+            sn1--;
 
-            Assert.Equal( 49, si1.Value );
-            Assert.Equal( 25, si1.Minimum );
-            Assert.Equal( 100, si1.Maximum );
+            Assert.Equal( 49L, sn1.Value );
+            Assert.Equal( -25L, sn1.Minimum );
+            Assert.Equal( 100L, sn1.Maximum );
         }
 
         [Fact]
         public void AdditionNoSaturationPre()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            var si2 = si1 + 25;
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
+            var sn2 = sn1 + 25L;
 
-            Assert.Equal( 75, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 75L, sn2.Value );
+            Assert.Equal( -25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void AdditionNoSaturationPost()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            var si2 = 35 + si1;
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
+            var sn2 = 35L + sn1;
 
-            Assert.Equal( 85, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 85L, sn2.Value );
+            Assert.Equal( -25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
-        public void SubstractionNoSaturationPre()
+        public void SubtractionNoSaturationPre()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            var si2 = si1 - 5;
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
+            var sn2 = sn1 - 5L;
 
-            Assert.Equal( 45, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 45L, sn2.Value );
+            Assert.Equal( -25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
-        public void SubstractionNoSaturationPost()
+        public void SubtractionNoSaturationPost()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            var si2 = 90 - si1;
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
+            var sn2 = 30L - sn1;
 
-            Assert.Equal( 40, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( -20L, sn2.Value );
+            Assert.Equal( -25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void MultiplicationNoSaturationPre()
         {
-            var si1 = new SaturatedLong( 10, 5, 100 );
-            var si2 = si1 * 6;
+            var sn1 = new SaturatedLong( 10L, -5L, 100L );
+            var sn2 = sn1 * 6L;
 
-            Assert.Equal( 60, si2.Value );
-            Assert.Equal( 5, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 60L, sn2.Value );
+            Assert.Equal( -5L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void MultiplicationNoSaturationPost()
         {
-            var si1 = new SaturatedLong( 15, 10, 100 );
-            var si2 = 3 * si1;
+            var sn1 = new SaturatedLong( 15L, -10L, 100L );
+            var sn2 = 3L * sn1;
 
-            Assert.Equal( 45, si2.Value );
-            Assert.Equal( 10, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 45L, sn2.Value );
+            Assert.Equal( -10L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void DivisionNoSaturationPre()
         {
-            var si1 = new SaturatedLong( 80, 15, 100 );
-            var si2 = si1 / 4;
+            var sn1 = new SaturatedLong( 80L, 15L, 100L );
+            var sn2 = sn1 / 4L;
 
-            Assert.Equal( 20, si2.Value );
-            Assert.Equal( 15, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 20L, sn2.Value );
+            Assert.Equal( 15L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void DivisionNoSaturationPost()
         {
-            var si1 = new SaturatedLong( 3, 0, 100 );
-            var si2 = 150 / si1;
+            var sn1 = new SaturatedLong( 3L, 0L, 100L );
+            var sn2 = 150L / sn1;
 
-            Assert.Equal( 50, si2.Value );
-            Assert.Equal( 0, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 50L, sn2.Value );
+            Assert.Equal( 0L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void IncrementSaturation()
         {
-            var si1 = new SaturatedLong( 100, 25, 100 );
-            si1++;
+            var sn1 = new SaturatedLong( 100L, -25L, 100L );
+            sn1++;
 
-            Assert.Equal( 100, si1.Value );
-            Assert.Equal( 25, si1.Minimum );
-            Assert.Equal( 100, si1.Maximum );
+            Assert.Equal( 100L, sn1.Value );
+            Assert.Equal( -25L, sn1.Minimum );
+            Assert.Equal( 100L, sn1.Maximum );
         }
 
         [Fact]
         public void DecrementSaturation()
         {
-            var si1 = new SaturatedLong( 25, 25, 100 );
-            si1--;
+            var sn1 = new SaturatedLong( -25L, -25L, 100L );
+            sn1--;
 
-            Assert.Equal( 25, si1.Value );
-            Assert.Equal( 25, si1.Minimum );
-            Assert.Equal( 100, si1.Maximum );
+            Assert.Equal( -25L, sn1.Value );
+            Assert.Equal( -25L, sn1.Minimum );
+            Assert.Equal( 100L, sn1.Maximum );
         }
 
         [Fact]
-        public void AdditionSaturationPre()
+        public void AdditionSaturationPrePositive()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            var si2 = si1 + 25000;
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
+            var sn2 = sn1 + 25000L;
 
-            Assert.Equal( 100, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 100L, sn2.Value );
+            Assert.Equal( -25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
-        public void AdditionSaturationPost()
+        public void AdditionSaturationPreNegative()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            var si2 = 35000 + si1;
+            var bn = -25000L;
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
+            var sn2 = sn1 + bn;
 
-            Assert.Equal( 100, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( -25L, sn2.Value );
+            Assert.Equal( -25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
-        public void SubstractionSaturationPre()
+        public void AdditionSaturationPostPositive()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            var si2 = si1 - 500;
+            var sn1 = new SaturatedLong( 50L, 25L, 100L );
+            var sn2 = 35000L + sn1;
 
-            Assert.Equal( 25, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 100L, sn2.Value );
+            Assert.Equal( 25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
-        public void SubstractionSaturationPost()
+        public void AdditionSaturationPostNegative()
         {
-            var si1 = new SaturatedLong( 80, 25, 100 );
-            var si2 = 90 - si1;
+            var sn1 = new SaturatedLong( -50L, -100L, 100L );
+            var sn2 = -60L + sn1;
 
-            Assert.Equal( 25, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( -100L, sn2.Value );
+            Assert.Equal( -100L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
+        }
+
+        [Fact]
+        public void SubtractionSaturationPre()
+        {
+            var sn1 = new SaturatedLong( 50L, 25L, 100L );
+            var sn2 = sn1 - 500L;
+
+            Assert.Equal( 25L, sn2.Value );
+            Assert.Equal( 25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
+        }
+
+        [Fact]
+        public void SubtractionSaturationPost()
+        {
+            var sn1 = new SaturatedLong( 80L, 25L, 100L );
+            var sn2 = 90L - sn1;
+
+            Assert.Equal( 25L, sn2.Value );
+            Assert.Equal( 25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void MultiplicationSaturationPre()
         {
-            var si1 = new SaturatedLong( 10, 5, 100 );
-            var si2 = si1 * 60;
+            var sn1 = new SaturatedLong( 10L, 5L, 100L );
+            var sn2 = sn1 * 60L;
 
-            Assert.Equal( 100, si2.Value );
-            Assert.Equal( 5, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 100L, sn2.Value );
+            Assert.Equal( 5L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void MultiplicationSaturationPost()
         {
-            var si1 = new SaturatedLong( 15, 10, 100 );
-            var si2 = 300 * si1;
+            var sn1 = new SaturatedLong( 15L, 10L, 100L );
+            var sn2 = 300L * sn1;
 
-            Assert.Equal( 100, si2.Value );
-            Assert.Equal( 10, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 100L, sn2.Value );
+            Assert.Equal( 10L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void DivisionSaturationPre()
         {
-            var si1 = new SaturatedLong( 80, 15, 100 );
-            var si2 = si1 / 8;
+            var sn1 = new SaturatedLong( 80L, 15L, 100L );
+            var sn2 = sn1 / 8L;
 
-            Assert.Equal( 15, si2.Value );
-            Assert.Equal( 15, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 15L, sn2.Value );
+            Assert.Equal( 15L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void DivisionSaturationPost()
         {
-            var si1 = new SaturatedLong( 30, 25, 100 );
-            var si2 = 150 / si1;
+            var sn1 = new SaturatedLong( 30L, 25L, 100L );
+            var sn2 = 150L / sn1;
 
-            Assert.Equal( 25, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 25L, sn2.Value );
+            Assert.Equal( 25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
         public void IncrementOverflow()
         {
-            var si1 = new SaturatedLong( long.MaxValue );
-            si1++;
+            var sn1 = new SaturatedLong( long.MaxValue );
+            sn1++;
 
-            Assert.Equal( long.MaxValue, si1.Value );
-            Assert.Equal( long.MinValue, si1.Minimum );
-            Assert.Equal( long.MaxValue, si1.Maximum );
+            Assert.Equal( long.MaxValue, sn1.Value );
+            Assert.Equal( long.MinValue, sn1.Minimum );
+            Assert.Equal( long.MaxValue, sn1.Maximum );
         }
 
         [Fact]
         public void DecrementOverflow()
         {
-            var si1 = new SaturatedLong( long.MinValue );
-            si1--;
+            var sn1 = new SaturatedLong( long.MinValue );
+            sn1--;
 
-            Assert.Equal( long.MinValue, si1.Value );
-            Assert.Equal( long.MinValue, si1.Minimum );
-            Assert.Equal( long.MaxValue, si1.Maximum );
+            Assert.Equal( long.MinValue, sn1.Value );
+            Assert.Equal( long.MinValue, sn1.Minimum );
+            Assert.Equal( long.MaxValue, sn1.Maximum );
         }
 
         [Fact]
-        public void AdditionOverflowPre()
+        public void AdditionOverflowPrePositive()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            var si2 = si1 + long.MaxValue;
+            var sn1 = new SaturatedLong( 50L, -125L, 100L );
+            var sn2 = sn1 + long.MaxValue;
 
-            Assert.Equal( 100, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 100L, sn2.Value );
+            Assert.Equal( -125L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
-        public void AdditionOverflowPost()
+        public void AdditionOverflowPreNegative()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            var si2 = long.MaxValue + si1;
+            var sn1 = new SaturatedLong( -50L, -100L, 100L );
+            var sn2 = sn1 + long.MinValue;
 
-            Assert.Equal( 100, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( -100L, sn2.Value );
+            Assert.Equal( -100L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
-        public void SubstractionOverflowPre()
+        public void AdditionOverflowPostPositive()
         {
-            var si1 = new SaturatedLong( 50, 25, 100 );
-            var si2 = si1 - long.MinValue;
+            var sn1 = new SaturatedLong( 50L, -25L, 100L );
+            var sn2 = long.MaxValue + sn1;
 
-            Assert.Equal( 25, si2.Value );
-            Assert.Equal( 25, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 100L, sn2.Value );
+            Assert.Equal( -25L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
-        public void SubstractionOverflowPost()
+        public void AdditionOverflowPostNegative()
         {
-            var si1 = new SaturatedLong( long.MaxValue, 500, long.MaxValue );
-            var si2 = -500 - si1;
+            var sn1 = new SaturatedLong( -50L, -125L, 100L );
+            var sn2 = long.MinValue + sn1;
 
-            Assert.Equal( 500, si2.Value );
-            Assert.Equal( 500, si2.Minimum );
-            Assert.Equal( long.MaxValue, si2.Maximum );
+            Assert.Equal( -125L, sn2.Value );
+            Assert.Equal( -125L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
-        public void MultiplicationOverflowPre()
+        public void SubtractionOverflowPrePositive()
         {
-            var si1 = new SaturatedLong( 10, 5, 100 );
-            var si2 = si1 * ( long.MaxValue / 2 );
+            var sn1 = new SaturatedLong( 50L, -125L, 100L );
+            var sn2 = sn1 - long.MinValue;
 
-            Assert.Equal( 100, si2.Value );
-            Assert.Equal( 5, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( 100L, sn2.Value );
+            Assert.Equal( -125L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
         }
 
         [Fact]
-        public void MultiplicationOverflowPost()
+        public void SubtractionOverflowPreNegative()
         {
-            var si1 = new SaturatedLong( 15, 10, 100 );
-            var si2 = ( long.MaxValue / 2 ) * si1;
+            var sn1 = new SaturatedLong( -50L, -125L, 100L );
+            var sn2 = sn1 - long.MaxValue;
 
-            Assert.Equal( 100, si2.Value );
-            Assert.Equal( 10, si2.Minimum );
-            Assert.Equal( 100, si2.Maximum );
+            Assert.Equal( -125L, sn2.Value );
+            Assert.Equal( -125L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
+        }
+
+        [Fact]
+        public void SubtractionOverflowPostPositive()
+        {
+            var sn1 = new SaturatedLong( long.MinValue, long.MinValue, -899L );
+            var sn2 = 500L - sn1;
+
+            Assert.Equal( -899L, sn2.Value );
+            Assert.Equal( long.MinValue, sn2.Minimum );
+            Assert.Equal( -899L, sn2.Maximum );
+        }
+
+        [Fact]
+        public void SubtractionOverflowPostNegative()
+        {
+            var sn1 = new SaturatedLong( long.MaxValue, 500L, long.MaxValue );
+            var sn2 = -500L - sn1;
+
+            Assert.Equal( 500L, sn2.Value );
+            Assert.Equal( 500L, sn2.Minimum );
+            Assert.Equal( long.MaxValue, sn2.Maximum );
+        }
+
+        [Fact]
+        public void MultiplicationOverflowPrePositive()
+        {
+            var sn1 = new SaturatedLong( 10L, -5L, 100L );
+            var sn2 = sn1 * ( long.MaxValue / 2L );
+
+            var sn3 = new SaturatedLong( -10L, -50L, 100L );
+            var sn4 = sn3 * ( long.MinValue / 2L );
+
+            Assert.Equal( 100L, sn2.Value );
+            Assert.Equal( -5L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
+
+            Assert.Equal( 100L, sn4.Value );
+            Assert.Equal( -50L, sn4.Minimum );
+            Assert.Equal( 100L, sn4.Maximum );
+        }
+
+        [Fact]
+        public void MultiplicationOverflowPreNegative()
+        {
+            var sn1 = new SaturatedLong( -10L, -50L, 100L );
+            var sn2 = sn1 * ( long.MaxValue / 2L );
+
+            var sn3 = new SaturatedLong( 10L, -50L, 100L );
+            var sn4 = sn3 * ( long.MinValue / 2L );
+
+            Assert.Equal( -50L, sn2.Value );
+            Assert.Equal( -50L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
+
+            Assert.Equal( -50L, sn4.Value );
+            Assert.Equal( -50L, sn4.Minimum );
+            Assert.Equal( 100L, sn4.Maximum );
+        }
+
+        [Fact]
+        public void MultiplicationOverflowPostPositive()
+        {
+            var sn1 = new SaturatedLong( 15L, -100L, 100L );
+            var sn2 = ( long.MaxValue / 2L ) * sn1;
+
+            var sn3 = new SaturatedLong( -15L, -100L, 100L );
+            var sn4 = ( long.MinValue / 2L ) * sn3;
+
+            Assert.Equal( 100L, sn2.Value );
+            Assert.Equal( -100L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
+
+            Assert.Equal( 100L, sn4.Value );
+            Assert.Equal( -100L, sn4.Minimum );
+            Assert.Equal( 100L, sn4.Maximum );
+        }
+
+        [Fact]
+        public void MultiplicationOverflowPostNegative()
+        {
+            var sn1 = new SaturatedLong( 15L, -100L, 100L );
+            var sn2 = ( long.MinValue / 2L ) * sn1;
+
+            var sn3 = new SaturatedLong( -15L, -100L, 100L );
+            var sn4 = ( long.MaxValue / 2L ) * sn3;
+
+            Assert.Equal( -100L, sn2.Value );
+            Assert.Equal( -100L, sn2.Minimum );
+            Assert.Equal( 100L, sn2.Maximum );
+
+            Assert.Equal( -100L, sn4.Value );
+            Assert.Equal( -100L, sn4.Minimum );
+            Assert.Equal( 100L, sn4.Maximum );
         }
 
         [Fact]
         public void ComparisonOperatorsPre()
         {
-            var si1 = new SaturatedLong( 15, 10, 100 );
+            var sn1 = new SaturatedLong( 15L, 10L, 100L );
 
-            Assert.True( si1 == 15 );
-            Assert.False( si1 == 16 );
+            Assert.True( sn1 == 15L );
+            Assert.False( sn1 == 16L );
 
-            Assert.False( si1 != 15 );
-            Assert.True( si1 != 14 );
+            Assert.False( sn1 != 15L );
+            Assert.True( sn1 != 14L );
 
-            Assert.True( si1 < 25 );
-            Assert.True( si1 <= 16 );
-            Assert.True( si1 <= 15 );
-            Assert.False( si1 <= 14 );
-            Assert.False( si1 < 5 );
+            Assert.True( sn1 < 25L );
+            Assert.True( sn1 <= 16L );
+            Assert.True( sn1 <= 15L );
+            Assert.False( sn1 <= 14L );
+            Assert.False( sn1 < 5L );
 
-            Assert.True( si1 > 5 );
-            Assert.True( si1 >= 14 );
-            Assert.True( si1 >= 15 );
-            Assert.False( si1 >= 16 );
-            Assert.False( si1 > 25 );
+            Assert.True( sn1 > 5L );
+            Assert.True( sn1 >= 14L );
+            Assert.True( sn1 >= 15L );
+            Assert.False( sn1 >= 16L );
+            Assert.False( sn1 > 25L );
         }
 
         [Fact]
         public void ComparisonOperatorsPost()
         {
-            var si1 = new SaturatedLong( 15, 10, 100 );
+            var sn1 = new SaturatedLong( 15L, 10L, 100L );
 
-            Assert.True( 15 == si1 );
-            Assert.False( 14 == si1 );
+            Assert.True( 15L == sn1 );
+            Assert.False( 14L == sn1 );
 
-            Assert.False( 15 != si1 );
-            Assert.True( 14 != si1 );
+            Assert.False( 15L != sn1 );
+            Assert.True( 14L != sn1 );
 
-            Assert.False( 25 < si1 );
-            Assert.False( 16 <= si1 );
-            Assert.True( 15 <= si1 );
-            Assert.True( 14 <= si1 );
-            Assert.True( 5 < si1 );
+            Assert.False( 25L < sn1 );
+            Assert.False( 16L <= sn1 );
+            Assert.True( 15L <= sn1 );
+            Assert.True( 14L <= sn1 );
+            Assert.True( 5L < sn1 );
 
-            Assert.False( 5 > si1 );
-            Assert.False( 14 >= si1 );
-            Assert.True( 15 >= si1 );
-            Assert.True( 16 >= si1 );
-            Assert.True( 25 > si1 );
+            Assert.False( 5L > sn1 );
+            Assert.False( 14L >= sn1 );
+            Assert.True( 15L >= sn1 );
+            Assert.True( 16L >= sn1 );
+            Assert.True( 25L > sn1 );
         }
 
         [Fact]
         public void Equality()
         {
-            var si1 = new SaturatedLong( 15, 10, 100 );
-            var si2 = new SaturatedLong( 25, 10, 100 );
-            var si3 = new SaturatedLong( 15, 5, 100 );
-            var si4 = new SaturatedLong( 15, 10, 150 );
-            var si5 = new SaturatedLong( 15, 10, 100 );
+            var sn1 = new SaturatedLong( 15L, 10L, 100L );
+            var sn2 = new SaturatedLong( 25L, 10L, 100L );
+            var sn3 = new SaturatedLong( 15L, 5L, 100L );
+            var sn4 = new SaturatedLong( 15L, 10L, 150L );
+            var sn5 = new SaturatedLong( 15L, 10L, 100L );
 
-            Assert.True( si1.Equals( si1 ) );
-            Assert.True( si1.Equals( si5 ) );
-            Assert.False( si1.Equals( si2 ) );
-            Assert.False( si1.Equals( si3 ) );
-            Assert.False( si1.Equals( si4 ) );
+            Assert.True( sn1.Equals( sn1 ) );
+            Assert.True( sn1.Equals( sn5 ) );
+            Assert.False( sn1.Equals( sn2 ) );
+            Assert.False( sn1.Equals( sn3 ) );
+            Assert.False( sn1.Equals( sn4 ) );
 
-            Assert.True( si1.Equals( 15 ) );
-            Assert.False( si1.Equals( 20 ) );
+            Assert.True( sn1.Equals( 15L ) );
+            Assert.False( sn1.Equals( 20L ) );
 
-            Assert.True( si1.Equals( (object) 15L ) );
-            Assert.False( si1.Equals( (object) 20L ) );
+            Assert.True( sn1.Equals( (object) 15L ) );
+            Assert.False( sn1.Equals( (object) 20L ) );
 
-            Assert.True( si1.Equals( (object) si5 ) );
-            Assert.False( si1.Equals( (object) si2 ) );
+            Assert.True( sn1.Equals( (object) sn5 ) );
+            Assert.False( sn1.Equals( (object) sn2 ) );
 
-            Assert.False( si1.Equals( null ) );
+            Assert.False( sn1.Equals( null ) );
 
-            Assert.False( si1.Equals( 15.0 ) );
+            Assert.False( sn1.Equals( 15.0 ) );
 
-            Assert.Equal( si1.GetHashCode(), si5.GetHashCode() );
-            Assert.NotEqual( si1.GetHashCode(), si2.GetHashCode() );
-            Assert.NotEqual( si1.GetHashCode(), si3.GetHashCode() );
-            Assert.NotEqual( si1.GetHashCode(), si4.GetHashCode() );
+            Assert.Equal( sn1.GetHashCode(), sn5.GetHashCode() );
+            Assert.NotEqual( sn1.GetHashCode(), sn2.GetHashCode() );
+            Assert.NotEqual( sn1.GetHashCode(), sn3.GetHashCode() );
+            Assert.NotEqual( sn1.GetHashCode(), sn4.GetHashCode() );
         }
 
         [Fact]
         public void CompareTo()
         {
-            var si1 = new SaturatedLong( 15, 10, 100 );
+            var sn1 = new SaturatedLong( 15L, 10L, 100L );
 
-            Assert.True( si1.CompareTo( 14 ) > 0 );
-            Assert.True( si1.CompareTo( 15 ) == 0 );
-            Assert.True( si1.CompareTo( 16 ) < 0 );
+            Assert.True( sn1.CompareTo( 14L ) > 0 );
+            Assert.True( sn1.CompareTo( 15L ) == 0 );
+            Assert.True( sn1.CompareTo( 16L ) < 0 );
         }
 
         [Fact]
         public void ToStringConversion()
         {
-            var si1 = new SaturatedLong( 15, 10, 100 );
-            var si2 = new SaturatedLong( 15000 );
+            var sn1 = new SaturatedLong( 15L, 10L, 100L );
+            var sn2 = new SaturatedLong( 15000L );
 
-            Assert.Equal( "15", si1.ToString() );
-            Assert.Equal( "15000", si2.ToString() );
+            Assert.Equal( "15", sn1.ToString() );
+            Assert.Equal( "15000", sn2.ToString() );
         }
     }
 }
