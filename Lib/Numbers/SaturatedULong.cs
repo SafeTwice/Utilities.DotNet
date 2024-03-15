@@ -7,9 +7,9 @@ using System;
 namespace Utilities.DotNet.Numbers
 {
     /// <summary>
-    /// Signed long integer number which value (and the result from arithmetic operations) are saturated between the given bounds.
+    /// Unsigned long integer number which value (and the result from arithmetic operations) are saturated between the given bounds.
     /// </summary>
-    public readonly struct SaturatedLong : IEquatable<long>, IEquatable<SaturatedLong>, IComparable<long>
+    public readonly struct SaturatedULong : IEquatable<ulong>, IEquatable<SaturatedULong>, IComparable<ulong>
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -18,17 +18,17 @@ namespace Utilities.DotNet.Numbers
         /// <summary>
         /// Current value.
         /// </summary>
-        public long Value => m_value;
+        public ulong Value => m_value;
 
         /// <summary>
         /// Minimum value.
         /// </summary>
-        public long Minimum => m_minimum;
+        public ulong Minimum => m_minimum;
 
         /// <summary>
         /// Maximum value.
         /// </summary>
-        public long Maximum => m_maximum;
+        public ulong Maximum => m_maximum;
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -38,7 +38,7 @@ namespace Utilities.DotNet.Numbers
         /// Copy constructor.
         /// </summary>
         /// <param name="other">Object to copy.</param>
-        public SaturatedLong( SaturatedLong other )
+        public SaturatedULong( SaturatedULong other )
         {
             m_minimum = other.m_minimum;
             m_maximum = other.m_maximum;
@@ -51,7 +51,7 @@ namespace Utilities.DotNet.Numbers
         /// <param name="value">Value.</param>
         /// <param name="min">Bound minimum.</param>
         /// <param name="max">Bound maximum.</param>
-        public SaturatedLong( long value, long min, long max )
+        public SaturatedULong( ulong value, ulong min, ulong max )
         {
             if( min > max )
             {
@@ -76,10 +76,10 @@ namespace Utilities.DotNet.Numbers
         }
 
         /// <summary>
-        /// Constructor with bounds set to the whole long integer range.
+        /// Constructor with bounds set to the whole ulong integer range.
         /// </summary>
         /// <param name="value">Value.</param>
-        public SaturatedLong( long value ) : this( value, long.MinValue, long.MaxValue )
+        public SaturatedULong( ulong value ) : this( value, ulong.MinValue, ulong.MaxValue )
         {
         }
 
@@ -88,10 +88,10 @@ namespace Utilities.DotNet.Numbers
         //===========================================================================
 
         /// <summary>
-        /// Converts <paramref name="o"/> to a long integer.
+        /// Converts <paramref name="o"/> to a ulong integer.
         /// </summary>
         /// <param name="o">Instance to convert.</param>
-        public static implicit operator long( SaturatedLong o )
+        public static implicit operator ulong( SaturatedULong o )
         {
             return o.m_value;
         }
@@ -102,18 +102,18 @@ namespace Utilities.DotNet.Numbers
         /// <param name="o">A saturated number.</param>
         /// <returns>A new instance which current value is the current value of <paramref name="o"/> incremented by one,
         ///          and having the same minimum and maximum values than <paramref name="o"/>.</returns>
-        public static SaturatedLong operator ++( SaturatedLong o )
+        public static SaturatedULong operator ++( SaturatedULong o )
         {
             checked
             {
                 try
                 {
-                    long newValue = o.m_value + 1;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    ulong newValue = o.m_value + 1;
+                    return new SaturatedULong( newValue, o.m_minimum, o.m_maximum );
                 }
                 catch( Exception )
                 {
-                    return new SaturatedLong( o.m_maximum, o.m_minimum, o.m_maximum );
+                    return new SaturatedULong( o.m_maximum, o.m_minimum, o.m_maximum );
                 }
             }
         }
@@ -124,18 +124,18 @@ namespace Utilities.DotNet.Numbers
         /// <param name="o">A saturated number.</param>
         /// <returns>A new instance which current value is the current value of <paramref name="o"/> decremented by one,
         ///          and having the same minimum and maximum values than <paramref name="o"/>.</returns>
-        public static SaturatedLong operator --( SaturatedLong o )
+        public static SaturatedULong operator --( SaturatedULong o )
         {
             checked
             {
                 try
                 {
-                    long newValue = o.m_value - 1;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    ulong newValue = o.m_value - 1;
+                    return new SaturatedULong( newValue, o.m_minimum, o.m_maximum );
                 }
                 catch( Exception )
                 {
-                    return new SaturatedLong( o.m_minimum, o.m_minimum, o.m_maximum );
+                    return new SaturatedULong( o.m_minimum, o.m_minimum, o.m_maximum );
                 }
             }
         }
@@ -147,19 +147,18 @@ namespace Utilities.DotNet.Numbers
         /// <param name="value">Value to increment by.</param>
         /// <returns>A new instance which current value is the current value of <paramref name="o"/> incremented by <paramref name="value"/>,
         ///          and having the same minimum and maximum values than <paramref name="o"/>.</returns>
-        public static SaturatedLong operator +( SaturatedLong o, long value )
+        public static SaturatedULong operator +( SaturatedULong o, ulong value )
         {
             checked
             {
                 try
                 {
-                    long newValue = o.m_value + value;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    ulong newValue = o.m_value + value;
+                    return new SaturatedULong( newValue, o.m_minimum, o.m_maximum );
                 }
                 catch( Exception )
                 {
-                    var newValue = ( value > 0 ) ? o.m_maximum : o.m_minimum;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    return new SaturatedULong( o.m_maximum, o.m_minimum, o.m_maximum );
                 }
             }
         }
@@ -171,19 +170,18 @@ namespace Utilities.DotNet.Numbers
         /// <param name="value">Value to decrement by.</param>
         /// <returns>A new instance which current value is the current value of <paramref name="o"/> decremented by <paramref name="value"/>,
         ///          and having the same minimum and maximum values than <paramref name="o"/>.</returns>
-        public static SaturatedLong operator -( SaturatedLong o, long value )
+        public static SaturatedULong operator -( SaturatedULong o, ulong value )
         {
             checked
             {
                 try
                 {
-                    long newValue = o.m_value - value;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    ulong newValue = o.m_value - value;
+                    return new SaturatedULong( newValue, o.m_minimum, o.m_maximum );
                 }
                 catch( Exception )
                 {
-                    var newValue = ( value > 0 ) ? o.m_minimum : o.m_maximum;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    return new SaturatedULong( o.m_minimum, o.m_minimum, o.m_maximum );
                 }
             }
         }
@@ -195,19 +193,18 @@ namespace Utilities.DotNet.Numbers
         /// <param name="value">Value to multiply by.</param>
         /// <returns>A new instance which current value is the current value of <paramref name="o"/> multiplied by <paramref name="value"/>,
         ///          and having the same minimum and maximum values than <paramref name="o"/>.</returns>
-        public static SaturatedLong operator *( SaturatedLong o, long value )
+        public static SaturatedULong operator *( SaturatedULong o, ulong value )
         {
             checked
             {
                 try
                 {
-                    long newValue = o.m_value * value;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    ulong newValue = o.m_value * value;
+                    return new SaturatedULong( newValue, o.m_minimum, o.m_maximum );
                 }
                 catch( Exception )
                 {
-                    var newValue = ( ( o.Value ^ value ) >= 0 ) ? o.m_maximum : o.m_minimum;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    return new SaturatedULong( o.m_maximum, o.m_minimum, o.m_maximum );
                 }
             }
         }
@@ -219,10 +216,10 @@ namespace Utilities.DotNet.Numbers
         /// <param name="value">Value to divide by.</param>
         /// <returns>A new instance which current value is the current value of <paramref name="o"/> divided by <paramref name="value"/>,
         ///          and having the same minimum and maximum values than <paramref name="o"/>.</returns>
-        public static SaturatedLong operator /( SaturatedLong o, long value )
+        public static SaturatedULong operator /( SaturatedULong o, ulong value )
         {
-            long newValue = o.m_value / value;
-            return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+            ulong newValue = o.m_value / value;
+            return new SaturatedULong( newValue, o.m_minimum, o.m_maximum );
         }
 
         /// <summary>
@@ -232,19 +229,18 @@ namespace Utilities.DotNet.Numbers
         /// <param name="o">A saturated number.</param>
         /// <returns>A new instance which current value is the current value of <paramref name="o"/> incremented by <paramref name="value"/>,
         ///          and having the same minimum and maximum values than <paramref name="o"/>.</returns>
-        public static SaturatedLong operator +( long value, SaturatedLong o )
+        public static SaturatedULong operator +( ulong value, SaturatedULong o )
         {
             checked
             {
                 try
                 {
-                    long newValue = value + o.m_value;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    ulong newValue = value + o.m_value;
+                    return new SaturatedULong( newValue, o.m_minimum, o.m_maximum );
                 }
                 catch( Exception )
                 {
-                    var newValue = ( o.Value > 0 ) ? o.m_maximum : o.m_minimum;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    return new SaturatedULong( o.m_maximum, o.m_minimum, o.m_maximum );
                 }
             }
         }
@@ -256,19 +252,18 @@ namespace Utilities.DotNet.Numbers
         /// <param name="o">A saturated number.</param>
         /// <returns>A new instance which current value is <paramref name="value"/> decremented by the current value of <paramref name="o"/>,
         ///          and having the same minimum and maximum values than <paramref name="o"/>.</returns>
-        public static SaturatedLong operator -( long value, SaturatedLong o )
+        public static SaturatedULong operator -( ulong value, SaturatedULong o )
         {
             checked
             {
                 try
                 {
-                    long newValue = value - o.m_value;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    ulong newValue = value - o.m_value;
+                    return new SaturatedULong( newValue, o.m_minimum, o.m_maximum );
                 }
                 catch( Exception )
                 {
-                    var newValue = ( o.Value > 0 ) ? o.m_minimum : o.m_maximum;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    return new SaturatedULong( o.m_minimum, o.m_minimum, o.m_maximum );
                 }
             }
         }
@@ -280,19 +275,18 @@ namespace Utilities.DotNet.Numbers
         /// <param name="o">A saturated number.</param>
         /// <returns>A new instance which current value is the current value of <paramref name="o"/> multiplied by <paramref name="value"/>,
         ///          and having the same minimum and maximum values than <paramref name="o"/>.</returns>
-        public static SaturatedLong operator *( long value, SaturatedLong o )
+        public static SaturatedULong operator *( ulong value, SaturatedULong o )
         {
             checked
             {
                 try
                 {
-                    long newValue = value * o.m_value;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    ulong newValue = value * o.m_value;
+                    return new SaturatedULong( newValue, o.m_minimum, o.m_maximum );
                 }
                 catch( Exception )
                 {
-                    var newValue = ( ( o.Value ^ value ) >= 0 ) ? o.m_maximum : o.m_minimum;
-                    return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+                    return new SaturatedULong( o.m_maximum, o.m_minimum, o.m_maximum );
                 }
             }
         }
@@ -304,10 +298,10 @@ namespace Utilities.DotNet.Numbers
         /// <param name="o">A saturated number.</param>
         /// <returns>A new instance which current value is <paramref name="value"/> divided by the current value of <paramref name="o"/>,
         ///          and having the same minimum and maximum values than <paramref name="o"/>.</returns>
-        public static SaturatedLong operator /( long value, SaturatedLong o )
+        public static SaturatedULong operator /( ulong value, SaturatedULong o )
         {
-            long newValue = value / o.m_value;
-            return new SaturatedLong( newValue, o.m_minimum, o.m_maximum );
+            ulong newValue = value / o.m_value;
+            return new SaturatedULong( newValue, o.m_minimum, o.m_maximum );
         }
 
         /// <summary>
@@ -316,7 +310,7 @@ namespace Utilities.DotNet.Numbers
         /// <param name="o">A saturated number.</param>
         /// <param name="value">A value.</param>
         /// <returns><c>true</c> if the current value of <paramref name="o"/> and <paramref name="value"/> are equal, <c>false</c> otherwise.</returns>
-        public static bool operator ==( SaturatedLong o, long value )
+        public static bool operator ==( SaturatedULong o, ulong value )
         {
             return o.m_value == value;
         }
@@ -327,7 +321,7 @@ namespace Utilities.DotNet.Numbers
         /// <param name="o">A saturated number.</param>
         /// <param name="value">A value.</param>
         /// <returns><c>true</c> if the current value of <paramref name="o"/> and <paramref name="value"/> are not equal, <c>false</c> otherwise.</returns>
-        public static bool operator !=( SaturatedLong o, long value )
+        public static bool operator !=( SaturatedULong o, ulong value )
         {
             return o.m_value != value;
         }
@@ -338,7 +332,7 @@ namespace Utilities.DotNet.Numbers
         /// <param name="o">A saturated number.</param>
         /// <param name="value">A value.</param>
         /// <returns><c>true</c> if the current value of <paramref name="o"/> is less than <paramref name="value"/>, <c>false</c> otherwise.</returns>
-        public static bool operator <( SaturatedLong o, long value )
+        public static bool operator <( SaturatedULong o, ulong value )
         {
             return o.m_value < value;
         }
@@ -349,7 +343,7 @@ namespace Utilities.DotNet.Numbers
         /// <param name="o">A saturated number.</param>
         /// <param name="value">A value.</param>
         /// <returns><c>true</c> if the current value of <paramref name="o"/> is greater than <paramref name="value"/>, <c>false</c> otherwise.</returns>
-        public static bool operator >( SaturatedLong o, long value )
+        public static bool operator >( SaturatedULong o, ulong value )
         {
             return o.m_value > value;
         }
@@ -360,7 +354,7 @@ namespace Utilities.DotNet.Numbers
         /// <param name="value">A value.</param>
         /// <param name="o">A saturated number.</param>
         /// <returns><c>true</c> if the current value of <paramref name="o"/> and <paramref name="value"/> are equal, <c>false</c> otherwise.</returns>
-        public static bool operator ==( long value, SaturatedLong o )
+        public static bool operator ==( ulong value, SaturatedULong o )
         {
             return value == o.m_value;
         }
@@ -371,7 +365,7 @@ namespace Utilities.DotNet.Numbers
         /// <param name="value">A value.</param>
         /// <param name="o">A saturated number.</param>
         /// <returns><c>true</c> if the current value of <paramref name="o"/> and <paramref name="value"/> are not equal, <c>false</c> otherwise.</returns>
-        public static bool operator !=( long value, SaturatedLong o )
+        public static bool operator !=( ulong value, SaturatedULong o )
         {
             return value != o.m_value;
         }
@@ -382,7 +376,7 @@ namespace Utilities.DotNet.Numbers
         /// <param name="value">A value.</param>
         /// <param name="o">A saturated number.</param>
         /// <returns><c>true</c> if <paramref name="value"/> is less than the current value of <paramref name="o"/>, <c>false</c> otherwise.</returns>
-        public static bool operator <( long value, SaturatedLong o )
+        public static bool operator <( ulong value, SaturatedULong o )
         {
             return value < o.m_value;
         }
@@ -393,7 +387,7 @@ namespace Utilities.DotNet.Numbers
         /// <param name="value">A value.</param>
         /// <param name="o">A saturated number.</param>
         /// <returns><c>true</c> if <paramref name="value"/> is greater than the current value of <paramref name="o"/>, <c>false</c> otherwise.</returns>
-        public static bool operator >( long value, SaturatedLong o )
+        public static bool operator >( ulong value, SaturatedULong o )
         {
             return value > o.m_value;
         }
@@ -403,7 +397,7 @@ namespace Utilities.DotNet.Numbers
         /// </summary>
         /// <param name="value">A value.</param>
         /// <returns><c>true</c> if the current value of this object and <paramref name="value"/> are equal, <c>false</c> otherwise.</returns>
-        public bool Equals( long value )
+        public bool Equals( ulong value )
         {
             return m_value == value;
         }
@@ -412,11 +406,11 @@ namespace Utilities.DotNet.Numbers
         /// Compares this object with <paramref name="other"/> for equality.
         /// </summary>
         /// <remarks>
-        /// Two SaturatedLong objects are equal if their current, minimum and maximum values are equal.
+        /// Two SaturatedULong objects are equal if their current, minimum and maximum values are equal.
         /// </remarks>
-        /// <param name="other">Another SaturatedLong.</param>
+        /// <param name="other">Another SaturatedULong.</param>
         /// <returns><c>true</c> if this object and <paramref name="other"/> are equal, <c>false</c> otherwise.</returns>
-        public bool Equals( SaturatedLong other )
+        public bool Equals( SaturatedULong other )
         {
             return ( m_value == other.m_value ) &&
                    ( m_minimum == other.m_minimum ) &&
@@ -430,11 +424,11 @@ namespace Utilities.DotNet.Numbers
             {
                 return false;
             }
-            else if( other is SaturatedLong o )
+            else if( other is SaturatedULong o )
             {
                 return Equals( o );
             }
-            else if( other is long i )
+            else if( other is ulong i )
             {
                 return Equals( i );
             }
@@ -458,7 +452,7 @@ namespace Utilities.DotNet.Numbers
         }
 
         /// <inheritdoc/>
-        public int CompareTo( long value )
+        public int CompareTo( ulong value )
         {
             return m_value.CompareTo( value );
         }
@@ -473,8 +467,8 @@ namespace Utilities.DotNet.Numbers
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private readonly long m_value;
-        private readonly long m_minimum;
-        private readonly long m_maximum;
+        private readonly ulong m_value;
+        private readonly ulong m_minimum;
+        private readonly ulong m_maximum;
     }
 }
