@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 namespace Utilities.Net.Converters
@@ -21,6 +21,78 @@ namespace Utilities.Net.Converters
         //===========================================================================
         //                            PUBLIC METHODS
         //===========================================================================
+
+        public ushort Convert( ushort value )
+        {
+            if( m_reverse )
+            {
+                return ToUInt16( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        public uint Convert( uint value )
+        {
+            if( m_reverse )
+            {
+                return ToUInt32( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        public ulong Convert( ulong value )
+        {
+            if( m_reverse )
+            {
+                return ToUInt64( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        public short Convert( short value )
+        {
+            if( m_reverse )
+            {
+                return ToInt16( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        public int Convert( int value )
+        {
+            if( m_reverse )
+            {
+                return ToInt32( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        public long Convert( long value )
+        {
+            if( m_reverse )
+            {
+                return ToInt64( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
 
         public ushort ToUInt16( byte[] value, int startIndex )
         {

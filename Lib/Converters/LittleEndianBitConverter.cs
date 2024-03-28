@@ -29,6 +29,36 @@ namespace Utilities.Net.Converters
         //                            PUBLIC METHODS
         //===========================================================================
 
+        public new static ushort Convert( ushort value )
+        {
+            return Instance.Convert( value );
+        }
+
+        public new static uint Convert( uint value )
+        {
+            return Instance.Convert( value );
+        }
+
+        public new static ulong Convert( ulong value )
+        {
+            return Instance.Convert( value );
+        }
+
+        public new static short Convert( short value )
+        {
+            return Instance.Convert( value );
+        }
+
+        public new static int Convert( int value )
+        {
+            return Instance.Convert( value );
+        }
+
+        public new static long Convert( long value )
+        {
+            return Instance.Convert( value );
+        }
+
         public new static ushort ToUInt16( byte[] value, int startIndex )
         {
             return Instance.ToUInt16( value, startIndex );
