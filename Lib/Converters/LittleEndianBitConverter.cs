@@ -33,6 +33,42 @@ namespace Utilities.DotNet.Converters
         //                            PUBLIC METHODS
         //===========================================================================
 
+        /// <inheritdoc cref="BitConverter.Convert(ushort)"/>
+        public new static ushort Convert( ushort value )
+        {
+            return Instance.Convert( value );
+        }
+
+        /// <inheritdoc cref="BitConverter.Convert(uint)"/>
+        public new static uint Convert( uint value )
+        {
+            return Instance.Convert( value );
+        }
+
+        /// <inheritdoc cref="BitConverter.Convert(ulong)"/>
+        public new static ulong Convert( ulong value )
+        {
+            return Instance.Convert( value );
+        }
+
+        /// <inheritdoc cref="BitConverter.Convert(short)"/>
+        public new static short Convert( short value )
+        {
+            return Instance.Convert( value );
+        }
+
+        /// <inheritdoc cref="BitConverter.Convert(int)"/>
+        public new static int Convert( int value )
+        {
+            return Instance.Convert( value );
+        }
+
+        /// <inheritdoc cref="BitConverter.Convert(long)"/>
+        public new static long Convert( long value )
+        {
+            return Instance.Convert( value );
+        }
+
         /// <inheritdoc cref="BitConverter.ToUInt16(byte[], int)"/>
         public new static ushort ToUInt16( byte[] value, int startIndex )
         {

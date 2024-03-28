@@ -27,6 +27,108 @@ namespace Utilities.DotNet.Converters
         //===========================================================================
 
         /// <summary>
+        /// Converts a value stored using a 16-bit unsigned integer to a 16-bit unsigned integer.
+        /// </summary>
+        /// <param name="value">A value.</param>
+        /// <returns>Converted value.</returns>
+        public ushort Convert( ushort value )
+        {
+            if( m_reverse )
+            {
+                return ToUInt16( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Converts a value stored using a 32-bit unsigned integer to a 32-bit unsigned integer.
+        /// </summary>
+        /// <param name="value">A value.</param>
+        /// <returns>Converted value.</returns>
+        public uint Convert( uint value )
+        {
+            if( m_reverse )
+            {
+                return ToUInt32( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Converts a value stored using a 64-bit unsigned integer to a 64-bit unsigned integer.
+        /// </summary>
+        /// <param name="value">A value.</param>
+        /// <returns>Converted value.</returns>
+        public ulong Convert( ulong value )
+        {
+            if( m_reverse )
+            {
+                return ToUInt64( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Converts a value stored using a 16-bit signed integer to a 16-bit signed integer.
+        /// </summary>
+        /// <param name="value">A value.</param>
+        /// <returns>Converted value.</returns>
+        public short Convert( short value )
+        {
+            if( m_reverse )
+            {
+                return ToInt16( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Converts a value stored using a 32-bit signed integer to a 32-bit signed integer.
+        /// </summary>
+        /// <param name="value">A value.</param>
+        /// <returns>Converted value.</returns>
+        public int Convert( int value )
+        {
+            if( m_reverse )
+            {
+                return ToInt32( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Converts a value stored using a 64-bit signed integer to a 64-bit signed integer.
+        /// </summary>
+        /// <param name="value">A value.</param>
+        /// <returns>Converted value.</returns>
+        public long Convert( long value )
+        {
+            if( m_reverse )
+            {
+                return ToInt64( System.BitConverter.GetBytes( value ), 0 );
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        /// <summary>
         /// Converts a value stored using 2 bytes at the specified position of a byte array to a 16-bit unsigned integer.
         /// </summary>
         /// <param name="value">Array storing the value to be converted.</param>
