@@ -101,11 +101,16 @@ namespace Utilities.Net.Services
             return service;
         }
 
+        public static TService GetGlobalService<TService>() where TService : class
+        {
+            return GlobalServices.GetService<TService>();
+        }
+
         //===========================================================================
         //                            PRIVATE METHODS
         //===========================================================================
 
-        public void DoRegisterService( Type serviceType, object serviceInstance )
+        private void DoRegisterService( Type serviceType, object serviceInstance )
         {
             if( m_services.ContainsKey( serviceType ) )
             {
