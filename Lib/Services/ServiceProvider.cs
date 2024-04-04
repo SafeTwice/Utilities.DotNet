@@ -107,6 +107,11 @@ namespace Utilities.DotNet.Services
             return service;
         }
 
+        public static TService GetGlobalService<TService>() where TService : class
+        {
+            return GlobalServices.GetService<TService>();
+        }
+
         //===========================================================================
         //                            PRIVATE METHODS
         //===========================================================================
