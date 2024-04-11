@@ -4,6 +4,7 @@
 
 using System;
 using System.Text;
+using static Utilities.Net.I18N.LibraryLocalizer;
 
 namespace Utilities.DotNet
 {
@@ -201,34 +202,31 @@ namespace Utilities.DotNet
         }
 
         /// <summary>
-        /// Converts a byte array to its corresponding hexadecimal representation.
+        /// Converts a string containing the hexadecimal representation of a byte array to its corresponding byte array.
         /// </summary>
-        /// <param name="value">A byte array.</param>
-        /// <param name="separator">An optional string to include between byte's representations.</param>
-        /// <returns>String containing the hexadecimal representation of the input array.</returns>
-        public static string ToHexString( this byte[] value, string separator = "" )
+        /// <param name="hexString">String containing the hexadecimal representation of a byte array.</param>
+        /// <returns>The byte array that corresponds to the input string.</returns>
+        public static byte[] ParseHexString( string hexString )
         {
-            if( value.Length == 0 )
+            if( ( hexString.Length % 2 ) != 0 )
             {
-                return string.Empty;
+                throw new ArgumentException( Localize( $"The value '{hexString}' is not a valid hexadecimal string (wrong length)" ) );
             }
 
-            var result = new StringBuilder( ( value.Length * 2 ) + ( ( value.Length - 1 ) * separator.Length ) );
-            bool addSeparator = false;
-
-            foreach( byte b in value )
+            var result = new byte[ hexString.Length / 2 ];
+            for( int i = 0; i < ( hexString.Length / 2 ); i++ )
             {
-                if( addSeparator )
+                try
                 {
-                    result.Append( separator );
+                    result[ i ] = Convert.ToByte( hexString.Substring( i * 2, 2 ), 16 );
                 }
-
-                result.AppendFormat( "{0:X2}", b );
-
-                addSeparator = true;
+                catch( Exception e )
+                {
+                    throw new ArgumentException( Localize( $"The value '{hexString}' is not a valid hexadecimal string (wrong format)" ), e );
+                }
             }
 
-            return result.ToString();
+            return result;
         }
     }
 }
