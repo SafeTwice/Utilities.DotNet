@@ -2,8 +2,6 @@
 /// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using System;
-
 namespace Utilities.Net.Converters
 {
     /// <summary>

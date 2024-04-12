@@ -1,6 +1,7 @@
 ﻿/// @file
 /// @copyright  Copyright (c) 2020 SafeTwice S.L. All rights reserved.
-/// @license    MIT (https://opensource.org/licenses/MIT)
+/// @license    See LICENSE.txt
+
 namespace Utilities.Net.TransferFunctions
 {
     /// <summary>
@@ -12,7 +13,7 @@ namespace Utilities.Net.TransferFunctions
         //                                  METHODS
         //===========================================================================
 
-        double Calculate(double inputValue);
-        double CalculateInverse(double inputValue);
+        double Calculate( double inputValue );
+        double CalculateInverse( double inputValue );
     }
 }

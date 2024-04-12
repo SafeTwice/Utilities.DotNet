@@ -1,6 +1,7 @@
 ﻿/// @file
 /// @copyright  Copyright (c) 2020 SafeTwice S.L. All rights reserved.
-/// @license    MIT (https://opensource.org/licenses/MIT)
+/// @license    See LICENSE.txt
+
 namespace Utilities.Net.TransferFunctions
 {
     /// <summary>
@@ -12,7 +13,7 @@ namespace Utilities.Net.TransferFunctions
         //                          PUBLIC CONSTRUCTORS
         //===========================================================================
 
-        public DoubleLinearInterpolation(double x0, double x1, double y0, double y1)
+        public DoubleLinearInterpolation( double x0, double x1, double y0, double y1 )
         {
             m_xBase = x0;
             m_xOffset = x1 - x0;
@@ -24,14 +25,14 @@ namespace Utilities.Net.TransferFunctions
         //                            PUBLIC METHODS
         //===========================================================================
 
-        public double Calculate(double inputValue)
+        public double Calculate( double inputValue )
         {
-            return m_yBase + (inputValue - m_xBase) * m_yOffset / m_xOffset;
+            return m_yBase + ( inputValue - m_xBase ) * m_yOffset / m_xOffset;
         }
 
-        public double CalculateInverse(double inputValue)
+        public double CalculateInverse( double inputValue )
         {
-            return m_xBase + (inputValue - m_yBase) * m_xOffset / m_yOffset;
+            return m_xBase + ( inputValue - m_yBase ) * m_xOffset / m_yOffset;
         }
 
         //===========================================================================

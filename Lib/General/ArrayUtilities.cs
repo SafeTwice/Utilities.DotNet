@@ -1,6 +1,6 @@
 ﻿/// @file
 /// @copyright  Copyright (c) 2019-2021 SafeTwice S.L. All rights reserved.
-/// @license    MIT (https://opensource.org/licenses/MIT)
+/// @license    See LICENSE.txt
 
 using System;
 using System.Text;
@@ -68,7 +68,7 @@ namespace Utilities.Net
         /// <param name="size">Size of the array.</param>
         /// <param name="valueProvider">Function to provide the initial values for the array.</param>
         /// <returns>An array</returns>
-        public static T[] CreateArray<T>( uint size, Func<int,T> valueProvider )
+        public static T[] CreateArray<T>( uint size, Func<int, T> valueProvider )
         {
             T[] result = new T[ size ];
 

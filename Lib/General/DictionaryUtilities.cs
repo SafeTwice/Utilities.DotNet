@@ -1,6 +1,6 @@
 ﻿/// @file
 /// @copyright  Copyright (c) 2020 SafeTwice S.L. All rights reserved.
-/// @license    MIT (https://opensource.org/licenses/MIT)
+/// @license    See LICENSE.txt
 
 using System.Collections.Generic;
 
