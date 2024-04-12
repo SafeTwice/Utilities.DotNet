@@ -23,8 +23,8 @@ namespace Utilities.DotNet.Logs
 
         /// <inheritdoc/>
         public TLogEntryType EnabledEntryTypes
-        { 
-            get => m_enabledEntryTypes; 
+        {
+            get => m_enabledEntryTypes;
             set
             {
                 m_enabledEntryTypes = value;
@@ -160,7 +160,7 @@ namespace Utilities.DotNet.Logs
         {
             var dateTime = DateTime.Now.ToString( "yyyy-MM-dd HH:mm:ss.fff" );
 
-            lock( m_fileLock)
+            lock( m_fileLock )
             {
                 m_fileWriter!.Write( dateTime );
                 m_fileWriter.Write( ',' );
@@ -189,7 +189,7 @@ namespace Utilities.DotNet.Logs
 
         private void TryOpenFile()
         {
-            if( ( m_filename == null ) || ( m_fileStream != null ) || ( m_fileWriter  != null ) || m_enabledEntryTypes.Equals( default( TLogEntryType ) ) )
+            if( ( m_filename == null ) || ( m_fileStream != null ) || ( m_fileWriter != null ) || m_enabledEntryTypes.Equals( default( TLogEntryType ) ) )
             {
                 return;
             }

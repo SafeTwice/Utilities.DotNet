@@ -37,7 +37,7 @@ namespace Utilities.DotNet.TransferFunctions
         /// <inheritdoc/>
         public double CalculateInverse( double value )
         {
-            return (value - m_offset) / m_gain;
+            return ( value - m_offset ) / m_gain;
         }
 
         //===========================================================================

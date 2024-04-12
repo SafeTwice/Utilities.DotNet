@@ -35,13 +35,13 @@ namespace Utilities.DotNet.TransferFunctions
         /// <inheritdoc/>
         public double Calculate( double value )
         {
-            return m_yBase + (value - m_xBase) * m_yOffset / m_xOffset;
+            return m_yBase + ( value - m_xBase ) * m_yOffset / m_xOffset;
         }
 
         /// <inheritdoc/>
         public double CalculateInverse( double value )
         {
-            return m_xBase + (value - m_yBase) * m_xOffset / m_yOffset;
+            return m_xBase + ( value - m_yBase ) * m_xOffset / m_yOffset;
         }
 
         //===========================================================================

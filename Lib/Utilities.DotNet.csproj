@@ -47,4 +47,8 @@
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Exceptions\Utilities.DotNet.Exceptions.csproj" />
+    </ItemGroup>
+
 </Project>

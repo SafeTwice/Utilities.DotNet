@@ -54,10 +54,10 @@ namespace Utilities.DotNet.Threads
         [Flags]
         private enum EXECUTION_STATE : uint
         {
-            ES_SYSTEM_REQUIRED =    0x00000001,
-            ES_DISPLAY_REQUIRED =   0x00000002,
-            ES_AWAYMODE_REQUIRED =  0x00000040,
-            ES_CONTINUOUS =         0x80000000,
+            ES_SYSTEM_REQUIRED = 0x00000001,
+            ES_DISPLAY_REQUIRED = 0x00000002,
+            ES_AWAYMODE_REQUIRED = 0x00000040,
+            ES_CONTINUOUS = 0x80000000,
         }
     }
 }
