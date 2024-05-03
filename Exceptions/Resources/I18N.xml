@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<I18N>
+  <Entry>
+    <Key>[{0} @ Line {1}] {2}</Key>
+    <Value lang="es">[{0} @ Línea {1}] {2}</Value>
+    <Value lang="ca">[{0} @ Línia {1}] {2}</Value>
+    <Value lang="fr">[{0} @ Ligne {1}] {2}</Value>
+  </Entry>
+  <Entry>
+    <Key>[Line {0}] {1}</Key>
+    <Value lang="es">[Línea {0}] {1}</Value>
+    <Value lang="ca">[Línia {0}] {1}</Value>
+    <Value lang="fr">[Ligne {0}] {1}</Value>
+  </Entry>
+</I18N>

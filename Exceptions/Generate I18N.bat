@@ -2,17 +2,17 @@
 
 SETLOCAL enableextensions enabledelayedexpansion
 
-::SET I18N_TOOL=I18N.Net\Tool\bin\Release\net6.0\I18N.Tool.exe 
-SET I18N_TOOL=C:\Work\Ongoing\I18N.DotNet\Tool\bin\Release\net6.0\I18N.DotNet.Tool.exe 
+SET I18N_TOOL=dotnet i18n-tool
 
+SET SOURCES_DIR=.
 SET I18N_DEV_FILE=I18N.xml
-SET I18N_DEPLOY_DIR=Lib\Resources
+SET I18N_DEPLOY_DIR=Resources
 SET I18N_DEPLOY_FILE=I18N.xml
 
 echo ### Generating I18N development file
 echo.
 
-%I18N_TOOL% parse -o %I18N_DEV_FILE% -r -d -S Lib
+%I18N_TOOL% parse -o %I18N_DEV_FILE% -r -d -S %SOURCES_DIR%
 
 echo.
 echo ### Analyzing resulting I18N development file
