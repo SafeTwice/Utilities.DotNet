@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 namespace Utilities.DotNet.Converters
@@ -14,9 +14,9 @@ namespace Utilities.DotNet.Converters
         //===========================================================================
 
         /// <value>
-        /// Glonal converter instance.
+        /// Global converter instance.
         /// </value>
-        public static readonly BitConverter Instance = new LittleEndianBitConverter();
+        public static BitConverter Instance { get; } = new LittleEndianBitConverter();
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS

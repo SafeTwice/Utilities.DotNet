@@ -6,7 +6,7 @@ The _Utilities.DotNet.Files_ package provides utilities to work with files and d
 
 ## Usage
 
-Theis package provides a single static class `FileUtilities` that contains methods to work with files and directories.
+This package provides a single static class `FileUtilities` that contains methods to work with files and directories.
 
 ### FileUtilities
 
@@ -14,8 +14,8 @@ The `FileUtilities` class provides the following static methods:
 
 | Method                    | Description                                                             |
 |---------------------------|-------------------------------------------------------------------------|
-| EnsureFilePathIsAvailable | Creates the directory and subdirectories where a file would be stored   |
-| SanitizeFilename | Sanitizes a filename, replacing or deleting charactars invalid for file names    |
+| EnsureFilePathIsAvailable | Creates the directory and subdirectories where a file would be stored.  |
+| SanitizeFilename | Sanitizes a filename, replacing or deleting characters invalid for file names.   |
 
 #### Example
 

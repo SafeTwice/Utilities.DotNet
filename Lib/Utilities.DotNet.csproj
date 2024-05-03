@@ -1,18 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net472;net48;net6.0;net7.0;net8.0</TargetFrameworks>
-    <Nullable>enable</Nullable>
-    <LangVersion>10</LangVersion>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Configurations>Debug;Release;Debug I18N;Release I18N</Configurations>
-    <Version>1.4.1</Version>
-    <NoWarn>NETSDK1138</NoWarn>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net472;net48;net6.0;net7.0;net8.0</TargetFrameworks>
+        <Version>1.3.0</Version>
+        <Configurations>Debug;Release;Debug I18N;Release I18N</Configurations>
+        <DebugType>embedded</DebugType>
+        <NoWarn>NETSDK1138;CS1587</NoWarn>
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <Title>$(AssemblyName)</Title>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Authors>SafeTwice S.L.</Authors>
+        <PackageProjectUrl>https://github.com/SafeTwice/Utilities.DotNet</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/SafeTwice/Utilities.DotNet.git</RepositoryUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <PackageTags>.net;dotnet;utilities</PackageTags>
+        <Company>www.safetwice.com</Company>
+        <Description>Utilities library for .NET</Description>
+        <Copyright>Copyright © 2022-2024 SafeTwice S.L.</Copyright>
+        <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <Nullable>enable</Nullable>
+        <LangVersion>10</LangVersion>
+        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    </PropertyGroup>
 
-  <ItemGroup Condition="'$(Configuration.EndsWith(`I18N`))' == 'true'">
-    <PackageReference Include="I18N.DotNet" Version="1.2" />
-    <EmbeddedResource Include="Resources\I18N.xml" />
-  </ItemGroup>
+    <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)'=='release'">
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 
 </Project>

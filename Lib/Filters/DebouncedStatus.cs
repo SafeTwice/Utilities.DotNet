@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2020 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2020-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -41,7 +41,7 @@ namespace Utilities.DotNet.Filters
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="activationLimit">Number of immediate activations / deactivations to change the status</param>
+        /// <param name="activationLimit">Number of immediate activations / deactivations to change the status.</param>
         public DebouncedStatus( int activationLimit )
         {
             Active = false;
@@ -62,7 +62,7 @@ namespace Utilities.DotNet.Filters
         /// Likewise, when the accumulated activations reach the deactivation limit, the debounced status is set to not active.
         /// When the debounced status changes, the corresponding event is triggered.
         /// </remarks>
-        /// <param name="active">Indicates if the immediate status is active</param>
+        /// <param name="active">Indicates if the immediate status is active.</param>
         public void UpdateStatus( bool active )
         {
             if( active )
@@ -97,7 +97,7 @@ namespace Utilities.DotNet.Filters
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private int m_activationLimit;
+        private readonly int m_activationLimit;
         private int m_count;
     }
 }

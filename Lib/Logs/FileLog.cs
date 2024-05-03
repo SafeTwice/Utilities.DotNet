@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -12,15 +12,16 @@ namespace Utilities.DotNet.Logs
     /// Log that writes log entries to a file.
     /// </summary>
     /// <remarks>
-    /// The type parameter <typeparamref name="TLogEntryType"/> must be a bit-field enum (using the Flags attribute).
+    /// The type parameter <typeparamref name="TLogEntryType"/> must be a bit-field enum (i.e., declared using the <see cref="System.FlagsAttribute">Flags</see> attribute).
     /// </remarks>
-    /// <typeparam name="TLogEntryType">Type of log entries</typeparam>
+    /// <typeparam name="TLogEntryType">Type of log entries.</typeparam>
     public class FileLog<TLogEntryType> : ILog<TLogEntryType>, IDisposable where TLogEntryType : struct, Enum
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
         //===========================================================================
 
+        /// <inheritdoc/>
         public TLogEntryType EnabledEntryTypes
         { 
             get => m_enabledEntryTypes; 
@@ -46,8 +47,8 @@ namespace Utilities.DotNet.Logs
         /// <summary>
         /// Constructor that sets the enabled entry types and opens an output file (see <see cref="Open(string)"/>).
         /// </summary>
-        /// <param name="filename">File path for the log output file</param>
-        /// <param name="enabledEntryTypes">Type of entries to enable</param>
+        /// <param name="filename">File path for the log output file.</param>
+        /// <param name="enabledEntryTypes">Type of entries to enable.</param>
         public FileLog( string filename, TLogEntryType enabledEntryTypes = default )
         {
             m_enabledEntryTypes = enabledEntryTypes;
@@ -68,6 +69,7 @@ namespace Utilities.DotNet.Logs
         //                            PUBLIC METHODS
         //===========================================================================
 
+        /// <inheritdoc/>
         public bool IsEntryTypeEnabled( TLogEntryType entryType )
         {
             return m_enabledEntryTypes.HasFlag( entryType );
@@ -80,7 +82,7 @@ namespace Utilities.DotNet.Logs
         /// If <see cref="EnabledEntryTypes"/> has its default value (i.e., all log entry types disabled) then
         /// file opening is delayed until at least one log entry type is enabled.
         /// </remarks>
-        /// <param name="filename">File path for the log output file</param>
+        /// <param name="filename">File path for the log output file.</param>
         public void Open( string filename )
         {
             Close();
@@ -109,6 +111,7 @@ namespace Utilities.DotNet.Logs
             }
         }
 
+        /// <inheritdoc/>
         public void AddLogEntry( TLogEntryType entryType, string category, string? message = null )
         {
             if( !IsWriteEntryEnabled( entryType ) )
@@ -119,6 +122,7 @@ namespace Utilities.DotNet.Logs
             WriteLogEntry( entryType, category, message ?? string.Empty );
         }
 
+        /// <inheritdoc/>
         public void AddLogEntry( TLogEntryType entryType, string category, Func<string> messageGenerator )
         {
             if( !IsWriteEntryEnabled( entryType ) )
@@ -132,6 +136,7 @@ namespace Utilities.DotNet.Logs
 
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             Close();

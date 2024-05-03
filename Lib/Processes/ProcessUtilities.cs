@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -18,6 +18,10 @@ namespace Utilities.DotNet.Processes
         //                            PUBLIC METHODS
         //===========================================================================
 
+        /// <summary>
+        /// Gets information about the modules loaded in the current process.
+        /// </summary>
+        /// <returns>A collection with the name and version of each loaded module.</returns>
         public static IEnumerable<(string name, string version)> GetModulesInfo()
         {
             foreach( ProcessModule module in Process.GetCurrentProcess().Modules )
@@ -26,6 +30,10 @@ namespace Utilities.DotNet.Processes
             }
         }
 
+        /// <summary>
+        /// Gets information about the assemblies loaded in the current application domain.
+        /// </summary>
+        /// <returns>A collection with the name and version of each loaded assembly.</returns>
         public static IEnumerable<(string name, string version)> GetAssembliesInfo()
         {
             foreach( Assembly assemblyInfo in AppDomain.CurrentDomain.GetAssemblies() )

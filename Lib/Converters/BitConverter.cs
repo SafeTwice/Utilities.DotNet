@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 namespace Utilities.DotNet.Converters
@@ -16,7 +16,7 @@ namespace Utilities.DotNet.Converters
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="reverse">Indicates if the values to convert have different byte order (endianness) than the one used in the processing computer architecture</param>
+        /// <param name="reverse">Indicates if the values to convert have different byte order (endianness) than the one used in the processing computer architecture.</param>
         public BitConverter( bool reverse )
         {
             m_reverse = reverse;
@@ -29,9 +29,9 @@ namespace Utilities.DotNet.Converters
         /// <summary>
         /// Converts a value stored using 2 bytes at the specified position of a byte array to a 16-bit unsigned integer.
         /// </summary>
-        /// <param name="value">Array storing the value to be converted</param>
-        /// <param name="startIndex">Index in the array at which the value is stored</param>
-        /// <returns>Converted value</returns>
+        /// <param name="value">Array storing the value to be converted.</param>
+        /// <param name="startIndex">Index in the array at which the value is stored.</param>
+        /// <returns>Converted value.</returns>
         public ushort ToUInt16( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
@@ -45,9 +45,9 @@ namespace Utilities.DotNet.Converters
         /// <summary>
         /// Converts a value stored using 4 bytes at the specified position of a byte array to a 32-bit unsigned integer.
         /// </summary>
-        /// <param name="value">Array storing the value to be converted</param>
-        /// <param name="startIndex">Index in the array at which the value is stored</param>
-        /// <returns>Converted value</returns>
+        /// <param name="value">Array storing the value to be converted.</param>
+        /// <param name="startIndex">Index in the array at which the value is stored.</param>
+        /// <returns>Converted value.</returns>
         public uint ToUInt32( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
@@ -61,9 +61,9 @@ namespace Utilities.DotNet.Converters
         /// <summary>
         /// Converts a value stored using 8 bytes at the specified position of a byte array to a 64-bit unsigned integer.
         /// </summary>
-        /// <param name="value">Array storing the value to be converted</param>
-        /// <param name="startIndex">Index in the array at which the value is stored</param>
-        /// <returns>Converted value</returns>
+        /// <param name="value">Array storing the value to be converted.</param>
+        /// <param name="startIndex">Index in the array at which the value is stored.</param>
+        /// <returns>Converted value.</returns>
         public ulong ToUInt64( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
@@ -77,9 +77,9 @@ namespace Utilities.DotNet.Converters
         /// <summary>
         /// Converts a value stored using 2 bytes at the specified position of a byte array to a 16-bit signed integer.
         /// </summary>
-        /// <param name="value">Array storing the value to be converted</param>
-        /// <param name="startIndex">Index in the array at which the value is stored</param>
-        /// <returns>Converted value</returns>
+        /// <param name="value">Array storing the value to be converted.</param>
+        /// <param name="startIndex">Index in the array at which the value is stored.</param>
+        /// <returns>Converted value.</returns>
         public short ToInt16( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
@@ -93,9 +93,9 @@ namespace Utilities.DotNet.Converters
         /// <summary>
         /// Converts a value stored using 4 bytes at the specified position of a byte array to a 32-bit signed integer.
         /// </summary>
-        /// <param name="value">Array storing the value to be converted</param>
-        /// <param name="startIndex">Index in the array at which the value is stored</param>
-        /// <returns>Converted value</returns>
+        /// <param name="value">Array storing the value to be converted.</param>
+        /// <param name="startIndex">Index in the array at which the value is stored.</param>
+        /// <returns>Converted value.</returns>
         public int ToInt32( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
@@ -109,9 +109,9 @@ namespace Utilities.DotNet.Converters
         /// <summary>
         /// Converts a value stored using 8 bytes at the specified position of a byte array to a 64-bit signed integer.
         /// </summary>
-        /// <param name="value">Array storing the value to be converted</param>
-        /// <param name="startIndex">Index in the array at which the value is stored</param>
-        /// <returns>Converted value</returns>
+        /// <param name="value">Array storing the value to be converted.</param>
+        /// <param name="startIndex">Index in the array at which the value is stored.</param>
+        /// <returns>Converted value.</returns>
         public long ToInt64( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
@@ -123,11 +123,11 @@ namespace Utilities.DotNet.Converters
         }
 
         /// <summary>
-        /// Converts a value stored using 4 bytes at the specified position of a byte array to a 32-bit flpating-point number.
+        /// Converts a value stored using 4 bytes at the specified position of a byte array to a 32-bit floating-point number.
         /// </summary>
-        /// <param name="value">Array storing the value to be converted</param>
-        /// <param name="startIndex">Index in the array at which the value is stored</param>
-        /// <returns>Converted value</returns>
+        /// <param name="value">Array storing the value to be converted.</param>
+        /// <param name="startIndex">Index in the array at which the value is stored.</param>
+        /// <returns>Converted value.</returns>
         public float ToSingle( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )
@@ -139,11 +139,11 @@ namespace Utilities.DotNet.Converters
         }
 
         /// <summary>
-        /// Converts a value stored using 8 bytes at the specified position of a byte array to a 64-bit flpating-point number.
+        /// Converts a value stored using 8 bytes at the specified position of a byte array to a 64-bit floating-point number.
         /// </summary>
-        /// <param name="value">Array storing the value to be converted</param>
-        /// <param name="startIndex">Index in the array at which the value is stored</param>
-        /// <returns>Converted value</returns>
+        /// <param name="value">Array storing the value to be converted.</param>
+        /// <param name="startIndex">Index in the array at which the value is stored.</param>
+        /// <returns>Converted value.</returns>
         public double ToDouble( byte[] value, int startIndex = 0 )
         {
             if( m_reverse )

@@ -1,10 +1,11 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2020 SafeTwice S.L. All rights reserved.
-/// @license    MIT (https://opensource.org/licenses/MIT)
+/// @copyright  Copyright (c) 2020-2024 SafeTwice S.L. All rights reserved.
+/// @license    See LICENSE.txt
+
 namespace Utilities.DotNet.TransferFunctions
 {
     /// <summary>
-    /// Calculates linear interpolations.
+    /// Transfer function for a linear interpolation defined using 2 points.
     /// </summary>
     public class DoubleLinearInterpolation : IDoubleTransferFunction
     {
@@ -12,7 +13,14 @@ namespace Utilities.DotNet.TransferFunctions
         //                          PUBLIC CONSTRUCTORS
         //===========================================================================
 
-        public DoubleLinearInterpolation(double x0, double x1, double y0, double y1)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="x0">X coordinate for the first point.</param>
+        /// <param name="x1">X coordinate for the second point.</param>
+        /// <param name="y0">Y coordinate for the first point.</param>
+        /// <param name="y1">Y coordinate for the second point.</param>
+        public DoubleLinearInterpolation( double x0, double x1, double y0, double y1 )
         {
             m_xBase = x0;
             m_xOffset = x1 - x0;
@@ -24,14 +32,16 @@ namespace Utilities.DotNet.TransferFunctions
         //                            PUBLIC METHODS
         //===========================================================================
 
-        public double Calculate(double inputValue)
+        /// <inheritdoc/>
+        public double Calculate( double value )
         {
-            return m_yBase + (inputValue - m_xBase) * m_yOffset / m_xOffset;
+            return m_yBase + (value - m_xBase) * m_yOffset / m_xOffset;
         }
 
-        public double CalculateInverse(double inputValue)
+        /// <inheritdoc/>
+        public double CalculateInverse( double value )
         {
-            return m_xBase + (inputValue - m_yBase) * m_xOffset / m_yOffset;
+            return m_xBase + (value - m_yBase) * m_xOffset / m_yOffset;
         }
 
         //===========================================================================

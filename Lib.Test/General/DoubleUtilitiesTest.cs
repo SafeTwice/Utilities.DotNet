@@ -1,6 +1,6 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2020 SafeTwice S.L. All rights reserved.
-/// @license    MIT (https://opensource.org/licenses/MIT)
+/// @copyright  Copyright (c) 2020-2024 SafeTwice S.L. All rights reserved.
+/// @license    See LICENSE.txt
 
 using Xunit;
 

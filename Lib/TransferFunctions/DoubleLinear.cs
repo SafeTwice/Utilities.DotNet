@@ -1,10 +1,11 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2020 SafeTwice S.L. All rights reserved.
-/// @license    MIT (https://opensource.org/licenses/MIT)
+/// @copyright  Copyright (c) 2020-2024 SafeTwice S.L. All rights reserved.
+/// @license    See LICENSE.txt
+
 namespace Utilities.DotNet.TransferFunctions
 {
     /// <summary>
-    /// Calculates a linear transfer function based on gain and offset.
+    /// Linear transfer function based on gain and offset.
     /// </summary>
     public class DoubleLinear : IDoubleTransferFunction
     {
@@ -12,7 +13,12 @@ namespace Utilities.DotNet.TransferFunctions
         //                          PUBLIC CONSTRUCTORS
         //===========================================================================
 
-        public DoubleLinear(double gain, double offset)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="gain">Gain.</param>
+        /// <param name="offset">Offset.</param>
+        public DoubleLinear( double gain, double offset )
         {
             m_gain = gain;
             m_offset = offset;
@@ -22,14 +28,16 @@ namespace Utilities.DotNet.TransferFunctions
         //                            PUBLIC METHODS
         //===========================================================================
 
-        public double Calculate(double inputValue)
+        /// <inheritdoc/>
+        public double Calculate( double value )
         {
-            return inputValue * m_gain + m_offset;
+            return value * m_gain + m_offset;
         }
 
-        public double CalculateInverse(double inputValue)
+        /// <inheritdoc/>
+        public double CalculateInverse( double value )
         {
-            return (inputValue - m_offset) / m_gain;
+            return (value - m_offset) / m_gain;
         }
 
         //===========================================================================
