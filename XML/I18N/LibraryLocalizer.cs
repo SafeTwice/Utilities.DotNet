@@ -1,14 +1,14 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-#if DEBUG_I18N || RELEASE_I18N
+#if DEBUG || RELEASE
 #define USE_I18N_LIB
 using I18N.DotNet;
 using System;
 #endif
 
-namespace Utilities.DotNet.I18N
+namespace Utilities.DotNet.XML.I18N
 {
     /// <summary>
     /// Global localizer for the library.
@@ -20,13 +20,16 @@ namespace Utilities.DotNet.I18N
         //                           PUBLIC PROPERTIES
         //===========================================================================
 
-        public static ILocalizer Localizer { get; set; } = new AutoLoadLocalizer();
+        /// <summary>
+        /// Library localizer.
+        /// </summary>
+        public static ILocalizer Localizer { get; } = new AutoLoadLocalizer();
 
         //===========================================================================
         //                            INTERNAL METHODS
         //===========================================================================
 
-        internal static string Localize( PlainString text ) => Localizer.Localize( text );
+        /// <inheritdoc cref="GlobalLocalizer.Localize(FormattableString)"/>
         internal static string Localize( FormattableString text ) => Localizer.Localize( text );
     }
 #else
@@ -36,6 +39,11 @@ namespace Utilities.DotNet.I18N
         //                            INTERNAL METHODS
         //===========================================================================
 
+        /// <summary>
+        /// Localizer stub.
+        /// </summary>
+        /// <param name="text">Text.</param>
+        /// <returns>Same <paramref name="text"/>.</returns>
         internal static string Localize( string text ) => text;
     }
 #endif

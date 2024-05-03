@@ -3,6 +3,7 @@
 /// @license    See LICENSE.txt
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Xml.Linq;
 using Utilities.DotNet.Exceptions;
@@ -18,6 +19,8 @@ namespace Utilities.DotNet.Test.XML
 
         public XmlUtilitiesTest()
         {
+            CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+
             var filename = Path.GetTempFileName();
 
             string[] contents =

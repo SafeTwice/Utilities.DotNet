@@ -1,75 +1,70 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <I18N>
   <Entry>
-    <Key>[{0} @ Line {1}] {2}</Key>
-    <Value lang="es">[{0} @ Línea {1}] {2}</Value>
-    <Value lang="ca">[{0} @ Línia {1}] {2}</Value>
-    <Value lang="fr">[{0} @ Ligne {1}] {2}</Value>
-  </Entry>
-  <Entry>
-    <Key>[Line {0}] {1}</Key>
-    <Value lang="es">[Línea {0}] {1}</Value>
-    <Value lang="ca">[Línia {0}] {1}</Value>
-    <Value lang="fr">[Ligne {0}] {1}</Value>
-  </Entry>
-  <Entry>
-    <Key>[{0}] {1}</Key>
-  </Entry>
-  <Entry>
+    <!-- Found in: XmlUtilities.cs -->
     <Key>XML element '{0}' lacks mandatory attribute '{1}'</Key>
     <Value lang="es">El elemento XML '{0}' no tiene el atributo obligatorio '{1}'</Value>
     <Value lang="ca">L'element XML '{0}' no té l'atribut obligatori '{1}'</Value>
     <Value lang="fr">L'élément XML '{0}' n'a pas l'attribut obligatoire '{1}'</Value>
   </Entry>
   <Entry>
+    <!-- Found in: XmlUtilities.cs -->
     <Key>XML element '{0}' mandatory attribute '{1}' is empty</Key>
     <Value lang="es">El elemento XML '{0}' tiene el atributo obligatorio '{1}' vacío</Value>
     <Value lang="ca">L'element XML '{0}' té l'atribut obligatori '{1}' buit</Value>
     <Value lang="fr">L'élément XML '{0}' a l'attribut obligatoire '{1}' vide</Value>
   </Entry>
   <Entry>
+    <!-- Found in: XmlUtilities.cs -->
     <Key>XML element '{0}' attribute '{1}' has an invalid value '{2}' (expected integer value)</Key>
     <Value lang="es">El elemento XML '{0}' tiene el atributo '{1}' con valor inválido '{2}' (se esperaba valor entero)</Value>
     <Value lang="ca">L'element XML '{0}' té l'atribut '{1}' amb valor invàlid '{2}' (s'esperava valor enter)</Value>
     <Value lang="fr">L'élément XML '{0}' a l'attribut '{1}' avec une valeur invalide '{2}' (valeur entière attendue)</Value>
   </Entry>
   <Entry>
+    <!-- Found in: XmlUtilities.cs -->
     <Key>XML element '{0}' attribute '{1}' has an invalid value '{2}' (expected unsigned integer value)</Key>
     <Value lang="es">El elemento XML '{0}' tiene el atributo '{1}' con valor inválido '{2}' (se esperaba valor entero sin signo)</Value>
     <Value lang="ca">L'element XML '{0}' té l'atribut '{1}' amb valor invàlid '{2}' (s'esperava valor enter sense signe)</Value>
     <Value lang="fr">L'élément XML '{0}' a l'attribut '{1}' avec une valeur invalide '{2}' (valeur entière sans signe attendue)</Value>
   </Entry>
   <Entry>
+    <!-- Found in: XmlUtilities.cs -->
     <Key>XML element '{0}' attribute '{1}' has an invalid value '{2}' (expected real number value)</Key>
     <Value lang="es">El elemento XML '{0}' tiene el atributo '{1}' con valor inválido '{2}' (se esperaba valor numérico real)</Value>
     <Value lang="ca">L'element XML '{0}' té l'atribut '{1}' amb valor invàlid '{2}' (s'esperava valor numèric real)</Value>
     <Value lang="fr">L'élément XML '{0}' a l'attribut '{1}' avec une valeur invalide '{2}' (valeur numérique réelle attendue)</Value>
   </Entry>
   <Entry>
+    <!-- Found in: XmlUtilities.cs -->
     <Key>XML element '{0}' attribute '{1}' has an invalid value '{2}' (expected boolean value)</Key>
     <Value lang="es">El elemento XML '{0}' tiene el atributo '{1}' con valor inválido '{2}' (se esperaba valor booleano)</Value>
     <Value lang="ca">L'element XML '{0}' té l'atribut '{1}' amb valor invàlid '{2}' (s'esperava valor booleà)</Value>
     <Value lang="fr">L'élément XML '{0}' a l'attribut '{1}' avec une valeur invalide '{2}' (valeur booléene attendue)</Value>
   </Entry>
   <Entry>
+    <!-- Found in: XmlUtilities.cs -->
     <Key>XML element '{0}' attribute '{1}' has an invalid value '{2}' (expected one of: {3})</Key>
     <Value lang="es">El elemento XML '{0}' tiene el atributo '{1}' con valor inválido '{2}' (se esperaba uno de: {3})</Value>
     <Value lang="ca">L'element XML '{0}' té l'atribut '{1}' amb valor invàlid '{2}' (s'esperava un de: {3})</Value>
     <Value lang="fr">L'élément XML '{0}' a l'attribut '{1}' avec une valeur invalide '{2}' (attendue une de: {3})</Value>
   </Entry>
   <Entry>
+    <!-- Found in: XmlUtilities.cs -->
     <Key>XML element '{0}' lacks one of mandatory attributes ('{1}') or are empty</Key>
     <Value lang="es">El elemento XML '{0}' no tiene uno de los atributos obligatorios ('{1}') o están vacíos</Value>
     <Value lang="ca">L'element XML '{0}' no té un dels atributs obligatoris ('{1}') o estan buits</Value>
     <Value lang="fr">L'élément XML '{0}' ne possède pas l'un des attributs obligatoires ('{1}') ou ils sont vides.</Value>
   </Entry>
   <Entry>
+    <!-- Found in: XmlUtilities.cs -->
     <Key>XML element '{0}' lacks mandatory child element '{1}'</Key>
     <Value lang="es">El elemento XML '{0}' no tiene el elemento hijo obligatorio '{1}'</Value>
     <Value lang="ca">L'element XML "{0}" no té l'element fill obligatori '{1}'</Value>
     <Value lang="fr">L'élément XML '{0}' ne dispose pas de l'élément enfant obligatoire '{1}'</Value>
   </Entry>
   <Entry>
+    <!-- Found in: XmlUtilities.cs -->
     <Key>XML element '{0}' has more than 1 child element '{1}'</Key>
     <Value lang="es">El elemento XML '{0}' tiene más de un elemento hijo '{1}'</Value>
     <Value lang="ca">L'element XML '{0}' té més d'un element fill '{1}'</Value>
