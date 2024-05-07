@@ -6,12 +6,13 @@ The _Utilities.DotNet.Exceptions_ package provides subclasses of `System.Excepti
 
 ## Usage
 
-The following exception classes are available:
+The following exception classes are provided:
 
-| Class                    | Description                                                              |
-|--------------------------|--------------------------------------------------------------------------|
-| RuntimeException         | Represents a "controlled" error raised during processing.                |
-| FileProcessingException  | Represents an error raised while processing a file.                      |
+| Class                        | Description                                                              |
+|------------------------------|--------------------------------------------------------------------------|
+| ExtendedInvalidCastException | Represents and error raised when casting an object to a type.            |
+| FileProcessingException      | Represents an error raised while processing a file.                      |
+| RuntimeException             | Represents a "controlled" error raised during processing.                |
 
 ### RuntimeException
 
@@ -57,6 +58,26 @@ void LoadXML( XElement element )
     throw new FileProcessingException( $"Invalid element {element.Name.LocalName}", filename, line );
   }
   ...
+}
+```
+
+### ExtendedInvalidCastException
+
+The `ExtendedInvalidCastException` class extends [`System.InvalidCastException`](https://learn.microsoft.com/es-es/dotnet/api/system.invalidcastexception) by providing a constructor that accepts the object that cannot be cast and the target type.
+
+##### Example
+
+``` CS
+void Process( object o )
+{
+  if( o is SomeClass sc )
+  {
+    ...
+  }
+  else
+  {
+    throw new ExtendedInvalidCastException( p, typeof(SomeClass) );
+  }
 }
 ```
 
