@@ -1,10 +1,10 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Utilities.DotNet.Types;
 
 namespace Utilities.DotNet.Services
 {
@@ -28,30 +28,11 @@ namespace Utilities.DotNet.Services
 
         static ServiceProvider()
         {
-            var registererInterfaceType = typeof( IGlobalServiceRegisterer );
+            var registererTypes = TypeUtilities.FindSubclasses( typeof( IGlobalServiceRegisterer ) );
 
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            List<Type> allTypes = new();
-
-            foreach( var assembly in assemblies )
+            foreach( var registererType in registererTypes )
             {
-                try
-                {
-                    var allAssemblyTypes = assembly.GetTypes();
-
-                    allTypes.AddRange( allAssemblyTypes );
-                }
-                catch( Exception )
-                {
-                }
-            }
-
-            var registererTypes = allTypes.Where( t => t.IsClass && !t.IsAbstract && registererInterfaceType.IsAssignableFrom( t ) );
-
-            foreach( var subType in registererTypes )
-            {
-                var serviceRegisterer = (IGlobalServiceRegisterer) Activator.CreateInstance( subType )!;
+                var serviceRegisterer = (IGlobalServiceRegisterer) Activator.CreateInstance( registererType )!;
                 serviceRegisterer.RegisterServices( GlobalServices );
             }
         }
@@ -107,6 +88,12 @@ namespace Utilities.DotNet.Services
             return service;
         }
 
+        /// <summary>
+        /// Gets a registered global service instance for a service type.
+        /// </summary>
+        /// <typeparam name="TService">Type of service.</typeparam>
+        /// <returns>Instance that implements the service.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when no instance has been registered for the type of service</exception>
         public static TService GetGlobalService<TService>() where TService : class
         {
             return GlobalServices.GetService<TService>();

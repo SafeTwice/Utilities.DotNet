@@ -49,6 +49,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Exceptions\Utilities.DotNet.Exceptions.csproj" />
+      <ProjectReference Include="..\Types\Utilities.DotNet.Types.csproj" />
     </ItemGroup>
 
 </Project>
