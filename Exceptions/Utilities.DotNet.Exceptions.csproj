@@ -17,7 +17,7 @@
         <PackageProjectUrl>https://github.com/SafeTwice/Utilities.DotNet</PackageProjectUrl>
         <RepositoryUrl>https://github.com/SafeTwice/Utilities.DotNet.git</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <PackageTags>.net;dotnet;utilities;exceptions</PackageTags>
+        <PackageTags>.net;dotnet;utilities;util;exceptions;exception</PackageTags>
         <Company>www.safetwice.com</Company>
         <Description>Exception utilities library for .NET</Description>
         <Copyright>Copyright © 2022-2024 SafeTwice S.L.</Copyright>
