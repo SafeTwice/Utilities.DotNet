@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Utilities.DotNet.Collections
 {
@@ -105,6 +106,17 @@ namespace Utilities.DotNet.Collections
                 Add( obj );
                 return IndexOf( obj );
             }
+        }
+
+        /// <inheritdoc/>
+        public void AddRange( IEnumerable<T> collection )
+        {
+            foreach( var item in collection )
+            {
+                AddItem( item );
+            }
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList() ) );
         }
 
         /// <inheritdoc/>

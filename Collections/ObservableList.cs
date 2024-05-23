@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace Utilities.DotNet.Collections
 {
@@ -20,7 +21,7 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <inheritdoc/>
-        public int Count => m_sortedList.Count;
+        public int Count => m_list.Count;
 
         /// <inheritdoc/>
         public bool IsReadOnly => false;
@@ -29,19 +30,19 @@ namespace Utilities.DotNet.Collections
         public bool IsFixedSize => false;
 
         /// <inheritdoc/>
-        public bool IsSynchronized => ( (ICollection) m_sortedList ).IsSynchronized;
+        public bool IsSynchronized => ( (ICollection) m_list ).IsSynchronized;
 
         /// <inheritdoc/>
-        public object SyncRoot => ( (ICollection) m_sortedList ).SyncRoot;
+        public object SyncRoot => ( (ICollection) m_list ).SyncRoot;
 
         /// <inheritdoc/>
         public T this[ int index ]
         {
-            get => m_sortedList[ index ];
+            get => m_list[ index ];
             set
             {
-                var oldItem = m_sortedList[ index ];
-                m_sortedList[ index ] = value;
+                var oldItem = m_list[ index ];
+                m_list[ index ] = value;
                 NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, value, oldItem, index ) );
             }
         }
@@ -68,7 +69,7 @@ namespace Utilities.DotNet.Collections
         /// </summary>
         public ObservableList()
         {
-            m_sortedList = new List<T>();
+            m_list = new List<T>();
         }
 
         /// <summary>
@@ -77,7 +78,7 @@ namespace Utilities.DotNet.Collections
         /// <param name="items">Collection of initial items.</param>
         public ObservableList( IEnumerable<T> items )
         {
-            m_sortedList = new List<T>( items );
+            m_list = new List<T>( items );
         }
 
         //===========================================================================
@@ -87,9 +88,21 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public void Add( T item )
         {
-            m_sortedList.Add( item );
+            var initialIndex = m_list.Count;
 
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, ( m_sortedList.Count - 1 ) ) );
+            m_list.Add( item );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, initialIndex ) );
+        }
+
+        /// <inheritdoc/>
+        public void AddRange( IEnumerable<T> collection )
+        {
+            var initialIndex = m_list.Count;
+
+            m_list.AddRange( collection );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), initialIndex ) );
         }
 
         int IList.Add( object? value )
@@ -102,14 +115,14 @@ namespace Utilities.DotNet.Collections
             else
             {
                 Add( obj );
-                return ( m_sortedList.Count - 1 );
+                return ( m_list.Count - 1 );
             }
         }
 
         /// <inheritdoc/>
         public void Insert( int index, T item )
         {
-            m_sortedList.Insert( index, item );
+            m_list.Insert( index, item );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
         }
@@ -130,13 +143,13 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public bool Remove( T item )
         {
-            int index = m_sortedList.IndexOf( item );
+            int index = m_list.IndexOf( item );
             if( index < 0 )
             {
                 return false;
             }
 
-            m_sortedList.RemoveAt( index );
+            m_list.RemoveAt( index );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
             return true;
@@ -159,9 +172,9 @@ namespace Utilities.DotNet.Collections
                 throw new ArgumentOutOfRangeException( nameof( index ) );
             }
 
-            var item = m_sortedList[ index ];
+            var item = m_list[ index ];
 
-            m_sortedList.RemoveAt( index );
+            m_list.RemoveAt( index );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
         }
@@ -169,12 +182,12 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public void Clear()
         {
-            if( m_sortedList.Count == 0 )
+            if( m_list.Count == 0 )
             {
                 return;
             }
 
-            m_sortedList.Clear();
+            m_list.Clear();
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Reset ) );
         }
@@ -182,7 +195,7 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public bool Contains( T value )
         {
-            return m_sortedList.Contains( value );
+            return m_list.Contains( value );
         }
 
         bool IList.Contains( object? value )
@@ -201,7 +214,7 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public int IndexOf( T value )
         {
-            return m_sortedList.IndexOf( value );
+            return m_list.IndexOf( value );
         }
 
         int IList.IndexOf( object? value )
@@ -220,23 +233,23 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public void CopyTo( T[] array, int index )
         {
-            m_sortedList.CopyTo( array, index );
+            m_list.CopyTo( array, index );
         }
 
         void ICollection.CopyTo( Array array, int index )
         {
-            ( (ICollection) m_sortedList ).CopyTo( array, index );
+            ( (ICollection) m_list ).CopyTo( array, index );
         }
 
         /// <inheritdoc/>
         public IEnumerator<T> GetEnumerator()
         {
-            return m_sortedList.GetEnumerator();
+            return m_list.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return m_sortedList.GetEnumerator();
+            return m_list.GetEnumerator();
         }
 
         //===========================================================================
@@ -252,6 +265,6 @@ namespace Utilities.DotNet.Collections
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private List<T> m_sortedList;
+        private List<T> m_list;
     }
 }

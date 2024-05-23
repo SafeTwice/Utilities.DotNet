@@ -12,7 +12,7 @@ namespace Utilities.DotNet.Collections
     /// added, removed, moved or replaced, or when the whole collection is cleared.
     /// </summary>
     /// <typeparam name="T">The type of the items in the list.</typeparam>
-    public interface IObservableList<T> : IList<T>, IReadOnlyList<T>, IList, IObservableCollection<T>
+    public interface IObservableList<T> : IListEx<T>, IReadOnlyList<T>, IList, IObservableCollection<T>
     {
         /// <inheritdoc cref="IList{T}.this[int]" />
         new T this[ int index ] { get; set; } // Needed to disambiguate between IList<> and IList and avoid error CS0121

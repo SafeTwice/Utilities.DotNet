@@ -128,14 +128,9 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public void Add( T item )
         {
-            m_sortedList.Add( item, item );
+            AddItem( item );
 
             int index = m_sortedList.IndexOfValue( item );
-
-            if( item is INotifyPropertyChanged notifyPropertyChangedItem )
-            {
-                notifyPropertyChangedItem.PropertyChanged += Item_PropertyChangedEvent;
-            }
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
         }
@@ -248,6 +243,16 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
         //                            PROTECTED METHODS
         //===========================================================================
+
+        private protected void AddItem( T item )
+        {
+            m_sortedList.Add( item, item );
+
+            if( item is INotifyPropertyChanged notifyPropertyChangedItem )
+            {
+                notifyPropertyChangedItem.PropertyChanged += Item_PropertyChangedEvent;
+            }
+        }
 
         private protected void Item_PropertyChangedEvent( object? sender, PropertyChangedEventArgs e )
         {

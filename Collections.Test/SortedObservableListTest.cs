@@ -115,6 +115,36 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
+        public void AddRange()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2 } );
+
+            collection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( collection, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { item2 }, collection );
+
+            collection.AddRange( new[] { item3, item1 } );
+
+            Assert.Equal( new[] { item1, item2, item3 }, collection );
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
+            Assert.Equal( new[] { item3, item1 }, events[ 0 ].NewItems );
+            Assert.Null( events[ 0 ].OldItems );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+        }
+
+        [Fact]
         public void IList_Add()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
