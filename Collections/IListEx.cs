@@ -17,5 +17,20 @@ namespace Utilities.DotNet.Collections
 
         /// <inheritdoc cref="List{T}.AddRange(IEnumerable{T})"/>
         void AddRange( IEnumerable<T> collection );
+
+        /// <inheritdoc cref="List{T}.IndexOf(T, int)"/>
+        int IndexOf( T item, int index );
+
+        /// <inheritdoc cref="List{T}.IndexOf(T, int, int)"/>
+        int IndexOf( T item, int index, int count );
+
+        /// <inheritdoc cref="List{T}.LastIndexOf(T)"/>
+        int LastIndexOf( T item );
+
+        /// <inheritdoc cref="List{T}.LastIndexOf(T, int)"/>
+        int LastIndexOf( T item, int index );
+
+        /// <inheritdoc cref="List{T}.LastIndexOf(T, int, int)"/>
+        int LastIndexOf( T item, int index, int count );
     }
 }

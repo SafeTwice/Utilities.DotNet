@@ -612,9 +612,8 @@ namespace Utilities.DotNet.Test.Collections
             var item1 = new TestClass( "Item1", 10 );
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
-            var item4 = new List<int>();
 
-            IObservableList<TestClass> collection = new ObservableList<TestClass>( new[] { item2, item3 } );
+            IObservableList<TestClass> collection = new ObservableList<TestClass>( new[] { item2, item3, item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -624,8 +623,9 @@ namespace Utilities.DotNet.Test.Collections
 
             Assert.Equal( -1, collection.IndexOf( item1 ) );
             Assert.Equal( 0, collection.IndexOf( item2 ) );
+            Assert.Equal( 2, collection.IndexOf( item2, 1 ) );
+            Assert.Equal( -1, collection.IndexOf( item2, 1, 1 ) );
             Assert.Equal( 1, collection.IndexOf( item3 ) );
-            Assert.Equal( -1, collection.IndexOf( item4 ) );
             Assert.Empty( events );
         }
 
@@ -653,6 +653,31 @@ namespace Utilities.DotNet.Test.Collections
             Assert.Equal( 0, list.IndexOf( item2 ) );
             Assert.Equal( 1, list.IndexOf( item3 ) );
             Assert.Equal( -1, list.IndexOf( item4 ) );
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void LastIndexOf()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            IObservableList<TestClass> collection = new ObservableList<TestClass>( new[] { item2, item3, item2 } );
+
+            collection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( collection, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( -1, collection.LastIndexOf( item1 ) );
+            Assert.Equal( 2, collection.LastIndexOf( item2 ) );
+            Assert.Equal( 0, collection.LastIndexOf( item2, 1 ) );
+            Assert.Equal( -1, collection.LastIndexOf( item2, 1, 1 ) );
+            Assert.Equal( 1, collection.LastIndexOf( item3 ) );
             Assert.Empty( events );
         }
 

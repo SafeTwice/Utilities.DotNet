@@ -36,16 +36,16 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <inheritdoc/>
-        public int Count => m_sortedList.Count;
+        public int Count => m_list.Count;
 
         /// <inheritdoc/>
         public bool IsReadOnly => false;
 
         /// <inheritdoc/>
-        public bool IsSynchronized => ( (ICollection) m_sortedList ).IsSynchronized;
+        public bool IsSynchronized => ( (ICollection) m_list ).IsSynchronized;
 
         /// <inheritdoc/>
-        public object SyncRoot => ( (ICollection) m_sortedList ).SyncRoot;
+        public object SyncRoot => ( (ICollection) m_list ).SyncRoot;
 
         //===========================================================================
         //                             PUBLIC EVENTS
@@ -64,7 +64,7 @@ namespace Utilities.DotNet.Collections
         /// </summary>
         public SortedObservableCollection()
         {
-            m_sortedList = new();
+            m_comparer = Comparer<T>.Default;
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Utilities.DotNet.Collections
         /// <param name="comparer">The <see cref="IComparer{T}"/> implementation to use when comparing collection items.</param>
         public SortedObservableCollection( IComparer<T> comparer )
         {
-            m_sortedList = new( comparer );
+            m_comparer = comparer;
         }
 
         /// <summary>
@@ -84,11 +84,11 @@ namespace Utilities.DotNet.Collections
         /// <param name="items">Collection of initial items.</param>
         public SortedObservableCollection( IEnumerable<T> items )
         {
-            m_sortedList = new();
+            m_comparer = Comparer<T>.Default;
 
             foreach( var item in items )
             {
-                Add( item );
+                AddItem( item );
             }
         }
 
@@ -100,11 +100,11 @@ namespace Utilities.DotNet.Collections
         /// <param name="comparer">The <see cref="IComparer{T}"/> implementation to use when comparing collection items.</param>
         public SortedObservableCollection( IEnumerable<T> items, IComparer<T> comparer )
         {
-            m_sortedList = new( comparer );
+            m_comparer = comparer;
 
             foreach( var item in items )
             {
-                Add( item );
+                AddItem( item );
             }
         }
 
@@ -128,9 +128,7 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public void Add( T item )
         {
-            AddItem( item );
-
-            int index = m_sortedList.IndexOfValue( item );
+            int index = AddItem( item );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
         }
@@ -138,7 +136,7 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public bool Remove( T item )
         {
-            int index = m_sortedList.IndexOfValue( item );
+            int index = m_list.IndexOf( item );
             if( index < 0 )
             {
                 return false;
@@ -149,7 +147,7 @@ namespace Utilities.DotNet.Collections
                 notifyPropertyChangedItem.PropertyChanged -= Item_PropertyChangedEvent;
             }
 
-            m_sortedList.RemoveAt( index );
+            m_list.RemoveAt( index );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
             return true;
@@ -158,14 +156,14 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public void Clear()
         {
-            if( m_sortedList.Count == 0 )
+            if( m_list.Count == 0 )
             {
                 return;
             }
 
             DetachItems();
 
-            m_sortedList.Clear();
+            m_list.Clear();
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Reset ) );
         }
@@ -173,29 +171,29 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public bool Contains( T value )
         {
-            return m_sortedList.ContainsValue( value );
+            return m_list.Contains( value );
         }
 
         /// <inheritdoc/>
         public void CopyTo( T[] array, int index )
         {
-            m_sortedList.Values.CopyTo( array, index );
+            m_list.CopyTo( array, index );
         }
 
         void ICollection.CopyTo( Array array, int index )
         {
-            ( (ICollection) m_sortedList.Values ).CopyTo( array, index );
+            ( (ICollection) m_list ).CopyTo( array, index );
         }
 
         /// <inheritdoc/>
         public IEnumerator<T> GetEnumerator()
         {
-            return m_sortedList.Values.GetEnumerator();
+            return m_list.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return m_sortedList.Values.GetEnumerator();
+            return m_list.GetEnumerator();
         }
 
         /// <summary>
@@ -209,7 +207,7 @@ namespace Utilities.DotNet.Collections
         /// <exception cref="ArgumentException">Thrown when the specified item is not contained in the collection.</exception>
         public void UpdateSortOrder( T item )
         {
-            int oldIndex = m_sortedList.IndexOfValue( item );
+            int oldIndex = m_list.IndexOf( item );
 
             if( oldIndex < 0 )
             {
@@ -218,21 +216,20 @@ namespace Utilities.DotNet.Collections
 
             bool needsReorder = false;
             
-            if( ( oldIndex > 0 ) && m_sortedList.Comparer.Compare( item, m_sortedList.Values[ oldIndex - 1 ] ) < 0 )
+            if( ( oldIndex > 0 ) && m_comparer.Compare( item, m_list[ oldIndex - 1 ] ) < 0 )
             {
                 needsReorder = true;
             }
-            else if( ( oldIndex < m_sortedList.Count - 1 ) && m_sortedList.Comparer.Compare( item, m_sortedList.Values[ oldIndex + 1 ] ) > 0 )
+            else if( ( oldIndex < m_list.Count - 1 ) && m_comparer.Compare( item, m_list[ oldIndex + 1 ] ) > 0 )
             {
                 needsReorder = true;
             }
 
             if( needsReorder )
             {
-                m_sortedList.RemoveAt( oldIndex );
-                m_sortedList.Add( item, item );
+                m_list.RemoveAt( oldIndex );
+                int newIndex = AddItem( item );
 
-                int newIndex = m_sortedList.IndexOfValue( item );
                 if( oldIndex != newIndex )
                 {
                     NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Move, item, newIndex, oldIndex ) );
@@ -244,14 +241,23 @@ namespace Utilities.DotNet.Collections
         //                            PROTECTED METHODS
         //===========================================================================
 
-        private protected void AddItem( T item )
+        private protected int AddItem( T item )
         {
-            m_sortedList.Add( item, item );
+            var insertionIndex = m_list.BinarySearch( item, m_comparer );
+
+            if( insertionIndex < 0 )
+            {
+                insertionIndex = ~insertionIndex;
+            }
+
+            m_list.Insert( insertionIndex, item );
 
             if( item is INotifyPropertyChanged notifyPropertyChangedItem )
             {
                 notifyPropertyChangedItem.PropertyChanged += Item_PropertyChangedEvent;
             }
+
+            return insertionIndex;
         }
 
         private protected void Item_PropertyChangedEvent( object? sender, PropertyChangedEventArgs e )
@@ -270,7 +276,7 @@ namespace Utilities.DotNet.Collections
 
         private void DetachItems()
         {
-            foreach( var item in m_sortedList.Values )
+            foreach( var item in m_list )
             {
                 if( item is INotifyPropertyChanged notifyPropertyChangedItem )
                 {
@@ -283,6 +289,7 @@ namespace Utilities.DotNet.Collections
         //                           PROTECTED ATTRIBUTES
         //===========================================================================
 
-        private protected SortedList<T, T> m_sortedList;
+        private readonly protected List<T> m_list = new();
+        private readonly IComparer<T> m_comparer;
     }
 }

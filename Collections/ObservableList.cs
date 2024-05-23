@@ -217,6 +217,18 @@ namespace Utilities.DotNet.Collections
             return m_list.IndexOf( value );
         }
 
+        /// <inheritdoc/>
+        public int IndexOf( T item, int index )
+        {
+            return m_list.IndexOf( item, index );
+        }
+
+        /// <inheritdoc/>
+        public int IndexOf( T item, int index, int count )
+        {
+            return m_list.IndexOf( item, index, count );
+        }
+
         int IList.IndexOf( object? value )
         {
             var obj = value as T;
@@ -228,6 +240,24 @@ namespace Utilities.DotNet.Collections
             {
                 return IndexOf( obj );
             }
+        }
+
+        /// <inheritdoc/>
+        public int LastIndexOf( T value )
+        {
+            return m_list.LastIndexOf( value );
+        }
+
+        /// <inheritdoc/>
+        public int LastIndexOf( T item, int index )
+        {
+            return m_list.LastIndexOf( item, index );
+        }
+
+        /// <inheritdoc/>
+        public int LastIndexOf( T item, int index, int count )
+        {
+            return m_list.LastIndexOf( item, index, count );
         }
 
         /// <inheritdoc/>
@@ -265,6 +295,6 @@ namespace Utilities.DotNet.Collections
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private List<T> m_list;
+        private readonly List<T> m_list;
     }
 }
