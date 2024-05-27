@@ -145,6 +145,15 @@ namespace Utilities.DotNet.Collections
             }
         }
 
+        /// <inheritdoc/>
+        /// <remarks>
+        /// Since the list is ordered, the index is ignored and the new items are inserted in its corresponding sorted positions.
+        /// </remarks>
+        public void InsertRange( int index, IEnumerable<T> collection )
+        {
+            AddRange( collection );
+        }
+
         void IList.Remove( object? value )
         {
             var obj = value as T;
@@ -174,6 +183,16 @@ namespace Utilities.DotNet.Collections
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
         }
 
+        /// <inheritdoc/>
+        public void RemoveRange( int index, int count )
+        {
+            var removedItems = m_list.GetRange( index, count );
+
+            m_list.RemoveRange( index, count );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, index ) );
+        }
+
         bool IList.Contains( object? value )
         {
             var obj = value as T;
@@ -185,6 +204,30 @@ namespace Utilities.DotNet.Collections
             {
                 return Contains( obj );
             }
+        }
+
+        /// <inheritdoc cref="IListEx{T}.GetRange(int, int)"/>
+        public ObservableList<T> GetRange( int index, int count )
+        {
+            return new ObservableList<T>( m_list.GetRange( index, count ) );
+        }
+
+        /// <inheritdoc/>
+        IListEx<T> IListEx<T>.GetRange( int index, int count )
+        {
+            return GetRange( index, count );
+        }
+
+        /// <inheritdoc cref="IListEx{T}.Slice(int, int)"/>
+        public ObservableList<T> Slice( int start, int length )
+        {
+            return GetRange( start, length );
+        }
+
+        /// <inheritdoc/>
+        IListEx<T> IListEx<T>.Slice( int start, int length )
+        {
+            return GetRange( start, length );
         }
 
         /// <inheritdoc/>

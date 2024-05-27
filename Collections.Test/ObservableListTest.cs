@@ -87,36 +87,6 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void AddRange()
-        {
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-            var item3 = new TestClass( "Item3", 20 );
-
-            IObservableList<TestClass> collection = new ObservableList<TestClass>( new[] { item2 } );
-
-            collection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( collection, obj );
-                events.Add( args );
-            };
-
-            Assert.Equal( new[] { item2 }, collection );
-
-            collection.AddRange( new[] { item1, item3 } );
-
-            Assert.Equal( new[] { item2, item1, item3 }, collection );
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { item1, item3 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-        }
-
-        [Fact]
         public void IList_Add()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
@@ -171,6 +141,36 @@ namespace Utilities.DotNet.Test.Collections
 
             Assert.Equal( new[] { item2 }, collection );
             Assert.Empty( events );
+        }
+
+        [Fact]
+        public void AddRange()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            var collection = new ObservableList<TestClass>( new[] { item2 } );
+
+            collection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( collection, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { item2 }, collection );
+
+            collection.AddRange( new[] { item1, item3 } );
+
+            Assert.Equal( new[] { item2, item1, item3 }, collection );
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
+            Assert.Equal( new[] { item1, item3 }, events[ 0 ].NewItems );
+            Assert.Null( events[ 0 ].OldItems );
+            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
         }
 
         [Fact]
@@ -311,6 +311,36 @@ namespace Utilities.DotNet.Test.Collections
 
             Assert.Equal( new[] { item2 }, collection );
             Assert.Empty( events );
+        }
+
+        [Fact]
+        public void InsertRange()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            var collection = new ObservableList<TestClass>( new[] { item1 } );
+
+            collection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( collection, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { item1 }, collection );
+
+            collection.InsertRange( 0, new[] { item2, item3 } );
+
+            Assert.Equal( new[] { item2, item3, item1 }, collection );
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
+            Assert.Equal( new[] { item2, item3 }, events[ 0 ].NewItems );
+            Assert.Null( events[ 0 ].OldItems );
+            Assert.Equal( 0, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
         }
 
         [Fact]
@@ -467,6 +497,36 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
+        public void RemoveRange()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            var collection = new ObservableList<TestClass>( new[] { item1, item2, item3 } );
+
+            collection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( collection, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { item1, item2, item3 }, collection );
+
+            collection.RemoveRange( 0, 2 );
+
+            Assert.Equal( new[] { item3 }, collection );
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
+            Assert.Equal( new[] { item1, item2 }, events[ 0 ].OldItems );
+            Assert.Null( events[ 0 ].NewItems );
+            Assert.Equal( 0, events[ 0 ].OldStartingIndex );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+        }
+
+        [Fact]
         public void Clear()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
@@ -605,7 +665,7 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void IndexOf()
+        public void IListEx_GetRange()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
@@ -614,6 +674,84 @@ namespace Utilities.DotNet.Test.Collections
             var item3 = new TestClass( "Item3", 20 );
 
             IObservableList<TestClass> collection = new ObservableList<TestClass>( new[] { item2, item3, item2 } );
+
+            collection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( collection, obj );
+                events.Add( args );
+            };
+
+            var range1 = collection.GetRange( 1, 2 );
+
+            Assert.Equal( new[] { item3, item2 }, range1 );
+
+            var range2 = collection.GetRange( 0, 1 );
+
+            Assert.Equal( new[] { item2 }, range2 );
+        }
+
+        [Fact]
+        public void Slice()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            var collection = new ObservableList<TestClass>( new[] { item2, item3, item2 } );
+
+            collection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( collection, obj );
+                events.Add( args );
+            };
+
+            var range1 = collection.Slice( 1, 2 );
+
+            Assert.Equal( new[] { item3, item2 }, range1 );
+
+            var range2 = collection.Slice( 0, 1 );
+
+            Assert.Equal( new[] { item2 }, range2 );
+        }
+
+        [Fact]
+        public void IListEx_Slice()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            IObservableList<TestClass> collection = new ObservableList<TestClass>( new[] { item2, item3, item2 } );
+
+            collection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( collection, obj );
+                events.Add( args );
+            };
+
+            var range1 = collection.Slice( 1, 2 );
+
+            Assert.Equal( new[] { item3, item2 }, range1 );
+
+            var range2 = collection.Slice( 0, 1 );
+
+            Assert.Equal( new[] { item2 }, range2 );
+        }
+
+        [Fact]
+        public void IndexOf()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            var collection = new ObservableList<TestClass>( new[] { item2, item3, item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {

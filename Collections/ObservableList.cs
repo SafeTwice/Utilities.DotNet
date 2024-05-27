@@ -95,16 +95,6 @@ namespace Utilities.DotNet.Collections
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, initialIndex ) );
         }
 
-        /// <inheritdoc/>
-        public void AddRange( IEnumerable<T> collection )
-        {
-            var initialIndex = m_list.Count;
-
-            m_list.AddRange( collection );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), initialIndex ) );
-        }
-
         int IList.Add( object? value )
         {
             var obj = value as T;
@@ -117,6 +107,16 @@ namespace Utilities.DotNet.Collections
                 Add( obj );
                 return ( m_list.Count - 1 );
             }
+        }
+
+        /// <inheritdoc/>
+        public void AddRange( IEnumerable<T> collection )
+        {
+            var initialIndex = m_list.Count;
+
+            m_list.AddRange( collection );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), initialIndex ) );
         }
 
         /// <inheritdoc/>
@@ -138,6 +138,14 @@ namespace Utilities.DotNet.Collections
             {
                 Insert( index, obj );
             }
+        }
+
+        /// <inheritdoc/>
+        public void InsertRange( int index, IEnumerable<T> collection )
+        {
+            m_list.InsertRange( index, collection );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), index ) );
         }
 
         /// <inheritdoc/>
@@ -180,6 +188,16 @@ namespace Utilities.DotNet.Collections
         }
 
         /// <inheritdoc/>
+        public void RemoveRange( int index, int count )
+        {
+            var removedItems = m_list.GetRange( index, count );
+
+            m_list.RemoveRange( index, count );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, index ) );
+        }
+
+        /// <inheritdoc/>
         public void Clear()
         {
             if( m_list.Count == 0 )
@@ -209,6 +227,30 @@ namespace Utilities.DotNet.Collections
             {
                 return Contains( obj );
             }
+        }
+
+        /// <inheritdoc cref="IListEx{T}.GetRange(int, int)"/>
+        public ObservableList<T> GetRange( int index, int count )
+        {
+            return new ObservableList<T>( m_list.GetRange( index, count ) );
+        }
+
+        /// <inheritdoc/>
+        IListEx<T> IListEx<T>.GetRange( int index, int count )
+        {
+            return GetRange( index, count );
+        }
+
+        /// <inheritdoc cref="IListEx{T}.Slice(int, int)"/>
+        public ObservableList<T> Slice( int start, int length )
+        {
+            return GetRange( start, length );
+        }
+
+        /// <inheritdoc/>
+        IListEx<T> IListEx<T>.Slice( int start, int length )
+        {
+            return GetRange( start, length );
         }
 
         /// <inheritdoc/>
