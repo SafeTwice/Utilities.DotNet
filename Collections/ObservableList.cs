@@ -11,29 +11,14 @@ using System.Linq;
 namespace Utilities.DotNet.Collections
 {
     /// <summary>
-    /// Implements am observable list of items.
+    /// Implements an observable list of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
-    public class ObservableList<T> : IObservableList<T> where T : class
+    public class ObservableList<T> : ObservableCollection<T>, IObservableList<T> where T : class
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
         //===========================================================================
-
-        /// <inheritdoc/>
-        public int Count => m_list.Count;
-
-        /// <inheritdoc/>
-        public bool IsReadOnly => false;
-
-        /// <inheritdoc/>
-        public bool IsFixedSize => false;
-
-        /// <inheritdoc/>
-        public bool IsSynchronized => ( (ICollection) m_list ).IsSynchronized;
-
-        /// <inheritdoc/>
-        public object SyncRoot => ( (ICollection) m_list ).SyncRoot;
 
         /// <inheritdoc/>
         public T this[ int index ]
@@ -53,12 +38,8 @@ namespace Utilities.DotNet.Collections
             set => this[ index ] = value as T ?? throw new InvalidCastException();
         }
 
-        //===========================================================================
-        //                             PUBLIC EVENTS
-        //===========================================================================
-
         /// <inheritdoc/>
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
+        public bool IsFixedSize => false;
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -69,31 +50,19 @@ namespace Utilities.DotNet.Collections
         /// </summary>
         public ObservableList()
         {
-            m_list = new List<T>();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ObservableList{T}"/> class with the items from the specified collection.
         /// </summary>
         /// <param name="items">Collection of initial items.</param>
-        public ObservableList( IEnumerable<T> items )
+        public ObservableList( IEnumerable<T> items ) : base( items )
         {
-            m_list = new List<T>( items );
         }
 
         //===========================================================================
         //                            PUBLIC METHODS
         //===========================================================================
-
-        /// <inheritdoc/>
-        public void Add( T item )
-        {
-            var initialIndex = m_list.Count;
-
-            m_list.Add( item );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, initialIndex ) );
-        }
 
         int IList.Add( object? value )
         {
@@ -107,16 +76,6 @@ namespace Utilities.DotNet.Collections
                 Add( obj );
                 return ( m_list.Count - 1 );
             }
-        }
-
-        /// <inheritdoc/>
-        public void AddRange( IEnumerable<T> collection )
-        {
-            var initialIndex = m_list.Count;
-
-            m_list.AddRange( collection );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), initialIndex ) );
         }
 
         /// <inheritdoc/>
@@ -146,21 +105,6 @@ namespace Utilities.DotNet.Collections
             m_list.InsertRange( index, collection );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), index ) );
-        }
-
-        /// <inheritdoc/>
-        public bool Remove( T item )
-        {
-            int index = m_list.IndexOf( item );
-            if( index < 0 )
-            {
-                return false;
-            }
-
-            m_list.RemoveAt( index );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
-            return true;
         }
 
         void IList.Remove( object? value )
@@ -195,25 +139,6 @@ namespace Utilities.DotNet.Collections
             m_list.RemoveRange( index, count );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, index ) );
-        }
-
-        /// <inheritdoc/>
-        public void Clear()
-        {
-            if( m_list.Count == 0 )
-            {
-                return;
-            }
-
-            m_list.Clear();
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Reset ) );
-        }
-
-        /// <inheritdoc/>
-        public bool Contains( T value )
-        {
-            return m_list.Contains( value );
         }
 
         bool IList.Contains( object? value )
@@ -301,42 +226,5 @@ namespace Utilities.DotNet.Collections
         {
             return m_list.LastIndexOf( item, index, count );
         }
-
-        /// <inheritdoc/>
-        public void CopyTo( T[] array, int index )
-        {
-            m_list.CopyTo( array, index );
-        }
-
-        void ICollection.CopyTo( Array array, int index )
-        {
-            ( (ICollection) m_list ).CopyTo( array, index );
-        }
-
-        /// <inheritdoc/>
-        public IEnumerator<T> GetEnumerator()
-        {
-            return m_list.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return m_list.GetEnumerator();
-        }
-
-        //===========================================================================
-        //                            PRIVATE METHODS
-        //===========================================================================
-
-        private void NotifyCollectionChanged( NotifyCollectionChangedEventArgs e )
-        {
-            CollectionChanged?.Invoke( this, e );
-        }
-
-        //===========================================================================
-        //                           PRIVATE ATTRIBUTES
-        //===========================================================================
-
-        private readonly List<T> m_list;
     }
 }

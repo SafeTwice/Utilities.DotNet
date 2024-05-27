@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Utilities.DotNet.Collections
 {
@@ -29,7 +30,7 @@ namespace Utilities.DotNet.Collections
     /// </para>
     /// </remarks>
     /// <typeparam name="T">Type of the items in the collection.</typeparam>
-    public class SortedObservableCollection<T> : IObservableCollection<T> where T : notnull
+    public class ObservableSortedCollection<T> : IObservableCollection<T> where T : notnull
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -59,30 +60,30 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SortedObservableCollection{T}"/> class that uses the
+        /// Initializes a new instance of the <see cref="ObservableSortedCollection{T}"/> class that uses the
         /// default <see cref="IComparer{T}"/>.
         /// </summary>
-        public SortedObservableCollection()
+        public ObservableSortedCollection()
         {
             m_comparer = Comparer<T>.Default;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SortedObservableCollection{T}"/> class that uses the
+        /// Initializes a new instance of the <see cref="ObservableSortedCollection{T}"/> class that uses the
         /// specified <see cref="IComparer{T}"/>.
         /// </summary>
         /// <param name="comparer">The <see cref="IComparer{T}"/> implementation to use when comparing collection items.</param>
-        public SortedObservableCollection( IComparer<T> comparer )
+        public ObservableSortedCollection( IComparer<T> comparer )
         {
             m_comparer = comparer;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SortedObservableCollection{T}"/> class with the items from the specified collection,
+        /// Initializes a new instance of the <see cref="ObservableSortedCollection{T}"/> class with the items from the specified collection,
         /// and that uses the default <see cref="IComparer{T}"/>.
         /// </summary>
         /// <param name="items">Collection of initial items.</param>
-        public SortedObservableCollection( IEnumerable<T> items )
+        public ObservableSortedCollection( IEnumerable<T> items )
         {
             m_comparer = Comparer<T>.Default;
 
@@ -93,12 +94,12 @@ namespace Utilities.DotNet.Collections
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SortedObservableCollection{T}"/> class with the items from the specified collection,
+        /// Initializes a new instance of the <see cref="ObservableSortedCollection{T}"/> class with the items from the specified collection,
         /// and that uses the specified <see cref="IComparer{T}"/>.
         /// </summary>
         /// <param name="items">Collection of initial items.</param>
         /// <param name="comparer">The <see cref="IComparer{T}"/> implementation to use when comparing collection items.</param>
-        public SortedObservableCollection( IEnumerable<T> items, IComparer<T> comparer )
+        public ObservableSortedCollection( IEnumerable<T> items, IComparer<T> comparer )
         {
             m_comparer = comparer;
 
@@ -113,10 +114,10 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="SortedObservableCollection{T}"/> class.
+        /// Finalizes an instance of the <see cref="ObservableSortedCollection{T}"/> class.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        ~SortedObservableCollection()
+        ~ObservableSortedCollection()
         {
             DetachItems();
         }
@@ -131,6 +132,17 @@ namespace Utilities.DotNet.Collections
             int index = AddItem( item );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+        }
+
+        /// <inheritdoc/>
+        public void AddRange( IEnumerable<T> collection )
+        {
+            foreach( var item in collection )
+            {
+                AddItem( item );
+            }
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList() ) );
         }
 
         /// <inheritdoc/>
@@ -151,6 +163,17 @@ namespace Utilities.DotNet.Collections
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
             return true;
+        }
+
+        /// <inheritdoc/>
+        public void RemoveRange( IEnumerable<T> collection )
+        {
+            foreach( var item in collection )
+            {
+                m_list.Remove( item );
+            }
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, collection.ToList() ) );
         }
 
         /// <inheritdoc/>
@@ -289,7 +312,7 @@ namespace Utilities.DotNet.Collections
         //                           PROTECTED ATTRIBUTES
         //===========================================================================
 
-        private readonly protected List<T> m_list = new();
+        private protected readonly List<T> m_list = new();
         private readonly IComparer<T> m_comparer;
     }
 }

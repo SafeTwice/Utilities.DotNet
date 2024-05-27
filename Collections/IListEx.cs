@@ -9,17 +9,11 @@ namespace Utilities.DotNet.Collections
     /// <summary>
     /// Extension of the <see cref="IList{T}"/> interface that provides additional methods.
     /// </summary>
-    public interface IListEx<T> : IList<T>
+    public interface IListEx<T> : IList<T>, ICollectionEx<T>
     {
         //===========================================================================
         //                                  METHODS
         //===========================================================================
-
-        /// <summary>
-        /// Adds the elements of the specified collection to the end of the list.
-        /// </summary>
-        /// <param name="collection">Collection whose elements will be added to the end of the list.</param>
-        void AddRange( IEnumerable<T> collection );
 
         /// <summary>
         /// Creates a shallow copy of a range of elements in the source list.

@@ -18,8 +18,8 @@ The following classes are provided:
 | Class                               | Description                                                              |
 |-------------------------------------|---------------------------------------------|
 | ObservableList&lt;T&gt;             | Implements an observable list.              |
-| SortedObservableCollection&lt;T&gt; | Implements an observable sorted collection. |
-| SortedObservableList&lt;T&gt;       | Implements an observable sorted list.       |
+| ObservableSortedCollection&lt;T&gt; | Implements an observable sorted collection. |
+| ObservableSortedList&lt;T&gt;       | Implements an observable sorted list.       |
 
 ### IObservableCollection&lt;T&gt;
 

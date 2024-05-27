@@ -12,10 +12,10 @@ using System.Linq;
 namespace Utilities.DotNet.Collections
 {
     /// <summary>
-    /// Implements am observable and sorted list of items.
+    /// Implements an observable and sorted list of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
-    public class SortedObservableList<T> : SortedObservableCollection<T>, IObservableList<T> where T : class
+    public class ObservableSortedList<T> : ObservableSortedCollection<T>, IObservableList<T> where T : class
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -55,38 +55,38 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SortedObservableList{T}"/> class that uses the
+        /// Initializes a new instance of the <see cref="ObservableSortedList{T}"/> class that uses the
         /// default <see cref="IComparer{T}"/>.
         /// </summary>
-        public SortedObservableList()
+        public ObservableSortedList()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SortedObservableList{T}"/> class that uses the
+        /// Initializes a new instance of the <see cref="ObservableSortedList{T}"/> class that uses the
         /// specified <see cref="IComparer{T}"/>.
         /// </summary>
         /// <param name="comparer">The <see cref="IComparer{T}"/> implementation to use when comparing list items.</param>
-        public SortedObservableList( IComparer<T> comparer ) : base( comparer )
+        public ObservableSortedList( IComparer<T> comparer ) : base( comparer )
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SortedObservableList{T}"/> class with the items from the specified collection,
+        /// Initializes a new instance of the <see cref="ObservableSortedList{T}"/> class with the items from the specified collection,
         /// and that uses the default <see cref="IComparer{T}"/>.
         /// </summary>
         /// <param name="items">Collection of initial items.</param>
-        public SortedObservableList( IEnumerable<T> items ) : base( items )
+        public ObservableSortedList( IEnumerable<T> items ) : base( items )
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SortedObservableList{T}"/> class with the items from the specified collection,
+        /// Initializes a new instance of the <see cref="ObservableSortedList{T}"/> class with the items from the specified collection,
         /// and that uses the specified <see cref="IComparer{T}"/>.
         /// </summary>
         /// <param name="items">Collection of initial items.</param>
         /// <param name="comparer">The <see cref="IComparer{T}"/> implementation to use when comparing list items.</param>
-        public SortedObservableList( IEnumerable<T> items, IComparer<T> comparer ) : base( items, comparer )
+        public ObservableSortedList( IEnumerable<T> items, IComparer<T> comparer ) : base( items, comparer )
         {
         }
 
@@ -106,17 +106,6 @@ namespace Utilities.DotNet.Collections
                 Add( obj );
                 return IndexOf( obj );
             }
-        }
-
-        /// <inheritdoc/>
-        public void AddRange( IEnumerable<T> collection )
-        {
-            foreach( var item in collection )
-            {
-                AddItem( item );
-            }
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList() ) );
         }
 
         /// <inheritdoc/>

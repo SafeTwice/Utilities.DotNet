@@ -13,12 +13,12 @@ using Xunit;
 
 namespace Utilities.DotNet.Test.Collections
 {
-    public class SortedObservableListTest
+    public class ObservableSortedListTest
     {
         [Fact]
         public void Constructor_Default()
         {
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>();
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>();
 
             Assert.Equal( 0, collection.Count );
             Assert.False( collection.IsReadOnly );
@@ -30,7 +30,7 @@ namespace Utilities.DotNet.Test.Collections
         [Fact]
         public void Constructor_Comparer()
         {
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( Comparer<TestClass>.Default );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( Comparer<TestClass>.Default );
 
             Assert.Equal( 0, collection.Count );
             Assert.False( collection.IsReadOnly );
@@ -46,7 +46,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 5 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item3, item1, item2 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item3, item1, item2 } );
 
             Assert.Equal( new[] { item1, item2, item3 }, collection );
             Assert.False( collection.IsReadOnly );
@@ -62,7 +62,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 5 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item3, item1, item2 },
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item3, item1, item2 },
                 Comparer<TestClass>.Create( (x, y) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
 
             Assert.Equal( new[] { item2, item1, item3 }, collection );
@@ -81,7 +81,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -123,7 +123,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -154,7 +154,7 @@ namespace Utilities.DotNet.Test.Collections
             var item1 = new List<int>();
             var item2 = new TestClass( "Item2", 1 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -181,7 +181,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -211,7 +211,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -253,7 +253,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -284,7 +284,7 @@ namespace Utilities.DotNet.Test.Collections
             var item1 = new List<int>();
             var item2 = new TestClass( "Item2", 1 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -311,7 +311,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -341,7 +341,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item1, item2, item3 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item1, item2, item3 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -378,7 +378,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item1, item2, item3 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item1, item2, item3 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -416,7 +416,7 @@ namespace Utilities.DotNet.Test.Collections
             var item1 = new List<int>();
             var item2 = new TestClass( "Item2", 1 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -443,7 +443,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2, item3, item1 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item2, item3, item1 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -473,7 +473,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2, item3, item1 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item2, item3, item1 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -501,7 +501,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2, item1, item3 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2, item1, item3 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -531,7 +531,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item1, item2 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item1, item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -554,7 +554,7 @@ namespace Utilities.DotNet.Test.Collections
             var item3 = new TestClass( "Item3", 20 );
             var item4 = new List<int>();
 
-            var collection = new SortedObservableList<TestClass>( new[] { item1, item2 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item1, item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -579,7 +579,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2, item3, item2 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item2, item3, item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -605,7 +605,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2, item3, item1 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2, item3, item1 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -631,7 +631,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item1, item3, item1, item2 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item1, item3, item1, item2 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -657,7 +657,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item3, item2, item3 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item3, item2, item3 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -684,7 +684,7 @@ namespace Utilities.DotNet.Test.Collections
             var item3 = new TestClass( "Item3", 20 );
             var item4 = new List<int>();
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2, item3 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2, item3 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -710,7 +710,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item3, item2, item3 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item3, item2, item3 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -736,7 +736,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2, item3, item1 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item2, item3, item1 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -759,7 +759,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2, item3, item1 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item2, item3, item1 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -783,7 +783,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2, item3 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item2, item3 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -820,7 +820,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item3, item1 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item3, item1 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -844,7 +844,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2, item3, item1 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2, item3, item1 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -869,7 +869,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2, item3 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2, item3 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -908,7 +908,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var collection = new SortedObservableList<TestClass>( new[] { item2, item3 } );
+            var collection = new ObservableSortedList<TestClass>( new[] { item2, item3 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -933,7 +933,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableList<TestClass> collection = new SortedObservableList<TestClass>( new[] { item2 } );
+            IObservableList<TestClass> collection = new ObservableSortedList<TestClass>( new[] { item2 } );
 
             Assert.Equal( new[] { item2 }, collection );
 

@@ -13,12 +13,12 @@ using Xunit;
 
 namespace Utilities.DotNet.Test.Collections
 {
-    public class SortedObservableCollectionTest
+    public class ObservableSortedCollectionTest
     {
         [Fact]
         public void Constructor_Default()
         {
-            IObservableCollection<int> collection = new SortedObservableCollection<int>();
+            IObservableCollection<int> collection = new ObservableSortedCollection<int>();
 
             Assert.Equal( 0, collection.Count );
             Assert.False( collection.IsReadOnly );
@@ -29,7 +29,7 @@ namespace Utilities.DotNet.Test.Collections
         [Fact]
         public void Constructor_Comparer()
         {
-            IObservableCollection<int> collection = new SortedObservableCollection<int>( Comparer<int>.Default );
+            IObservableCollection<int> collection = new ObservableSortedCollection<int>( Comparer<int>.Default );
 
             Assert.Equal( 0, collection.Count );
             Assert.False( collection.IsReadOnly );
@@ -40,7 +40,7 @@ namespace Utilities.DotNet.Test.Collections
         [Fact]
         public void Constructor_InitializationList()
         {
-            IObservableCollection<int> collection = new SortedObservableCollection<int>( new[] { 1, 3, 2, 4 } );
+            IObservableCollection<int> collection = new ObservableSortedCollection<int>( new[] { 1, 3, 2, 4 } );
 
             Assert.Equal( new[] { 1, 2, 3, 4 }, collection );
             Assert.False( collection.IsReadOnly );
@@ -51,7 +51,7 @@ namespace Utilities.DotNet.Test.Collections
         [Fact]
         public void Constructor_InitializationListAndComparer()
         {
-            IObservableCollection<int> collection = new SortedObservableCollection<int>( new[] { 5, 3, 4, 1 },
+            IObservableCollection<int> collection = new ObservableSortedCollection<int>( new[] { 5, 3, 4, 1 },
                 Comparer<int>.Create( (x, y) => Comparer<int>.Default.Compare( y, x ) ) );
 
             Assert.Equal( new[] { 5, 4, 3, 1 }, collection );
@@ -69,7 +69,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableCollection<TestClass> collection = new SortedObservableCollection<TestClass>( new[] { item1 },
+            IObservableCollection<TestClass> collection = new ObservableSortedCollection<TestClass>( new[] { item1 },
                 Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
 
             collection.CollectionChanged += ( obj, args ) =>
@@ -112,7 +112,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableCollection<TestClass> collection = new SortedObservableCollection<TestClass>( new[] { item1, item2, item3 },
+            IObservableCollection<TestClass> collection = new ObservableSortedCollection<TestClass>( new[] { item1, item2, item3 },
                 Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
 
             collection.CollectionChanged += ( obj, args ) =>
@@ -142,6 +142,36 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
+        public void RemoveRange()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            IObservableCollection<TestClass> observableCollection = new ObservableSortedCollection<TestClass>( new[] { item3, item2, item1 } );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { item1, item2, item3 }, observableCollection );
+
+            observableCollection.RemoveRange( new[] { item2, item1 } );
+
+            Assert.Equal( new[] { item3 }, observableCollection );
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
+            Assert.Equal( new[] { item2, item1 }, events[ 0 ].OldItems );
+            Assert.Null( events[ 0 ].NewItems );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+        }
+
+        [Fact]
         public void Clear()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
@@ -150,7 +180,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableCollection<TestClass> collection = new SortedObservableCollection<TestClass>( new[] { item1, item2, item3 },
+            IObservableCollection<TestClass> collection = new ObservableSortedCollection<TestClass>( new[] { item1, item2, item3 },
                 Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
 
             collection.CollectionChanged += ( obj, args ) =>
@@ -183,7 +213,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            IObservableCollection<TestClass> collection = new SortedObservableCollection<TestClass>();
+            IObservableCollection<TestClass> collection = new ObservableSortedCollection<TestClass>();
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -208,7 +238,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 5 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableCollection<TestClass> collection = new SortedObservableCollection<TestClass>( new[] { item3, item2, item1 },
+            IObservableCollection<TestClass> collection = new ObservableSortedCollection<TestClass>( new[] { item3, item2, item1 },
                 Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
 
             collection.CollectionChanged += ( obj, args ) =>
@@ -255,7 +285,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 5 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableCollection<TestClass> collection = new SortedObservableCollection<TestClass>( new[] { item3, item2, item1 },
+            IObservableCollection<TestClass> collection = new ObservableSortedCollection<TestClass>( new[] { item3, item2, item1 },
                 Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
 
             collection.CollectionChanged += ( obj, args ) =>
@@ -330,7 +360,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 5 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableCollection<TestClass> collection = new SortedObservableCollection<TestClass>( new[] { item3, item2, item1 },
+            IObservableCollection<TestClass> collection = new ObservableSortedCollection<TestClass>( new[] { item3, item2, item1 },
                 Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
 
             collection.CollectionChanged += ( obj, args ) =>
@@ -377,7 +407,7 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 5 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var collection = new SortedObservableCollection<TestClass>( new[] { item3, item1 },
+            var collection = new ObservableSortedCollection<TestClass>( new[] { item3, item1 },
                 Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
 
             collection.CollectionChanged += ( obj, args ) =>
@@ -398,7 +428,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            IObservableCollection<int> collection = new SortedObservableCollection<int>( new[] { 1, 3, 2, 4 } );
+            IObservableCollection<int> collection = new ObservableSortedCollection<int>( new[] { 1, 3, 2, 4 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -417,7 +447,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            IObservableCollection<int> collection = new SortedObservableCollection<int>( new[] { 6, 9 } );
+            IObservableCollection<int> collection = new ObservableSortedCollection<int>( new[] { 6, 9 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -443,7 +473,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            var collection = new SortedObservableCollection<int>( new[] { 6, 9 } );
+            var collection = new ObservableSortedCollection<int>( new[] { 6, 9 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -471,7 +501,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            IObservableCollection<int> collection = new SortedObservableCollection<int>( new[] { 9, 3, 7, 4 } );
+            IObservableCollection<int> collection = new ObservableSortedCollection<int>( new[] { 9, 3, 7, 4 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
@@ -493,7 +523,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            var collection = new SortedObservableCollection<int>( new[] { 9, 3, 7, 4 } );
+            var collection = new ObservableSortedCollection<int>( new[] { 9, 3, 7, 4 } );
 
             collection.CollectionChanged += ( obj, args ) =>
             {
