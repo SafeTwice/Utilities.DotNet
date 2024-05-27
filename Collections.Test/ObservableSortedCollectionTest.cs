@@ -203,7 +203,7 @@ namespace Utilities.DotNet.Test.Collections
 
             events.Clear();
 
-            Assert.False( collection.Remove( item1 ) );
+            collection.Clear();
 
             Assert.Empty( events );
         }

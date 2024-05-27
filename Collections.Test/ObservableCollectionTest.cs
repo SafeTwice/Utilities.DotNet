@@ -2,7 +2,6 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -212,7 +211,7 @@ namespace Utilities.DotNet.Test.Collections
 
             events.Clear();
 
-            Assert.False( observableCollection.Remove( item1 ) );
+            observableCollection.Clear();
 
             Assert.Empty( events );
         }

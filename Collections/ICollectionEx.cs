@@ -9,7 +9,7 @@ namespace Utilities.DotNet.Collections
     /// <summary>
     /// Extension of the <see cref="ICollection{T}"/> interface that provides additional methods.
     /// </summary>
-    public interface ICollectionEx<T> : ICollection<T>
+    public interface ICollectionEx<T> : ICollection<T>, IReadOnlyCollectionEx<T>
     {
         //===========================================================================
         //                                  METHODS
