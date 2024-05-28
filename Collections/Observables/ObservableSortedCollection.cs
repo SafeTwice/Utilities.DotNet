@@ -39,6 +39,11 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public int Count => m_list.Count;
 
+        /// <summary>
+        /// Gets the <see cref="IComparer{T}"/> implementation used to sort the collection items.
+        /// </summary>
+        public IComparer<T> Comparer { get; }
+
         /// <inheritdoc/>
         bool ICollection<T>.IsReadOnly => false;
 
@@ -65,7 +70,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// </summary>
         public ObservableSortedCollection()
         {
-            m_comparer = Comparer<T>.Default;
+            Comparer = Comparer<T>.Default;
         }
 
         /// <summary>
@@ -75,7 +80,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// <param name="comparer">The <see cref="IComparer{T}"/> implementation to use when comparing collection items.</param>
         public ObservableSortedCollection( IComparer<T> comparer )
         {
-            m_comparer = comparer;
+            Comparer = comparer;
         }
 
         /// <summary>
@@ -85,7 +90,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// <param name="items">Collection of initial items.</param>
         public ObservableSortedCollection( IEnumerable<T> items )
         {
-            m_comparer = Comparer<T>.Default;
+            Comparer = Comparer<T>.Default;
 
             foreach( var item in items )
             {
@@ -101,7 +106,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// <param name="comparer">The <see cref="IComparer{T}"/> implementation to use when comparing collection items.</param>
         public ObservableSortedCollection( IEnumerable<T> items, IComparer<T> comparer )
         {
-            m_comparer = comparer;
+            Comparer = comparer;
 
             foreach( var item in items )
             {
@@ -239,11 +244,11 @@ namespace Utilities.DotNet.Collections.Observables
 
             bool needsReorder = false;
 
-            if( ( oldIndex > 0 ) && m_comparer.Compare( item, m_list[ oldIndex - 1 ] ) < 0 )
+            if( ( oldIndex > 0 ) && Comparer.Compare( item, m_list[ oldIndex - 1 ] ) < 0 )
             {
                 needsReorder = true;
             }
-            else if( ( oldIndex < m_list.Count - 1 ) && m_comparer.Compare( item, m_list[ oldIndex + 1 ] ) > 0 )
+            else if( ( oldIndex < m_list.Count - 1 ) && Comparer.Compare( item, m_list[ oldIndex + 1 ] ) > 0 )
             {
                 needsReorder = true;
             }
@@ -266,7 +271,7 @@ namespace Utilities.DotNet.Collections.Observables
 
         private protected int AddItem( T item )
         {
-            var insertionIndex = m_list.BinarySearch( item, m_comparer );
+            var insertionIndex = m_list.BinarySearch( item, Comparer );
 
             if( insertionIndex < 0 )
             {
@@ -313,11 +318,5 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         protected private readonly List<T> m_list = new();
-
-        //===========================================================================
-        //                           PRIVATE ATTRIBUTES
-        //===========================================================================
-
-        private readonly IComparer<T> m_comparer;
     }
 }

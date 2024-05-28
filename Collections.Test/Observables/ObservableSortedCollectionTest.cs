@@ -21,6 +21,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var observableCollection = new ObservableSortedCollection<int>();
 
             Assert.Equal( 0, observableCollection.Count );
+            Assert.Equal( Comparer<int>.Default, observableCollection.Comparer );
             Assert.False( ( (IObservableCollection<int>) observableCollection ).IsReadOnly );
             Assert.NotNull( ( (IObservableCollection<int>) observableCollection ).SyncRoot );
             Assert.False( ( (IObservableCollection<int>) observableCollection ).IsSynchronized );
@@ -32,6 +33,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var observableCollection = new ObservableSortedCollection<int>( Comparer<int>.Default );
 
             Assert.Equal( 0, observableCollection.Count );
+            Assert.Equal( Comparer<int>.Default, observableCollection.Comparer );
             Assert.False( ( (IObservableCollection<int>) observableCollection ).IsReadOnly );
             Assert.NotNull( ( (IObservableCollection<int>) observableCollection ).SyncRoot );
             Assert.False( ( (IObservableCollection<int>) observableCollection ).IsSynchronized );
@@ -40,24 +42,30 @@ namespace Utilities.DotNet.Test.Collections.Observables
         [Fact]
         public void Constructor_InitializationList()
         {
-            IObservableCollection<int> observableCollection = new ObservableSortedCollection<int>( new[] { 1, 3, 2, 4 } );
+            var observableCollection = new ObservableSortedCollection<int>( new[] { 1, 3, 2, 4 } );
 
             Assert.Equal( new[] { 1, 2, 3, 4 }, observableCollection );
-            Assert.False( observableCollection.IsReadOnly );
-            Assert.NotNull( observableCollection.SyncRoot );
-            Assert.False( observableCollection.IsSynchronized );
+            Assert.Equal( 4, observableCollection.Count );
+            Assert.Equal( Comparer<int>.Default, observableCollection.Comparer );
+            Assert.False( ( (IObservableCollection<int>) observableCollection ).IsReadOnly );
+            Assert.NotNull( ( (IObservableCollection<int>) observableCollection ).SyncRoot );
+            Assert.False( ( (IObservableCollection<int>) observableCollection ).IsSynchronized );
         }
 
         [Fact]
         public void Constructor_InitializationListAndComparer()
         {
-            IObservableCollection<int> observableCollection = new ObservableSortedCollection<int>( new[] { 5, 3, 4, 1 },
-                Comparer<int>.Create( ( x, y ) => Comparer<int>.Default.Compare( y, x ) ) );
+            Comparer<int> comparer = Comparer<int>.Create( ( x, y ) => Comparer<int>.Default.Compare( y, x ) );
+
+            var observableCollection = new ObservableSortedCollection<int>( new[] { 5, 3, 4, 1 },
+                comparer );
 
             Assert.Equal( new[] { 5, 4, 3, 1 }, observableCollection );
-            Assert.False( observableCollection.IsReadOnly );
-            Assert.NotNull( observableCollection.SyncRoot );
-            Assert.False( observableCollection.IsSynchronized );
+            Assert.Equal( 4, observableCollection.Count );
+            Assert.Equal( comparer, observableCollection.Comparer );
+            Assert.False( ( (IObservableCollection<int>) observableCollection ).IsReadOnly );
+            Assert.NotNull( ( (IObservableCollection<int>) observableCollection ).SyncRoot );
+            Assert.False( ( (IObservableCollection<int>) observableCollection ).IsSynchronized );
         }
 
         [Fact]
