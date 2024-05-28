@@ -9,6 +9,7 @@ namespace Utilities.DotNet.Collections
     /// <summary>
     /// Extension of the <see cref="IList{T}"/> interface that provides additional methods.
     /// </summary>
+    /// <typeparam name="T">Type of the items in the list.</typeparam>
     public interface IListEx<T> : IList<T>, ICollectionEx<T>, IReadOnlyListEx<T>
     {
         //===========================================================================

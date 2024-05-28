@@ -7,7 +7,8 @@ using System.Collections.Specialized;
 namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
-    /// Represents a read-only view of a collection of objects that provides notifications when items are added or removed, or when the whole collection is cleared.
+    /// Represents a read-only view of a collection of objects that provides notifications when items are added or removed,
+    /// or when the whole collection is cleared.
     /// </summary>
     /// <remarks>
     /// This interface does not provide methods to modify the collection, but this does not mean that the collection is immutable,

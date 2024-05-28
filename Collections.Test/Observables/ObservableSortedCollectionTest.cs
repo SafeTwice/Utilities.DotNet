@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Utilities.DotNet.Collections.Observables;
 using Xunit;
@@ -53,7 +52,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         public void Constructor_InitializationListAndComparer()
         {
             IObservableCollection<int> observableCollection = new ObservableSortedCollection<int>( new[] { 5, 3, 4, 1 },
-                Comparer<int>.Create( (x, y) => Comparer<int>.Default.Compare( y, x ) ) );
+                Comparer<int>.Create( ( x, y ) => Comparer<int>.Default.Compare( y, x ) ) );
 
             Assert.Equal( new[] { 5, 4, 3, 1 }, observableCollection );
             Assert.False( observableCollection.IsReadOnly );
@@ -85,7 +84,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             Assert.Equal( new[] { item2, item1 }, observableCollection );
             Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[0].Action );
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
             Assert.Equal( new[] { item2 }, events[ 0 ].NewItems );
             Assert.Null( events[ 0 ].OldItems );
             Assert.Equal( 0, events[ 0 ].NewStartingIndex );
@@ -537,7 +536,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             ( (ICollection) observableCollection ).CopyTo( array, 0 );
 
             Assert.Equal( new[] { 3, 4, 7, 9 }, array );
-            
+
             Assert.Empty( events );
         }
     }

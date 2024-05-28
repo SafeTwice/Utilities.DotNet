@@ -370,7 +370,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             collection.CopyTo( array, 0 );
 
             Assert.Equal( new[] { item1, item2, item3 }, array );
-            
+
             Assert.Empty( events );
         }
 

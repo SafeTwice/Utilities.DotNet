@@ -98,6 +98,6 @@ namespace Utilities.DotNet.Collections.Observables
         //                           PROTECTED ATTRIBUTES
         //===========================================================================
 
-        private protected IObservableReadOnlyCollection<T> m_collection;
+        protected private IObservableReadOnlyCollection<T> m_collection;
     }
 }

@@ -67,7 +67,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item3 = new TestClass( "Item3", 20 );
 
             var observableList = new ObservableSortedList<TestClass>( new[] { item3, item1, item2 },
-                Comparer<TestClass>.Create( (x, y) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
+                Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
 
             Assert.Equal( new[] { item2, item1, item3 }, observableList );
             Assert.False( ( (IList) observableList ).IsReadOnly );

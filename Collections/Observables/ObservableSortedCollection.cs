@@ -312,7 +312,12 @@ namespace Utilities.DotNet.Collections.Observables
         //                           PROTECTED ATTRIBUTES
         //===========================================================================
 
-        private protected readonly List<T> m_list = new();
+        protected private readonly List<T> m_list = new();
+
+        //===========================================================================
+        //                           PRIVATE ATTRIBUTES
+        //===========================================================================
+
         private readonly IComparer<T> m_comparer;
     }
 }

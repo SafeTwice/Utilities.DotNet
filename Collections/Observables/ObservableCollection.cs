@@ -155,15 +155,15 @@ namespace Utilities.DotNet.Collections.Observables
         //                            PROTECTED METHODS
         //===========================================================================
 
-        private protected void NotifyCollectionChanged( NotifyCollectionChangedEventArgs e )
+        protected private void NotifyCollectionChanged( NotifyCollectionChangedEventArgs e )
         {
             CollectionChanged?.Invoke( this, e );
         }
 
         //===========================================================================
-        //                           PRIVATE ATTRIBUTES
+        //                          PROTECTED ATTRIBUTES
         //===========================================================================
 
-        private protected readonly List<T> m_list;
+        protected private readonly List<T> m_list;
     }
 }

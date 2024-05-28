@@ -72,7 +72,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             Assert.Equal( new[] { item1, item2 }, list );
             Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[0].Action );
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
             Assert.Equal( new[] { item2 }, events[ 0 ].NewItems );
             Assert.Null( events[ 0 ].OldItems );
             Assert.Equal( 1, events[ 0 ].NewStartingIndex );
