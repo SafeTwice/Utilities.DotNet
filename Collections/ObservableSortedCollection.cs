@@ -238,7 +238,7 @@ namespace Utilities.DotNet.Collections
             }
 
             bool needsReorder = false;
-            
+
             if( ( oldIndex > 0 ) && m_comparer.Compare( item, m_list[ oldIndex - 1 ] ) < 0 )
             {
                 needsReorder = true;

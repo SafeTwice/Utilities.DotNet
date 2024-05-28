@@ -154,26 +154,26 @@ namespace Utilities.DotNet.Collections
             }
         }
 
-        /// <inheritdoc cref="IListEx{T}.GetRange(int, int)"/>
-        public ObservableList<T> GetRange( int index, int count )
+        /// <inheritdoc/>
+        public IObservableList<T> GetRange( int index, int count )
         {
             return new ObservableList<T>( m_list.GetRange( index, count ) );
         }
 
         /// <inheritdoc/>
-        IListEx<T> IListEx<T>.GetRange( int index, int count )
+        IListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count )
         {
             return GetRange( index, count );
         }
 
-        /// <inheritdoc cref="IListEx{T}.Slice(int, int)"/>
-        public ObservableList<T> Slice( int start, int length )
+        /// <inheritdoc/>
+        public IObservableList<T> Slice( int start, int length )
         {
             return GetRange( start, length );
         }
 
         /// <inheritdoc/>
-        IListEx<T> IListEx<T>.Slice( int start, int length )
+        IListEx<T> IReadOnlyListEx<T>.Slice( int start, int length )
         {
             return GetRange( start, length );
         }

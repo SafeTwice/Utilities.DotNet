@@ -34,9 +34,10 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObservableSortedCollection{T}"/> class that uses the
-        /// default <see cref="IComparer{T}"/>.
+        /// Initializes a new instance of the <see cref="ObservableReadOnlyCollection{T}"/> class that is a
+        /// read-only wrapper around the specified collection.
         /// </summary>
+        /// <param name="collection">Collection to wrap.</param>
         public ObservableReadOnlyCollection( IObservableReadOnlyCollection<T> collection )
         {
             m_collection = collection;
@@ -64,12 +65,12 @@ namespace Utilities.DotNet.Collections
         /// <inheritdoc/>
         public bool Contains( T item )
         {
-           return m_collection.Contains( item );
+            return m_collection.Contains( item );
         }
 
         /// <inheritdoc/>
         public void CopyTo( T[] array, int arrayIndex )
-        { 
+        {
             m_collection.CopyTo( array, arrayIndex );
         }
 

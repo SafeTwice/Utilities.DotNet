@@ -476,7 +476,7 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void IListEx_GetRange()
+        public void GetRange()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
@@ -492,15 +492,45 @@ namespace Utilities.DotNet.Test.Collections
                 events.Add( args );
             };
 
-            IListEx<TestClass> list = observableList;
-
-            var range1 = list.GetRange( 1, 2 );
+            var range1 = observableList.GetRange( 1, 2 );
 
             Assert.Equal( new[] { item3, item2 }, range1 );
+            Assert.Empty( events );
 
-            var range2 = list.GetRange( 0, 1 );
+            var range2 = observableList.GetRange( 0, 1 );
 
             Assert.Equal( new[] { item2 }, range2 );
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void IReadOnlyListEx_GetRange()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            var observableList = new ObservableList<TestClass>( new[] { item2, item3, item2 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            IReadOnlyListEx<TestClass> readOnlyList = observableList;
+
+            var range1 = readOnlyList.GetRange( 1, 2 );
+
+            Assert.Equal( new[] { item3, item2 }, range1 );
+            Assert.Empty( events );
+
+            var range2 = readOnlyList.GetRange( 0, 1 );
+
+            Assert.Equal( new[] { item2 }, range2 );
+            Assert.Empty( events );
         }
 
         [Fact]
@@ -523,14 +553,16 @@ namespace Utilities.DotNet.Test.Collections
             var range1 = observableList.Slice( 1, 2 );
 
             Assert.Equal( new[] { item3, item2 }, range1 );
+            Assert.Empty( events );
 
             var range2 = observableList.Slice( 0, 1 );
 
             Assert.Equal( new[] { item2 }, range2 );
+            Assert.Empty( events );
         }
 
         [Fact]
-        public void IListEx_Slice()
+        public void IReadOnlyListEx_Slice()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
@@ -546,15 +578,17 @@ namespace Utilities.DotNet.Test.Collections
                 events.Add( args );
             };
 
-            IListEx<TestClass> list = observableList;
+            IReadOnlyListEx<TestClass> readOnlyList = observableList;
 
-            var range1 = list.Slice( 1, 2 );
+            var range1 = readOnlyList.Slice( 1, 2 );
 
             Assert.Equal( new[] { item3, item2 }, range1 );
+            Assert.Empty( events );
 
-            var range2 = list.Slice( 0, 1 );
+            var range2 = readOnlyList.Slice( 0, 1 );
 
             Assert.Equal( new[] { item2 }, range2 );
+            Assert.Empty( events );
         }
 
         [Fact]
