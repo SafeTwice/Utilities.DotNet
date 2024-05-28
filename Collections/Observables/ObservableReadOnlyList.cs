@@ -2,7 +2,7 @@
 /// @copyright  Copyright (c) 2022-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-namespace Utilities.DotNet.Collections
+namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
     /// Implements an observable read-only list of items.

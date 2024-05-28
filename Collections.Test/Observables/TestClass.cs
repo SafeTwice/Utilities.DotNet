@@ -5,7 +5,7 @@
 using System;
 using System.ComponentModel;
 
-namespace Utilities.DotNet.Test.Collections
+namespace Utilities.DotNet.Test.Collections.Observables
 {
     public class TestClass : INotifyPropertyChanged, IComparable
     {

@@ -5,7 +5,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Utilities.DotNet.Collections
+namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
     /// Represents a collection of objects which can be individually accessed by index, that provides notifications when items are
@@ -18,7 +18,7 @@ namespace Utilities.DotNet.Collections
         new T this[ int index ] { get; set; } // Needed to disambiguate between IList<> and IList and avoid error CS0121
 
         /// <inheritdoc cref="ICollection{T}.IsReadOnly" />
-        new bool IsReadOnly { get; } // Needed to disambiguate between IObservableCollection<> and IList and avoid error CS0229
+        new bool IsReadOnly { get; } // Needed to disambiguate between ICollection<> and IList and avoid error CS0229
 
         /// <inheritdoc cref="IList{T}.RemoveAt(int)" />
         new void RemoveAt( int index ); // Needed to disambiguate between IList<> and IList and avoid error CS0121

@@ -5,25 +5,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Utilities.DotNet.Collections;
+using Utilities.DotNet.Collections.Observables;
 using Xunit;
 
 #pragma warning disable xUnit2013 // Do not use equality check to check for collection size.
-#pragma warning disable xUnit2017 // Do not use Contains() to check if a value exists in a collection
 
-namespace Utilities.DotNet.Test.Collections
+namespace Utilities.DotNet.Test.Collections.Observables
 {
     public class ObservableCollectionTest
     {
         [Fact]
         public void Constructor_Default()
         {
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>();
+            var observableCollection = new ObservableCollection<TestClass>();
 
             Assert.Equal( 0, observableCollection.Count );
-            Assert.False( observableCollection.IsReadOnly );
-            Assert.NotNull( observableCollection.SyncRoot );
-            Assert.False( observableCollection.IsSynchronized );
+            Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsReadOnly );
+            Assert.NotNull( ( (IObservableCollection<TestClass>) observableCollection ).SyncRoot );
+            Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsSynchronized );
         }
 
         [Fact]
@@ -33,12 +32,13 @@ namespace Utilities.DotNet.Test.Collections
             var item2 = new TestClass( "Item2", 5 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { item1, item2, item3 } );
+            var observableCollection = new ObservableCollection<TestClass>( new[] { item1, item2, item3 } );
 
             Assert.Equal( new[] { item1, item2, item3 }, observableCollection );
-            Assert.False( observableCollection.IsReadOnly );
-            Assert.NotNull( observableCollection.SyncRoot );
-            Assert.False( observableCollection.IsSynchronized );
+            Assert.Equal( 3, observableCollection.Count );
+            Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsReadOnly );
+            Assert.NotNull( ( (IObservableCollection<TestClass>) observableCollection ).SyncRoot );
+            Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsSynchronized );
         }
 
         [Fact]

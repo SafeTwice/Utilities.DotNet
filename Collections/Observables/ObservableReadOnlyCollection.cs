@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Utilities.DotNet.Collections
+namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
     /// Implements an observable read-only collection of items.

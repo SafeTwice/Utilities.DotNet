@@ -6,40 +6,32 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
+using System.Linq;
 
-namespace Utilities.DotNet.Collections
+namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
-    /// Implements an observable and sorted list of items.
+    /// Implements an observable list of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
-    public class ObservableSortedList<T> : ObservableSortedCollection<T>, IObservableList<T> where T : class
+    public class ObservableList<T> : ObservableCollection<T>, IObservableList<T> where T : class
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
         //===========================================================================
 
         /// <inheritdoc/>
-        /// <remarks>
-        /// The setter replaces the item at the specified index with the specified item, but since the list
-        /// is ordered, the new item may be moved to a different position.
-        /// </remarks>
         public T this[ int index ]
         {
             get => m_list[ index ];
             set
             {
-                RemoveAt( index );
-                Add( value );
+                var oldItem = m_list[ index ];
+                m_list[ index ] = value;
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, value, oldItem, index ) );
             }
         }
 
-        /// <inheritdoc/>
-        /// <remarks>
-        /// The setter replaces the item at the specified index with the specified item, but since the list
-        /// is ordered, the new item may be moved to a different position.
-        /// </remarks>
         object? IList.this[ int index ]
         {
             get => this[ index ];
@@ -47,45 +39,30 @@ namespace Utilities.DotNet.Collections
         }
 
         /// <inheritdoc/>
-        public bool IsFixedSize => false;
+        bool IObservableList<T>.IsReadOnly => false;
+
+        /// <inheritdoc/>
+        bool IList.IsReadOnly => false;
+
+        /// <inheritdoc/>
+        bool IList.IsFixedSize => false;
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
         //===========================================================================
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObservableSortedList{T}"/> class that uses the
-        /// default <see cref="IComparer{T}"/>.
+        /// Initializes a new instance of the <see cref="ObservableList{T}"/> class.
         /// </summary>
-        public ObservableSortedList()
+        public ObservableList()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObservableSortedList{T}"/> class that uses the
-        /// specified <see cref="IComparer{T}"/>.
-        /// </summary>
-        /// <param name="comparer">The <see cref="IComparer{T}"/> implementation to use when comparing list items.</param>
-        public ObservableSortedList( IComparer<T> comparer ) : base( comparer )
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ObservableSortedList{T}"/> class with the items from the specified collection,
-        /// and that uses the default <see cref="IComparer{T}"/>.
+        /// Initializes a new instance of the <see cref="ObservableList{T}"/> class with the items from the specified collection.
         /// </summary>
         /// <param name="items">Collection of initial items.</param>
-        public ObservableSortedList( IEnumerable<T> items ) : base( items )
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ObservableSortedList{T}"/> class with the items from the specified collection,
-        /// and that uses the specified <see cref="IComparer{T}"/>.
-        /// </summary>
-        /// <param name="items">Collection of initial items.</param>
-        /// <param name="comparer">The <see cref="IComparer{T}"/> implementation to use when comparing list items.</param>
-        public ObservableSortedList( IEnumerable<T> items, IComparer<T> comparer ) : base( items, comparer )
+        public ObservableList( IEnumerable<T> items ) : base( items )
         {
         }
 
@@ -103,23 +80,18 @@ namespace Utilities.DotNet.Collections
             else
             {
                 Add( obj );
-                return IndexOf( obj );
+                return ( m_list.Count - 1 );
             }
         }
 
         /// <inheritdoc/>
-        /// <remarks>
-        /// Since the list is ordered, the index is ignored and the new item is inserted in its corresponding sorted position.
-        /// </remarks>
         public void Insert( int index, T item )
         {
-            Add( item );
+            m_list.Insert( index, item );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
         }
 
-        /// <inheritdoc/>
-        /// <remarks>
-        /// Since the list is ordered, the index is ignored and the new item is inserted in its corresponding sorted position.
-        /// </remarks>
         void IList.Insert( int index, object? value )
         {
             var obj = value as T;
@@ -129,17 +101,16 @@ namespace Utilities.DotNet.Collections
             }
             else
             {
-                Add( obj );
+                Insert( index, obj );
             }
         }
 
         /// <inheritdoc/>
-        /// <remarks>
-        /// Since the list is ordered, the index is ignored and the new items are inserted in its corresponding sorted positions.
-        /// </remarks>
         public void InsertRange( int index, IEnumerable<T> collection )
         {
-            AddRange( collection );
+            m_list.InsertRange( index, collection );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), index ) );
         }
 
         void IList.Remove( object? value )
@@ -160,11 +131,6 @@ namespace Utilities.DotNet.Collections
             }
 
             var item = m_list[ index ];
-
-            if( item is INotifyPropertyChanged notifyPropertyChangedItem )
-            {
-                notifyPropertyChangedItem.PropertyChanged -= Item_PropertyChangedEvent;
-            }
 
             m_list.RemoveAt( index );
 

@@ -10,7 +10,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Utilities.DotNet.Collections
+namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
     /// Implements an observable and sorted collection of items.
@@ -40,13 +40,13 @@ namespace Utilities.DotNet.Collections
         public int Count => m_list.Count;
 
         /// <inheritdoc/>
-        public bool IsReadOnly => false;
+        bool ICollection<T>.IsReadOnly => false;
 
         /// <inheritdoc/>
-        public bool IsSynchronized => ( (ICollection) m_list ).IsSynchronized;
+        bool ICollection.IsSynchronized => ( (ICollection) m_list ).IsSynchronized;
 
         /// <inheritdoc/>
-        public object SyncRoot => ( (ICollection) m_list ).SyncRoot;
+        object ICollection.SyncRoot => ( (ICollection) m_list ).SyncRoot;
 
         //===========================================================================
         //                             PUBLIC EVENTS
