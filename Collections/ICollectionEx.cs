@@ -16,13 +16,13 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <summary>
-        /// Adds the elements of the specified collection to the end of the list.
+        /// Adds the elements of the specified collection to the end of the collection.
         /// </summary>
         /// <param name="collection">Collection whose elements will be added to the end of the list.</param>
         void AddRange( IEnumerable<T> collection );
 
         /// <summary>
-        /// Removes the elements of the specified collection from the list.
+        /// Removes the elements of the specified collection from the collection.
         /// </summary>
         /// <param name="collection">Collection whose elements will be removed from the list.</param>
         void RemoveRange( IEnumerable<T> collection );
