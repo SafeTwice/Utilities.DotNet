@@ -8,7 +8,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// Implements an observable read-only list of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
-    public class ObservableReadOnlyList<T> : ObservableReadOnlyCollection<T>, IObservableReadOnlyList<T> where T : class
+    public class ObservableReadOnlyList<T> : ObservableReadOnlyCollection<T>, IObservableReadOnlyList<T>
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES

@@ -14,7 +14,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// Implements an observable and sorted list of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
-    public class ObservableSortedList<T> : ObservableSortedCollection<T>, IObservableList<T> where T : class
+    public class ObservableSortedList<T> : ObservableSortedCollection<T>, IObservableList<T>
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -43,7 +43,7 @@ namespace Utilities.DotNet.Collections.Observables
         object? IList.this[ int index ]
         {
             get => this[ index ];
-            set => this[ index ] = value as T ?? throw new InvalidCastException();
+            set => this[ index ] = ( value is T castValue ) ? castValue : throw new InvalidCastException();
         }
 
         /// <inheritdoc/>
@@ -101,15 +101,14 @@ namespace Utilities.DotNet.Collections.Observables
 
         int IList.Add( object? value )
         {
-            var obj = value as T;
-            if( obj == null )
-            {
-                return -1;
-            }
-            else
+            if( value is T obj )
             {
                 Add( obj );
                 return IndexOf( obj );
+            }
+            else
+            {
+                return -1;
             }
         }
 
@@ -128,14 +127,13 @@ namespace Utilities.DotNet.Collections.Observables
         /// </remarks>
         void IList.Insert( int index, object? value )
         {
-            var obj = value as T;
-            if( obj == null )
+            if( value is T obj )
             {
-                throw new InvalidCastException();
+                Add( obj );
             }
             else
             {
-                Add( obj );
+                throw new InvalidCastException();
             }
         }
 
@@ -150,8 +148,7 @@ namespace Utilities.DotNet.Collections.Observables
 
         void IList.Remove( object? value )
         {
-            var obj = value as T;
-            if( obj != null )
+            if( value is T obj )
             {
                 Remove( obj );
             }
@@ -189,14 +186,13 @@ namespace Utilities.DotNet.Collections.Observables
 
         bool IList.Contains( object? value )
         {
-            var obj = value as T;
-            if( obj == null )
+            if( value is T obj )
             {
-                return false;
+                return Contains( obj );
             }
             else
             {
-                return Contains( obj );
+                return false;
             }
         }
 
@@ -244,14 +240,13 @@ namespace Utilities.DotNet.Collections.Observables
 
         int IList.IndexOf( object? value )
         {
-            var obj = value as T;
-            if( obj == null )
+            if( value is T obj )
             {
-                return -1;
+                return IndexOf( obj );
             }
             else
             {
-                return IndexOf( obj );
+                return -1;
             }
         }
 

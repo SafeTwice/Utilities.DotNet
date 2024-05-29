@@ -13,7 +13,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// Implements an observable read-only collection of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the collection.</typeparam>
-    public class ObservableReadOnlyCollection<T> : IObservableReadOnlyCollection<T> where T : notnull
+    public class ObservableReadOnlyCollection<T> : IObservableReadOnlyCollection<T>
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
