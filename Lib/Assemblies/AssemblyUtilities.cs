@@ -32,8 +32,9 @@ namespace Utilities.Net.Assemblies
         /// <param name="baseType">Base type.</param>
         public static void RunClassConstructors( Type baseType )
         {
-            var subTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany( a => a.GetTypes() )
-                .Where( t => t.IsClass && !t.IsAbstract && t.IsSubclassOf( baseType ) );
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var subTypes = assemblies.SelectMany( a => a.GetTypes() )
+                .Where( t => t.IsClass && !t.IsAbstract && baseType.IsAssignableFrom( t ) );
 
             foreach( var subType in subTypes )
             {
