@@ -31,6 +31,9 @@ namespace Utilities.DotNet.I18N
 
         /// <inheritdoc cref="GlobalLocalizer.Localize(FormattableString)"/>
         internal static string Localize( FormattableString text ) => Localizer.Localize( text );
+
+        /// <inheritdoc cref="GlobalLocalizer.Localize(PlainString)"/>
+        internal static string Localize( PlainString text ) => Localizer.Localize( text );
     }
 #else
     internal static class LibraryLocalizer
