@@ -25,6 +25,9 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsReadOnly );
             Assert.NotNull( ( (IObservableCollection<TestClass>) observableCollection ).SyncRoot );
             Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsSynchronized );
+
+            Assert.Equal( 0, ( (IObservableCollection<TestClass>) observableCollection ).Count );
+            Assert.Equal( 0, ( (ICollectionEx<TestClass>) observableCollection ).Count );
         }
 
         [Fact]

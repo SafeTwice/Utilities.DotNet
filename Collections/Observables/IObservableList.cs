@@ -12,13 +12,18 @@ namespace Utilities.DotNet.Collections.Observables
     /// added, removed, moved or replaced, or when the whole collection is cleared.
     /// </summary>
     /// <typeparam name="T">The type of the items in the list.</typeparam>
-    public interface IObservableList<T> : IListEx<T>, IList, IObservableCollection<T>, IObservableReadOnlyList<T>
+    public interface IObservableList<T> : IListEx<T>, IObservableCollection<T>, IObservableReadOnlyList<T>
     {
-        /// <inheritdoc cref="IList{T}.this[int]" />
-        new T this[ int index ] { get; set; } // Needed to disambiguate between IList<> and IList and avoid error CS0121
+        //===========================================================================
+        //                                PROPERTIES
+        //===========================================================================
 
         /// <inheritdoc cref="ICollection{T}.IsReadOnly" />
         new bool IsReadOnly { get; } // Needed to disambiguate between ICollection<> and IList and avoid error CS0229
+
+        //===========================================================================
+        //                                  METHODS
+        //===========================================================================
 
         /// <inheritdoc cref="IList{T}.RemoveAt(int)" />
         new void RemoveAt( int index ); // Needed to disambiguate between IList<> and IList and avoid error CS0121

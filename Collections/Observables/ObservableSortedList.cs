@@ -186,14 +186,7 @@ namespace Utilities.DotNet.Collections.Observables
 
         bool IList.Contains( object? value )
         {
-            if( value is T obj )
-            {
-                return Contains( obj );
-            }
-            else
-            {
-                return false;
-            }
+            return ( value is T obj ) && Contains( obj );
         }
 
         /// <inheritdoc/>
@@ -202,8 +195,17 @@ namespace Utilities.DotNet.Collections.Observables
             return new ObservableList<T>( m_list.GetRange( index, count ) );
         }
 
-        /// <inheritdoc/>
-        IListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count )
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count )
+        {
+            return GetRange( index, count );
+        }
+
+        IObservableReadOnlyList<T> IObservableReadOnlyList<T>.GetRange( int index, int count )
+        {
+            return GetRange( index, count );
+        }
+
+        IListEx<T> IListEx<T>.GetRange( int index, int count )
         {
             return GetRange( index, count );
         }
@@ -214,16 +216,35 @@ namespace Utilities.DotNet.Collections.Observables
             return GetRange( start, length );
         }
 
-        /// <inheritdoc/>
-        IListEx<T> IReadOnlyListEx<T>.Slice( int start, int length )
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length )
+        {
+            return GetRange( start, length );
+        }
+
+        IObservableReadOnlyList<T> IObservableReadOnlyList<T>.Slice( int start, int length )
+        {
+            return GetRange( start, length );
+        }
+
+        IListEx<T> IListEx<T>.Slice( int start, int length )
         {
             return GetRange( start, length );
         }
 
         /// <inheritdoc/>
-        public int IndexOf( T value )
+        public int IndexOf( T item )
         {
-            return m_list.IndexOf( value );
+            return m_list.IndexOf( item );
+        }
+
+        int IList.IndexOf( object? value )
+        {
+            return ( value is T obj ) ? IndexOf( obj ) : -1;
+        }
+
+        int IReadOnlyListEx<T>.IndexOf( object item )
+        {
+            return ( item is T obj ) ? IndexOf( obj ) : -1;
         }
 
         /// <inheritdoc/>
@@ -232,28 +253,31 @@ namespace Utilities.DotNet.Collections.Observables
             return m_list.IndexOf( item, index );
         }
 
+        int IReadOnlyListEx<T>.IndexOf( object item, int index )
+        {
+            return ( item is T obj ) ? IndexOf( obj, index ) : -1;
+        }
+
         /// <inheritdoc/>
         public int IndexOf( T item, int index, int count )
         {
             return m_list.IndexOf( item, index, count );
         }
 
-        int IList.IndexOf( object? value )
+        int IReadOnlyListEx<T>.IndexOf( object item, int index, int count )
         {
-            if( value is T obj )
-            {
-                return IndexOf( obj );
-            }
-            else
-            {
-                return -1;
-            }
+            return ( item is T obj ) ? IndexOf( obj, index, count ) : -1;
         }
 
         /// <inheritdoc/>
-        public int LastIndexOf( T value )
+        public int LastIndexOf( T item )
         {
-            return m_list.LastIndexOf( value );
+            return m_list.LastIndexOf( item );
+        }
+
+        int IReadOnlyListEx<T>.LastIndexOf( object item )
+        {
+            return ( item is T obj ) ? LastIndexOf( obj ) : -1;
         }
 
         /// <inheritdoc/>
@@ -262,10 +286,20 @@ namespace Utilities.DotNet.Collections.Observables
             return m_list.LastIndexOf( item, index );
         }
 
+        int IReadOnlyListEx<T>.LastIndexOf( object item, int index )
+        {
+            return ( item is T obj ) ? LastIndexOf( obj, index ) : -1;
+        }
+
         /// <inheritdoc/>
         public int LastIndexOf( T item, int index, int count )
         {
             return m_list.LastIndexOf( item, index, count );
+        }
+
+        int IReadOnlyListEx<T>.LastIndexOf( object item, int index, int count )
+        {
+            return ( item is T obj ) ? LastIndexOf( obj, index, count ) : -1;
         }
     }
 }

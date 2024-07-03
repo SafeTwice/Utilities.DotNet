@@ -15,7 +15,7 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <inheritdoc/>
-        public T this[ int index ] => List[ index ];
+        public T this[ int index ] => _List[ index ];
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -34,57 +34,33 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <inheritdoc/>
-        public IListEx<T> GetRange( int index, int count )
-        {
-            return new ListEx<T>( List.GetRange( index, count ) );
-        }
+        public IReadOnlyListEx<T> GetRange( int index, int count ) => _List.GetRange( index, count );
 
         /// <inheritdoc/>
-        public IListEx<T> Slice( int start, int length )
-        {
-            return GetRange( start, length );
-        }
+        public IReadOnlyListEx<T> Slice( int start, int length ) => _List.Slice( start, length );
 
         /// <inheritdoc/>
-        public int IndexOf( T value )
-        {
-            return List.IndexOf( value );
-        }
+        public int IndexOf( object item ) => _List.IndexOf( item );
 
         /// <inheritdoc/>
-        public int IndexOf( T item, int index )
-        {
-            return List.IndexOf( item, index );
-        }
+        public int IndexOf( object item, int index ) => _List.IndexOf( item, index );
 
         /// <inheritdoc/>
-        public int IndexOf( T item, int index, int count )
-        {
-            return List.IndexOf( item, index, count );
-        }
+        public int IndexOf( object item, int index, int count ) => _List.IndexOf( item, index, count );
 
         /// <inheritdoc/>
-        public int LastIndexOf( T value )
-        {
-            return List.LastIndexOf( value );
-        }
+        public int LastIndexOf( object item ) => _List.LastIndexOf( item );
 
         /// <inheritdoc/>
-        public int LastIndexOf( T item, int index )
-        {
-            return List.LastIndexOf( item, index );
-        }
+        public int LastIndexOf( object item, int index ) => _List.LastIndexOf( item, index );
 
         /// <inheritdoc/>
-        public int LastIndexOf( T item, int index, int count )
-        {
-            return List.LastIndexOf( item, index, count );
-        }
+        public int LastIndexOf( object item, int index, int count ) => _List.LastIndexOf( item, index, count );
 
         //===========================================================================
         //                           PRIVATE PROPERTIES
         //===========================================================================
 
-        private IReadOnlyListEx<T> List => (IReadOnlyListEx<T>) m_collection;
+        private IReadOnlyListEx<T> _List => (IReadOnlyListEx<T>) m_collection;
     }
 }

@@ -63,27 +63,12 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         /// <inheritdoc/>
-        public bool Contains( T item )
-        {
-            return m_collection.Contains( item );
-        }
+        public bool Contains( object item ) => m_collection.Contains( item );
 
         /// <inheritdoc/>
-        public void CopyTo( T[] array, int arrayIndex )
-        {
-            m_collection.CopyTo( array, arrayIndex );
-        }
+        public IEnumerator<T> GetEnumerator() => m_collection.GetEnumerator();
 
-        /// <inheritdoc/>
-        public IEnumerator<T> GetEnumerator()
-        {
-            return m_collection.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return m_collection.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => m_collection.GetEnumerator();
 
         //===========================================================================
         //                            PRIVATE METHODS

@@ -15,7 +15,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// the collection can still be modified by other means.
     /// </remarks>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
-    public interface IObservableReadOnlyCollection<T> : IReadOnlyCollectionEx<T>, INotifyCollectionChanged
+    public interface IObservableReadOnlyCollection<out T> : IReadOnlyCollectionEx<T>, INotifyCollectionChanged
     {
     }
 }

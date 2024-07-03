@@ -558,6 +558,16 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void IReadOnlyCollectionEx_Contains()
+        {
+            ObservableSortedCollection<int> collection = new( new[] { 5, 8, 2 } );
+
+            Assert.True( ( (IReadOnlyCollectionEx<int>) collection ).Contains( 8 ) );
+            Assert.False( ( (IReadOnlyCollectionEx<int>) collection ).Contains( 9 ) );
+            Assert.False( ( (IReadOnlyCollectionEx<int>) collection ).Contains( 5.0 ) );
+        }
+
+        [Fact]
         public void GetEnumerator()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();

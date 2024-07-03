@@ -9,7 +9,7 @@ namespace Utilities.DotNet.Collections
     /// <summary>
     /// Extension of the <see cref="IReadOnlyList{T}"/> interface that provides additional methods.
     /// </summary>
-    public interface IReadOnlyListEx<T> : IReadOnlyCollectionEx<T>, IReadOnlyList<T>
+    public interface IReadOnlyListEx<out T> : IReadOnlyCollectionEx<T>, IReadOnlyList<T>
     {
         //===========================================================================
         //                                  METHODS
@@ -24,7 +24,7 @@ namespace Utilities.DotNet.Collections
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> or <paramref name="count"/> are less than 0.</exception>
         /// <exception cref="System.ArgumentException">Thrown when <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of
         ///                                            elements in the list.</exception>
-        IListEx<T> GetRange( int index, int count );
+        IReadOnlyListEx<T> GetRange( int index, int count );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of its first occurrence within the range of elements in the entire list.
@@ -34,7 +34,7 @@ namespace Utilities.DotNet.Collections
         /// </remarks>
         /// <param name="item">Object to locate in the list.</param>
         /// <returns>Zero-based index of the first occurrence of item within the entire list, if found; otherwise, -1.</returns>
-        int IndexOf( T item );
+        int IndexOf( object item );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of its first occurrence within the range of elements in the list that
@@ -47,7 +47,7 @@ namespace Utilities.DotNet.Collections
         /// <param name="index">Zero-based starting index of the search. 0 (zero) is valid in an empty list.</param>
         /// <returns>Zero-based index of the first occurrence of item within the specified range of elements in the list, if found; otherwise, -1.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list.</exception>
-        int IndexOf( T item, int index );
+        int IndexOf( object item, int index );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of the first occurrence within the range of elements in the list that starts
@@ -64,7 +64,7 @@ namespace Utilities.DotNet.Collections
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list,
         ///                                                      <paramref name="count"/> is less than 0, or <paramref name="index"/> and <paramref name="count"/>
         ///                                                      do not denote a valid range of elements in the list.</exception>
-        int IndexOf( T item, int index, int count );
+        int IndexOf( object item, int index, int count );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of the last occurrence within the entire list.
@@ -74,7 +74,7 @@ namespace Utilities.DotNet.Collections
         /// </remarks>
         /// <param name="item">Object to locate in the list.</param>
         /// <returns>Zero-based index of the last occurrence of item within the entire the list, if found; otherwise, -1.</returns>
-        int LastIndexOf( T item );
+        int LastIndexOf( object item );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of the last occurrence within the range of elements in the list
@@ -87,7 +87,7 @@ namespace Utilities.DotNet.Collections
         /// <param name="index">Zero-based starting index of the backward search.</param>
         /// <returns>Zero-based index of the last occurrence of item within the specified range of elements in the list, if found; otherwise, -1.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list.</exception>
-        int LastIndexOf( T item, int index );
+        int LastIndexOf( object item, int index );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of the last occurrence within the range of elements in the list
@@ -104,7 +104,7 @@ namespace Utilities.DotNet.Collections
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list,
         ///                                                      <paramref name="count"/> is less than 0, or <paramref name="index"/> and <paramref name="count"/>
         ///                                                      do not denote a valid range of elements in the list.</exception>
-        int LastIndexOf( T item, int index, int count );
+        int LastIndexOf( object item, int index, int count );
 
         /// <summary>
         /// Creates a shallow copy of a range of elements in the source list.
@@ -114,6 +114,6 @@ namespace Utilities.DotNet.Collections
         /// <returns>shallow copy of a range of elements in the source list.</returns>
         /// <exception cref="System.ArgumentException">Thrown when <paramref name="start"/> and <paramref name="length"/> do not denote a valid range of
         ///                                            elements in the list.</exception>
-        IListEx<T> Slice( int start, int length );
+        IReadOnlyListEx<T> Slice( int start, int length );
     }
 }

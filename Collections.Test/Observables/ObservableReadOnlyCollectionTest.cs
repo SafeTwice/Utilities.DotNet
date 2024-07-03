@@ -36,7 +36,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void Add()
+        public void AddToObserverdList()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
@@ -80,7 +80,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void Remove()
+        public void RemoveFromObservedList()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
@@ -119,7 +119,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void Clear()
+        public void ClearObservedCollection()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 
@@ -231,30 +231,6 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Equal( 9, enumerator.Current );
 
             Assert.False( enumerator.MoveNext() );
-
-            Assert.Empty( events );
-        }
-
-        [Fact]
-        public void CopyTo()
-        {
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            IObservableCollection<int> baseCollection = new ObservableCollection<int>( new[] { 9, 3, 7, 4 } );
-
-            IObservableReadOnlyCollection<int> testedCollection = new ObservableReadOnlyCollection<int>( baseCollection );
-
-            testedCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( testedCollection, obj );
-                events.Add( args );
-            };
-
-            var array = new int[ 4 ];
-
-            testedCollection.CopyTo( array, 0 );
-
-            Assert.Equal( new[] { 9, 3, 7, 4 }, array );
 
             Assert.Empty( events );
         }

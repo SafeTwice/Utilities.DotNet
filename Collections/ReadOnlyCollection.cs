@@ -38,15 +38,11 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <inheritdoc/>
-        public bool Contains( T item ) => m_collection.Contains( item );
-
-        /// <inheritdoc/>
-        public void CopyTo( T[] array, int arrayIndex ) => m_collection.CopyTo( array, arrayIndex );
+        public bool Contains( object item ) => m_collection.Contains( item );
 
         /// <inheritdoc/>
         public IEnumerator<T> GetEnumerator() => m_collection.GetEnumerator();
 
-        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => m_collection.GetEnumerator();
 
         //===========================================================================

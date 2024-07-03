@@ -12,6 +12,13 @@ namespace Utilities.DotNet.Collections
     public interface ICollectionEx<T> : ICollection<T>, ICollectionEx, IReadOnlyCollectionEx<T>
     {
         //===========================================================================
+        //                                PROPERTIES
+        //===========================================================================
+
+        /// <inheritdoc cref="ICollection{T}.Count" />
+        new int Count { get; } // Needed to disambiguate between ICollection<> and ICollection and avoid error CS0229
+
+        //===========================================================================
         //                                  METHODS
         //===========================================================================
 

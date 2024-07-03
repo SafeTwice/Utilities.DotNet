@@ -245,14 +245,12 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         bool ICollectionEx.Contains( object item )
         {
-            if( item is T obj )
-            {
-                return Contains( obj );
-            }
-            else
-            {
-                return false;
-            }
+            return ( item is T obj ) && Contains( obj );
+        }
+
+        bool IReadOnlyCollectionEx<T>.Contains( object item )
+        {
+            return ( item is T obj ) && Contains( obj );
         }
 
         /// <inheritdoc/>

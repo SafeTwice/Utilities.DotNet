@@ -13,12 +13,16 @@ namespace Utilities.DotNet.Collections.Observables
     /// the collection can still be modified by other means.
     /// </remarks>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
-    public interface IObservableReadOnlyList<T> : IObservableReadOnlyCollection<T>, IReadOnlyListEx<T>
+    public interface IObservableReadOnlyList<out T> : IObservableReadOnlyCollection<T>, IReadOnlyListEx<T>
     {
+        //===========================================================================
+        //                                  METHODS
+        //===========================================================================
+
         /// <inheritdoc cref="IReadOnlyListEx{T}.GetRange(int, int)"/>
-        new IObservableList<T> GetRange( int index, int count );
+        new IObservableReadOnlyList<T> GetRange( int index, int count );
 
         /// <inheritdoc cref="IReadOnlyListEx{T}.Slice(int, int)"/>
-        new IObservableList<T> Slice( int start, int length );
+        new IObservableReadOnlyList<T> Slice( int start, int length );
     }
 }

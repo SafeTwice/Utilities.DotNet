@@ -182,6 +182,11 @@ namespace Utilities.DotNet.Collections.Observables
             }
         }
 
+        bool IReadOnlyCollectionEx<T>.Contains( object item )
+        {
+            return ( (ICollectionEx) this ).Contains( item );
+        }
+
         /// <inheritdoc/>
         public void CopyTo( T[] array, int index )
         {

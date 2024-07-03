@@ -25,6 +25,11 @@ namespace Utilities.DotNet.Test.Collections
             Assert.False( ( (IList) list ).IsFixedSize );
             Assert.NotNull( ( (IList) list ).SyncRoot );
             Assert.False( ( (IList) list ).IsSynchronized );
+
+            // The following tests are to ensure interface disambiguation.
+
+            Assert.Equal( 0, ( (IListEx<int>) list ).Count );
+            Assert.Equal( 0, ( (ICollectionEx<int>) list ).Count );
         }
 
         [Fact]
@@ -68,6 +73,22 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
+        public void IReadOnlyCollectionEx_GetRange()
+        {
+            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
+
+            var collection = ( (IReadOnlyListEx<int>) list );
+
+            var range1 = collection.GetRange( 1, 2 );
+
+            Assert.Equal( new[] { 8, 2 }, range1 );
+
+            var range2 = collection.GetRange( 0, 1 );
+
+            Assert.Equal( new[] { 5 }, range2 );
+        }
+
+        [Fact]
         public void Slice()
         {
             ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
@@ -77,6 +98,22 @@ namespace Utilities.DotNet.Test.Collections
             Assert.Equal( new[] { 8, 2 }, range1 );
 
             var range2 = list.Slice( 0, 1 );
+
+            Assert.Equal( new[] { 5 }, range2 );
+        }
+
+        [Fact]
+        public void IReadOnlyCollectionEx_Slice()
+        {
+            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
+
+            var collection = ( (IReadOnlyListEx<int>) list );
+
+            var range1 = collection.Slice( 1, 2 );
+
+            Assert.Equal( new[] { 8, 2 }, range1 );
+
+            var range2 = collection.Slice( 0, 1 );
 
             Assert.Equal( new[] { 5 }, range2 );
         }
@@ -175,6 +212,56 @@ namespace Utilities.DotNet.Test.Collections
             Assert.True( ( (ICollectionEx) list ).Contains( 8 ) );
             Assert.False( ( (ICollectionEx) list ).Contains( 9 ) );
             Assert.False( ( (ICollectionEx) list ).Contains( 5.0 ) );
+        }
+
+        [Fact]
+        public void IReadOnlyCollectionEx_Contains()
+        {
+            ListEx<int> list = new( new[] { 5, 8, 2 } );
+
+            Assert.True( ( (IReadOnlyCollectionEx<int>) list ).Contains( 8 ) );
+            Assert.False( ( (IReadOnlyCollectionEx<int>) list ).Contains( 9 ) );
+            Assert.False( ( (IReadOnlyCollectionEx<int>) list ).Contains( 5.0 ) );
+        }
+
+        [Fact]
+        public void IReadOnlyCollectionEx_IndexOf()
+        {
+            var list = new ListEx<int>( new[] { 3, 6, 4, 3 } );
+
+            var collection = ( (IReadOnlyListEx<int>) list );
+
+            Assert.Equal( 1, collection.IndexOf( 6 ) );
+            Assert.Equal( -1, collection.IndexOf( 10 ) );
+            Assert.Equal( -1, collection.IndexOf( 10.0 ) );
+
+            Assert.Equal( 3, collection.IndexOf( 3, 1 ) );
+            Assert.Equal( -1, collection.IndexOf( 6, 2 ) );
+            Assert.Equal( -1, collection.IndexOf( 4.0, 1 ) );
+
+            Assert.Equal( 3, collection.IndexOf( 3, 2, 2 ) );
+            Assert.Equal( -1, collection.IndexOf( 6, 2, 2 ) );
+            Assert.Equal( -1, collection.IndexOf( 3.0, 2, 2 ) );
+        }
+
+        [Fact]
+        public void IReadOnlyCollectionEx_LastIndexOf()
+        {
+            var list = new ListEx<int>( new[] { 3, 6, 4, 3 } );
+
+            var collection = ( (IReadOnlyListEx<int>) list );
+
+            Assert.Equal( 1, collection.LastIndexOf( 6 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 10 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 10.0 ) );
+
+            Assert.Equal( 0, collection.LastIndexOf( 3, 1 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 4, 1 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 4.0, 1 ) );
+
+            Assert.Equal( 0, collection.LastIndexOf( 3, 1, 2 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 3, 2, 2 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 3.0, 2, 2 ) );
         }
     }
 }

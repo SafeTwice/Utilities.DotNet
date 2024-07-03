@@ -35,7 +35,7 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void Add()
+        public void AddToLinkedCollection()
         {
             var baseCollection = new ListEx<int>( new[] { 1, 3, 2, 4 } );
 
@@ -49,7 +49,7 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void Remove()
+        public void RemoveFromLinkedCollection()
         {
             var baseCollection = new ListEx<int>( new[] { 1, 3, 2, 4 } );
 
@@ -67,7 +67,7 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void Clear()
+        public void ClearLinkedCollection()
         {
             var baseCollection = new ListEx<int>( new[] { 1, 3, 2, 4 } );
 
@@ -127,20 +127,6 @@ namespace Utilities.DotNet.Test.Collections
             Assert.Equal( 9, enumerator.Current );
 
             Assert.False( enumerator.MoveNext() );
-        }
-
-        [Fact]
-        public void CopyTo()
-        {
-            IListEx<int> baseCollection = new ListEx<int>( new[] { 9, 3, 7, 4 } );
-
-            IReadOnlyCollectionEx<int> testedCollection = new ReadOnlyCollection<int>( baseCollection );
-
-            var array = new int[ 4 ];
-
-            testedCollection.CopyTo( array, 0 );
-
-            Assert.Equal( new[] { 9, 3, 7, 4 }, array );
         }
     }
 }

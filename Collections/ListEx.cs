@@ -51,21 +51,26 @@ namespace Utilities.DotNet.Collections
             return new ListEx<T>( base.GetRange( index, count ) );
         }
 
-#if NET8_0_OR_GREATER
-        /// <inheritdoc/>
-        public new IListEx<T> Slice( int start, int length )
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count )
         {
-            return GetRange( start, length );
+            return GetRange( index, count );
         }
-#else
-        /// <inheritdoc/>
-        public IListEx<T> Slice( int start, int length )
-        {
-            return GetRange( start, length );
-        }
-#endif
 
         /// <inheritdoc/>
+#if NET8_0_OR_GREATER
+        public new IListEx<T> Slice( int start, int length )
+#else
+        public IListEx<T> Slice( int start, int length )
+#endif
+        {
+            return GetRange( start, length );
+        }
+
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length )
+        {
+            return GetRange( start, length );
+        }
+
         void ICollectionEx.Add( object item )
         {
             if( item is T obj )
@@ -78,7 +83,6 @@ namespace Utilities.DotNet.Collections
             }
         }
 
-        /// <inheritdoc/>
         void ICollectionEx.AddRange( IEnumerable collection )
         {
             foreach( var item in collection )
@@ -87,7 +91,6 @@ namespace Utilities.DotNet.Collections
             }
         }
 
-        /// <inheritdoc/>
         void ICollectionEx.Remove( object item )
         {
             if( item is T obj )
@@ -105,7 +108,6 @@ namespace Utilities.DotNet.Collections
             }
         }
 
-        /// <inheritdoc/>
         void ICollectionEx.RemoveRange( IEnumerable collection )
         {
             foreach( var item in collection )
@@ -114,17 +116,44 @@ namespace Utilities.DotNet.Collections
             }
         }
 
-        /// <inheritdoc/>
         bool ICollectionEx.Contains( object item )
         {
-            if( item is T obj )
-            {
-                return Contains( obj );
-            }
-            else
-            {
-                return false;
-            }
+            return ( item is T obj ) && Contains( obj );
+        }
+
+        bool IReadOnlyCollectionEx<T>.Contains( object item )
+        {
+            return ( item is T obj ) && Contains( obj );
+        }
+
+        int IReadOnlyListEx<T>.IndexOf( object item )
+        {
+            return ( item is T obj ) ? IndexOf( obj ) : -1;
+        }
+
+        int IReadOnlyListEx<T>.IndexOf( object item, int index )
+        {
+            return ( item is T obj ) ? IndexOf( obj, index ) : -1;
+        }
+
+        int IReadOnlyListEx<T>.IndexOf( object item, int index, int count )
+        {
+            return ( item is T obj ) ? IndexOf( obj, index, count ) : -1;
+        }
+
+        int IReadOnlyListEx<T>.LastIndexOf( object item )
+        {
+            return ( item is T obj ) ? LastIndexOf( obj ) : -1;
+        }
+
+        int IReadOnlyListEx<T>.LastIndexOf( object item, int index )
+        {
+            return ( item is T obj ) ? LastIndexOf( obj, index ) : -1;
+        }
+
+        int IReadOnlyListEx<T>.LastIndexOf( object item, int index, int count )
+        {
+            return ( item is T obj ) ? LastIndexOf( obj, index, count ) : -1;
         }
     }
 }

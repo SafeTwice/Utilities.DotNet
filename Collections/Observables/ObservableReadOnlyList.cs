@@ -15,7 +15,7 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         /// <inheritdoc/>
-        public T this[ int index ] => List[ index ];
+        public T this[ int index ] => _List[ index ];
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -35,69 +35,37 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         /// <inheritdoc/>
-        public IObservableList<T> GetRange( int index, int count )
-        {
-            return new ObservableList<T>( List.GetRange( index, count ) );
-        }
+        public IObservableReadOnlyList<T> GetRange( int index, int count ) => _List.GetRange( index, count );
+
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count ) => _List.GetRange( index, count );
 
         /// <inheritdoc/>
-        IListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count )
-        {
-            return GetRange( index, count );
-        }
+        public IObservableReadOnlyList<T> Slice( int start, int length ) => _List.Slice( start, length );
+
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length ) => _List.Slice( start, length );
 
         /// <inheritdoc/>
-        public IObservableList<T> Slice( int start, int length )
-        {
-            return GetRange( start, length );
-        }
+        public int IndexOf( object value ) => _List.IndexOf( value );
 
         /// <inheritdoc/>
-        IListEx<T> IReadOnlyListEx<T>.Slice( int start, int length )
-        {
-            return GetRange( start, length );
-        }
+        public int IndexOf( object item, int index ) => _List.IndexOf( item, index );
 
         /// <inheritdoc/>
-        public int IndexOf( T value )
-        {
-            return List.IndexOf( value );
-        }
+        public int IndexOf( object item, int index, int count ) => _List.IndexOf( item, index, count );
 
         /// <inheritdoc/>
-        public int IndexOf( T item, int index )
-        {
-            return List.IndexOf( item, index );
-        }
+        public int LastIndexOf( object value ) => _List.LastIndexOf( value );
 
         /// <inheritdoc/>
-        public int IndexOf( T item, int index, int count )
-        {
-            return List.IndexOf( item, index, count );
-        }
+        public int LastIndexOf( object item, int index ) => _List.LastIndexOf( item, index );
 
         /// <inheritdoc/>
-        public int LastIndexOf( T value )
-        {
-            return List.LastIndexOf( value );
-        }
-
-        /// <inheritdoc/>
-        public int LastIndexOf( T item, int index )
-        {
-            return List.LastIndexOf( item, index );
-        }
-
-        /// <inheritdoc/>
-        public int LastIndexOf( T item, int index, int count )
-        {
-            return List.LastIndexOf( item, index, count );
-        }
+        public int LastIndexOf( object item, int index, int count ) => _List.LastIndexOf( item, index, count );
 
         //===========================================================================
         //                           PRIVATE PROPERTIES
         //===========================================================================
 
-        private IObservableReadOnlyList<T> List => (IObservableReadOnlyList<T>) m_collection;
+        private IObservableReadOnlyList<T> _List => (IObservableReadOnlyList<T>) m_collection;
     }
 }
