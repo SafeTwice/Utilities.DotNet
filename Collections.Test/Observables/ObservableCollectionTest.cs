@@ -2,9 +2,11 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Utilities.DotNet.Collections;
 using Utilities.DotNet.Collections.Observables;
 using Xunit;
 
@@ -84,6 +86,24 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void ICollectionEx_Add()
+        {
+            ObservableCollection<int> collection = new();
+
+            ( (ICollectionEx) collection ).Add( 5 );
+
+            Assert.Equal( new[] { 5 }, collection );
+        }
+
+        [Fact]
+        public void ICollectionEx_Add_InvalidObject()
+        {
+            ObservableCollection<int> collection = new();
+
+            Assert.Throws<InvalidCastException>( () => ( (ICollectionEx) collection ).Add( 5.0 ) );
+        }
+
+        [Fact]
         public void AddRange()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
@@ -111,6 +131,24 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Null( events[ 0 ].OldItems );
             Assert.Equal( 1, events[ 0 ].NewStartingIndex );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+        }
+
+        [Fact]
+        public void ICollectionEx_AddRange()
+        {
+            ObservableCollection<int> collection = new();
+
+            ( (ICollectionEx) collection ).AddRange( new[] { 5, 8, 2 } );
+
+            Assert.Equal( new[] { 5, 8, 2 }, collection );
+        }
+
+        [Fact]
+        public void ICollectionEx_AddRange_InvalidObject()
+        {
+            ObservableCollection<int> collection = new();
+
+            Assert.Throws<InvalidCastException>( () => ( (ICollectionEx) collection ).AddRange( new object[] { 5, 8.0, 2 } ) );
         }
 
         [Fact]
@@ -151,6 +189,26 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void ICollectionEx_Remove()
+        {
+            ObservableCollection<int> collection = new( new[] { 5, 8, 2 } );
+
+            ( (ICollectionEx) collection ).Remove( 8 );
+
+            Assert.Equal( new[] { 5, 2 }, collection );
+        }
+
+        [Fact]
+        public void ICollectionEx_Remove_InvalidObject()
+        {
+            ObservableCollection<int> collection = new( new[] { 5, 8, 2 } );
+
+            ( (ICollectionEx) collection ).Remove( 8.0 );
+
+            Assert.Equal( new[] { 5, 8, 2 }, collection );
+        }
+
+        [Fact]
         public void RemoveRange()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
@@ -178,6 +236,16 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Null( events[ 0 ].NewItems );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+        }
+
+        [Fact]
+        public void ICollectionEx_RemoveRange()
+        {
+            ObservableCollection<int> collection = new( new[] { 5, 8, 2, 9 } );
+
+            ( (ICollectionEx) collection ).RemoveRange( new[] { 8, 2 } );
+
+            Assert.Equal( new[] { 5, 9 }, collection );
         }
 
         [Fact]
@@ -258,6 +326,16 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.False( observableCollection.Contains( item2 ) );
 
             Assert.Empty( events );
+        }
+
+        [Fact]
+        public void ICollectionEx_Contains()
+        {
+            ObservableCollection<int> collection = new( new[] { 5, 8, 2 } );
+
+            Assert.True( ( (ICollectionEx) collection ).Contains( 8 ) );
+            Assert.False( ( (ICollectionEx) collection ).Contains( 9 ) );
+            Assert.False( ( (ICollectionEx) collection ).Contains( 5.0 ) );
         }
 
         [Fact]

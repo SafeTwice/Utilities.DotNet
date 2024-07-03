@@ -2,6 +2,7 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Utilities.DotNet.Collections;
@@ -81,13 +82,99 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
+        public void ICollectionEx_Add()
+        {
+            ListEx<int> list = new();
+
+            ( (ICollectionEx) list ).Add( 5 );
+
+            Assert.Equal( new[] { 5 }, list );
+        }
+
+        [Fact]
+        public void ICollectionEx_Add_InvalidObject()
+        {
+            ListEx<int> list = new();
+
+            Assert.Throws<InvalidCastException>( () => ( (ICollectionEx) list ).Add( 5.0 ) );
+        }
+
+        [Fact]
+        public void ICollectionEx_AddRange()
+        {
+            ListEx<int> list = new();
+
+            ( (ICollectionEx) list ).AddRange( new[] { 5, 8, 2 } );
+
+            Assert.Equal( new[] { 5, 8, 2 }, list );
+        }
+
+        [Fact]
+        public void ICollectionEx_AddRange_InvalidObject()
+        {
+            ListEx<int> list = new();
+
+            Assert.Throws<InvalidCastException>( () => ( (ICollectionEx) list ).AddRange( new object[] { 5, 8.0, 2 } ) );
+        }
+
+        [Fact]
+        public void ICollectionEx_Remove()
+        {
+            ListEx<int> list = new( new[] { 5, 8, 2 } );
+
+            ( (ICollectionEx) list ).Remove( 8 );
+
+            Assert.Equal( new[] { 5, 2 }, list );
+        }
+
+        [Fact]
+        public void ICollectionEx_Remove_InvalidObject()
+        {
+            ListEx<int> list = new( new[] { 5, 8, 2 } );
+
+            ( (ICollectionEx) list ).Remove( 8.0 );
+
+            Assert.Equal( new[] { 5, 8, 2 }, list );
+        }
+
+        [Fact]
         public void RemoveRange()
         {
-            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2, 9 } );
+            ListEx<int> list = new( new[] { 5, 8, 2, 9 } );
 
             list.RemoveRange( new[] { 8, 2 } );
 
             Assert.Equal( new[] { 5, 9 }, list );
+        }
+
+        [Fact]
+        public void ICollectionEx_RemoveRange()
+        {
+            ListEx<int> list = new( new[] { 5, 8, 2, 9 } );
+
+            ( (ICollectionEx) list ).RemoveRange( new[] { 8, 2 } );
+
+            Assert.Equal( new[] { 5, 9 }, list );
+        }
+
+        [Fact]
+        public void ICollectionEx_RemoveRange_InvalidObject()
+        {
+            ListEx<int> list = new( new[] { 5, 8, 2, 9 } );
+
+            ( (ICollectionEx) list ).RemoveRange( new object[] { 8, 2.0 } );
+
+            Assert.Equal( new[] { 5, 2, 9 }, list );
+        }
+
+        [Fact]
+        public void ICollectionEx_Contains()
+        {
+            ListEx<int> list = new( new[] { 5, 8, 2 } );
+
+            Assert.True( ( (ICollectionEx) list ).Contains( 8 ) );
+            Assert.False( ( (ICollectionEx) list ).Contains( 9 ) );
+            Assert.False( ( (ICollectionEx) list ).Contains( 5.0 ) );
         }
     }
 }

@@ -2,6 +2,8 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Utilities.DotNet.Collections
@@ -64,11 +66,64 @@ namespace Utilities.DotNet.Collections
 #endif
 
         /// <inheritdoc/>
+        void ICollectionEx.Add( object item )
+        {
+            if( item is T obj )
+            {
+                Add( obj );
+            }
+            else
+            {
+                throw new InvalidCastException();
+            }
+        }
+
+        /// <inheritdoc/>
+        void ICollectionEx.AddRange( IEnumerable collection )
+        {
+            foreach( var item in collection )
+            {
+                ( (ICollectionEx) this ).Add( item );
+            }
+        }
+
+        /// <inheritdoc/>
+        void ICollectionEx.Remove( object item )
+        {
+            if( item is T obj )
+            {
+                Remove( obj );
+            }
+        }
+
+        /// <inheritdoc/>
         public void RemoveRange( IEnumerable<T> collection )
         {
             foreach( var item in collection )
             {
                 Remove( item );
+            }
+        }
+
+        /// <inheritdoc/>
+        void ICollectionEx.RemoveRange( IEnumerable collection )
+        {
+            foreach( var item in collection )
+            {
+                ( (ICollectionEx) this ).Remove( item );
+            }
+        }
+
+        /// <inheritdoc/>
+        bool ICollectionEx.Contains( object item )
+        {
+            if( item is T obj )
+            {
+                return Contains( obj );
+            }
+            else
+            {
+                return false;
             }
         }
     }

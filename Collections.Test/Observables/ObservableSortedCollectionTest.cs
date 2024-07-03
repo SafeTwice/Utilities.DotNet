@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Utilities.DotNet.Collections;
 using Utilities.DotNet.Collections.Observables;
 using Xunit;
 
@@ -112,6 +113,72 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void ICollectionEx_Add()
+        {
+            ObservableSortedCollection<int> collection = new();
+
+            ( (ICollectionEx) collection ).Add( 5 );
+
+            Assert.Equal( new[] { 5 }, collection );
+        }
+
+        [Fact]
+        public void ICollectionEx_Add_InvalidObject()
+        {
+            ObservableSortedCollection<int> collection = new();
+
+            Assert.Throws<InvalidCastException>( () => ( (ICollectionEx) collection ).Add( 5.0 ) );
+        }
+
+        [Fact]
+        public void AddRange()
+        {
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            IObservableCollection<TestClass> observableCollection = new ObservableSortedCollection<TestClass>( new[] { item2 } );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { item2 }, observableCollection );
+
+            observableCollection.AddRange( new[] { item1, item3 } );
+
+            Assert.Equal( new[] { item1, item2, item3 }, observableCollection );
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
+            Assert.Equal( new[] { item1, item3 }, events[ 0 ].NewItems );
+            Assert.Null( events[ 0 ].OldItems );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+        }
+
+        [Fact]
+        public void ICollectionEx_AddRange()
+        {
+            ObservableSortedCollection<int> collection = new();
+
+            ( (ICollectionEx) collection ).AddRange( new[] { 5, 8, 2 } );
+
+            Assert.Equal( new[] { 2, 5, 8 }, collection );
+        }
+
+        [Fact]
+        public void ICollectionEx_AddRange_InvalidObject()
+        {
+            ObservableSortedCollection<int> collection = new();
+
+            Assert.Throws<InvalidCastException>( () => ( (ICollectionEx) collection ).AddRange( new object[] { 5, 8.0, 2 } ) );
+        }
+
+        [Fact]
         public void Remove()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
@@ -150,6 +217,26 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void ICollectionEx_Remove()
+        {
+            ObservableSortedCollection<int> collection = new( new[] { 5, 8, 2 } );
+
+            ( (ICollectionEx) collection ).Remove( 8 );
+
+            Assert.Equal( new[] { 2, 5 }, collection );
+        }
+
+        [Fact]
+        public void ICollectionEx_Remove_InvalidObject()
+        {
+            ObservableSortedCollection<int> collection = new( new[] { 5, 8, 2 } );
+
+            ( (ICollectionEx) collection ).Remove( 8.0 );
+
+            Assert.Equal( new[] { 2, 5, 8 }, collection );
+        }
+
+        [Fact]
         public void RemoveRange()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
@@ -177,6 +264,16 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Null( events[ 0 ].NewItems );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+        }
+
+        [Fact]
+        public void ICollectionEx_RemoveRange()
+        {
+            ObservableSortedCollection<int> collection = new( new[] { 5, 8, 2, 9 } );
+
+            ( (ICollectionEx) collection ).RemoveRange( new[] { 8, 2 } );
+
+            Assert.Equal( new[] { 5, 9 }, collection );
         }
 
         [Fact]
@@ -448,6 +545,16 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.False( observableCollection.Contains( 5 ) );
 
             Assert.Empty( events );
+        }
+
+        [Fact]
+        public void ICollectionEx_Contains()
+        {
+            ObservableSortedCollection<int> collection = new( new[] { 5, 8, 2 } );
+
+            Assert.True( ( (ICollectionEx) collection ).Contains( 8 ) );
+            Assert.False( ( (ICollectionEx) collection ).Contains( 9 ) );
+            Assert.False( ( (ICollectionEx) collection ).Contains( 5.0 ) );
         }
 
         [Fact]
