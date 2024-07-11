@@ -14,7 +14,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// Implements an observable collection of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the collection.</typeparam>
-    public class ObservableCollection<T> : IObservableCollection<T>
+    public class ObservableCollection<T> : IObservableCollection<T>, ICollectionEx
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES

@@ -22,11 +22,18 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var observableList = new ObservableSortedList<TestClass>();
 
             Assert.Equal( 0, observableList.Count );
-            Assert.False( ( (IList) observableList ).IsReadOnly );
+
             Assert.False( ( (IObservableList<TestClass>) observableList ).IsReadOnly );
-            Assert.False( ( (IObservableList<TestClass>) observableList ).IsFixedSize );
-            Assert.NotNull( ( (IObservableList<TestClass>) observableList ).SyncRoot );
-            Assert.False( ( (IObservableList<TestClass>) observableList ).IsSynchronized );
+
+            Assert.False( ( (IList) observableList ).IsReadOnly );
+            Assert.False( ( (IList) observableList ).IsFixedSize );
+            Assert.NotNull( ( (IList) observableList ).SyncRoot );
+            Assert.False( ( (IList) observableList ).IsSynchronized );
+
+            // The following tests are to ensure interface disambiguation.
+
+            Assert.Equal( 0, ( (IObservableList<TestClass>) observableList ).Count );
+            Assert.Equal( 0, ( (ICollectionEx<TestClass>) observableList ).Count );
         }
 
         [Fact]
@@ -35,11 +42,13 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var observableList = new ObservableSortedList<TestClass>( Comparer<TestClass>.Default );
 
             Assert.Equal( 0, observableList.Count );
-            Assert.False( ( (IList) observableList ).IsReadOnly );
+
             Assert.False( ( (IObservableList<TestClass>) observableList ).IsReadOnly );
-            Assert.False( ( (IObservableList<TestClass>) observableList ).IsFixedSize );
-            Assert.NotNull( ( (IObservableList<TestClass>) observableList ).SyncRoot );
-            Assert.False( ( (IObservableList<TestClass>) observableList ).IsSynchronized );
+
+            Assert.False( ( (IList) observableList ).IsReadOnly );
+            Assert.False( ( (IList) observableList ).IsFixedSize );
+            Assert.NotNull( ( (IList) observableList ).SyncRoot );
+            Assert.False( ( (IList) observableList ).IsSynchronized );
         }
 
         [Fact]
@@ -52,11 +61,14 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var observableList = new ObservableSortedList<TestClass>( new[] { item3, item1, item2 } );
 
             Assert.Equal( new[] { item1, item2, item3 }, observableList );
-            Assert.False( ( (IList) observableList ).IsReadOnly );
+            Assert.Equal( 3, observableList.Count );
+
             Assert.False( ( (IObservableList<TestClass>) observableList ).IsReadOnly );
-            Assert.False( ( (IObservableList<TestClass>) observableList ).IsFixedSize );
-            Assert.NotNull( ( (IObservableList<TestClass>) observableList ).SyncRoot );
-            Assert.False( ( (IObservableList<TestClass>) observableList ).IsSynchronized );
+
+            Assert.False( ( (IList) observableList ).IsReadOnly );
+            Assert.False( ( (IList) observableList ).IsFixedSize );
+            Assert.NotNull( ( (IList) observableList ).SyncRoot );
+            Assert.False( ( (IList) observableList ).IsSynchronized );
         }
 
         [Fact]
@@ -70,11 +82,14 @@ namespace Utilities.DotNet.Test.Collections.Observables
                 Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
 
             Assert.Equal( new[] { item2, item1, item3 }, observableList );
-            Assert.False( ( (IList) observableList ).IsReadOnly );
+            Assert.Equal( 3, observableList.Count );
+
             Assert.False( ( (IObservableList<TestClass>) observableList ).IsReadOnly );
-            Assert.False( ( (IObservableList<TestClass>) observableList ).IsFixedSize );
-            Assert.NotNull( ( (IObservableList<TestClass>) observableList ).SyncRoot );
-            Assert.False( ( (IObservableList<TestClass>) observableList ).IsSynchronized );
+
+            Assert.False( ( (IList) observableList ).IsReadOnly );
+            Assert.False( ( (IList) observableList ).IsFixedSize );
+            Assert.NotNull( ( (IList) observableList ).SyncRoot );
+            Assert.False( ( (IList) observableList ).IsSynchronized );
         }
 
         [Fact]

@@ -11,7 +11,7 @@ namespace Utilities.DotNet.Collections
     /// <summary>
     /// Extension of <see cref="List{T}"/> that implements <see cref="IListEx{T}"/>.
     /// </summary>
-    public class ListEx<T> : List<T>, IListEx<T>
+    public class ListEx<T> : List<T>, IListEx<T>, ICollectionEx
     {
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS

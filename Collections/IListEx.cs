@@ -11,14 +11,14 @@ namespace Utilities.DotNet.Collections
     /// Extension of the <see cref="IList{T}"/> interface that provides additional methods.
     /// </summary>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
-    public interface IListEx<T> : IList<T>, IList, ICollectionEx<T>, IReadOnlyListEx<T>
+    public interface IListEx<T> : IList<T>, ICollectionEx<T>, IReadOnlyListEx<T>
     {
         //===========================================================================
         //                                PROPERTIES
         //===========================================================================
 
         /// <inheritdoc cref="IList{T}.this[int]" />
-        new T this[ int index ] { get; set; } // Needed to disambiguate between IList<> and IList and avoid error CS0121
+        new T this[ int index ] { get; set; } // Needed to disambiguate between IList<> and IReadOnlyList<> and avoid error CS0121
 
         //===========================================================================
         //                                  METHODS

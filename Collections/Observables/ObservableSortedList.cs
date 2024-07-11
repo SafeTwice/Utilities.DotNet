@@ -14,7 +14,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// Implements an observable and sorted list of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
-    public class ObservableSortedList<T> : ObservableSortedCollection<T>, IObservableList<T>
+    public class ObservableSortedList<T> : ObservableSortedCollection<T>, IObservableList<T>, IList
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -47,12 +47,10 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
-        bool IObservableList<T>.IsReadOnly => false;
+        //bool IObservableList<T>.IsReadOnly => false;
 
-        /// <inheritdoc/>
         bool IList.IsReadOnly => false;
 
-        /// <inheritdoc/>
         bool IList.IsFixedSize => false;
 
         //===========================================================================

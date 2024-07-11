@@ -22,9 +22,10 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var observableCollection = new ObservableCollection<TestClass>();
 
             Assert.Equal( 0, observableCollection.Count );
-            Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsReadOnly );
-            Assert.NotNull( ( (IObservableCollection<TestClass>) observableCollection ).SyncRoot );
-            Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsSynchronized );
+
+            Assert.False( ( (ICollection<TestClass>) observableCollection ).IsReadOnly );
+
+            // The following tests are to ensure interface disambiguation.
 
             Assert.Equal( 0, ( (IObservableCollection<TestClass>) observableCollection ).Count );
             Assert.Equal( 0, ( (ICollectionEx<TestClass>) observableCollection ).Count );
@@ -41,9 +42,8 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             Assert.Equal( new[] { item1, item2, item3 }, observableCollection );
             Assert.Equal( 3, observableCollection.Count );
+
             Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsReadOnly );
-            Assert.NotNull( ( (IObservableCollection<TestClass>) observableCollection ).SyncRoot );
-            Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsSynchronized );
         }
 
         [Fact]

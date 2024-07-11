@@ -14,21 +14,5 @@ namespace Utilities.DotNet.Collections.Observables
     /// <typeparam name="T">The type of the items in the list.</typeparam>
     public interface IObservableList<T> : IListEx<T>, IObservableCollection<T>, IObservableReadOnlyList<T>
     {
-        //===========================================================================
-        //                                PROPERTIES
-        //===========================================================================
-
-        /// <inheritdoc cref="ICollection{T}.IsReadOnly" />
-        new bool IsReadOnly { get; } // Needed to disambiguate between ICollection<> and IList and avoid error CS0229
-
-        //===========================================================================
-        //                                  METHODS
-        //===========================================================================
-
-        /// <inheritdoc cref="IList{T}.RemoveAt(int)" />
-        new void RemoveAt( int index ); // Needed to disambiguate between IList<> and IList and avoid error CS0121
-
-        /// <inheritdoc cref="ICollection{T}.Clear()" />
-        new void Clear(); // Needed to disambiguate between ICollection<> and IList and avoid error CS0121
     }
 }

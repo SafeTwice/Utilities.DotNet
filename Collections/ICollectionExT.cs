@@ -9,21 +9,18 @@ namespace Utilities.DotNet.Collections
     /// <summary>
     /// Extension of the <see cref="ICollection{T}"/> interface that provides additional methods.
     /// </summary>
-    public interface ICollectionEx<T> : ICollection<T>, ICollectionEx, IReadOnlyCollectionEx<T>
+    public interface ICollectionEx<T> : ICollection<T>, IReadOnlyCollectionEx<T>
     {
         //===========================================================================
         //                                PROPERTIES
         //===========================================================================
 
         /// <inheritdoc cref="ICollection{T}.Count" />
-        new int Count { get; } // Needed to disambiguate between ICollection<> and ICollection and avoid error CS0229
+        new int Count { get; } // Needed to disambiguate between ICollection<> and IReadOnlyCollection<> and avoid error CS0229
 
         //===========================================================================
         //                                  METHODS
         //===========================================================================
-
-        /// <inheritdoc cref="ICollection{T}.Clear()" />
-        new void Clear(); // Needed to disambiguate between ICollection<> and ICollectionEx and avoid error CS0121
 
         /// <summary>
         /// Adds the items of the specified collection to the end of the collection.

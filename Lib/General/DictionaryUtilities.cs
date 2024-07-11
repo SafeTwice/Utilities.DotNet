@@ -23,7 +23,7 @@ namespace Utilities.DotNet
         /// <param name="dictionary">A dictionary.</param>
         /// <param name="key">Key to find the value for in <paramref name="dictionary"/>.</param>
         /// <param name="defaultValue">Value returned if no value is associated to <paramref name="key"/>.</param>
-        /// <returns>.</returns>
+        /// <returns>Value for the key if found; default value otherwise.</returns>
         public static TValue? GetValue<TKey, TValue>( this IDictionary<TKey, TValue> dictionary, TKey key, TValue? defaultValue = default( TValue ) )
         {
             TValue? value;

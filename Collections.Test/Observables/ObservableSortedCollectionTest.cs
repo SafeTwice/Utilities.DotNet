@@ -23,9 +23,13 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             Assert.Equal( 0, observableCollection.Count );
             Assert.Equal( Comparer<int>.Default, observableCollection.Comparer );
+
             Assert.False( ( (IObservableCollection<int>) observableCollection ).IsReadOnly );
-            Assert.NotNull( ( (IObservableCollection<int>) observableCollection ).SyncRoot );
-            Assert.False( ( (IObservableCollection<int>) observableCollection ).IsSynchronized );
+
+            // The following tests are to ensure interface disambiguation.
+
+            Assert.Equal( 0, ( (IObservableCollection<TestClass>) observableCollection ).Count );
+            Assert.Equal( 0, ( (ICollectionEx<TestClass>) observableCollection ).Count );
         }
 
         [Fact]
@@ -35,9 +39,8 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             Assert.Equal( 0, observableCollection.Count );
             Assert.Equal( Comparer<int>.Default, observableCollection.Comparer );
+
             Assert.False( ( (IObservableCollection<int>) observableCollection ).IsReadOnly );
-            Assert.NotNull( ( (IObservableCollection<int>) observableCollection ).SyncRoot );
-            Assert.False( ( (IObservableCollection<int>) observableCollection ).IsSynchronized );
         }
 
         [Fact]
@@ -48,9 +51,8 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Equal( new[] { 1, 2, 3, 4 }, observableCollection );
             Assert.Equal( 4, observableCollection.Count );
             Assert.Equal( Comparer<int>.Default, observableCollection.Comparer );
+
             Assert.False( ( (IObservableCollection<int>) observableCollection ).IsReadOnly );
-            Assert.NotNull( ( (IObservableCollection<int>) observableCollection ).SyncRoot );
-            Assert.False( ( (IObservableCollection<int>) observableCollection ).IsSynchronized );
         }
 
         [Fact]
@@ -64,9 +66,8 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Equal( new[] { 5, 4, 3, 1 }, observableCollection );
             Assert.Equal( 4, observableCollection.Count );
             Assert.Equal( comparer, observableCollection.Comparer );
+
             Assert.False( ( (IObservableCollection<int>) observableCollection ).IsReadOnly );
-            Assert.NotNull( ( (IObservableCollection<int>) observableCollection ).SyncRoot );
-            Assert.False( ( (IObservableCollection<int>) observableCollection ).IsSynchronized );
         }
 
         [Fact]
