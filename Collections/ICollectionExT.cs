@@ -23,15 +23,24 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <summary>
-        /// Adds the items of the specified collection to the end of the collection.
+        /// Adds an item to the collection.
         /// </summary>
-        /// <param name="collection">Collection whose items will be added to the end of the collection.</param>
-        void AddRange( IEnumerable<T> collection );
+        /// <param name="item">Item to be added to the collection.</param>
+        /// <returns><c>true</c> if the item could be added; <c>false</c> otherwise.</returns>
+        bool TryAdd( T item );
+
+        /// <summary>
+        /// Adds the items of the specified collection to the collection.
+        /// </summary>
+        /// <param name="collection">Collection whose items will be added to the collection.</param>
+        /// <returns><c>true</c> if all the items could be added; <c>false</c> otherwise.</returns>
+        bool AddRange( IEnumerable<T> collection );
 
         /// <summary>
         /// Removes the items of the specified collection from the collection.
         /// </summary>
         /// <param name="collection">Collection whose items will be removed from the collection.</param>
-        void RemoveRange( IEnumerable<T> collection );
+        /// <returns><c>true</c> if all the items were present and removed; <c>false</c> otherwise.</returns>
+        bool RemoveRange( IEnumerable<T> collection );
     }
 }

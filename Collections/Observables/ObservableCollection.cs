@@ -74,36 +74,57 @@ namespace Utilities.DotNet.Collections.Observables
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, initialIndex ) );
         }
 
-        /// <inheritdoc/>
-        void ICollectionEx.Add( object item )
+        bool ICollectionEx<T>.TryAdd( T item )
+        {
+            Add( item );
+            return true;
+        }
+
+        bool ICollectionEx.Add( object item )
         {
             if( item is T obj )
             {
                 Add( obj );
+                return true;
             }
             else
             {
-                throw new InvalidCastException();
+                return false;
             }
         }
 
         /// <inheritdoc/>
-        public void AddRange( IEnumerable<T> collection )
+        public bool AddRange( IEnumerable<T> collection )
         {
             var initialIndex = m_list.Count;
 
             m_list.AddRange( collection );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), initialIndex ) );
+
+            return true;
         }
 
-        /// <inheritdoc/>
-        void ICollectionEx.AddRange( IEnumerable collection )
+        bool ICollectionEx.AddRange( IEnumerable collection )
         {
+            bool result = true;
+            var itemsToAdd = new List<T>();
+            
             foreach( var item in collection )
             {
-                ( (ICollectionEx) this ).Add( item );
+                if( item is T obj )
+                {
+                    itemsToAdd.Add( obj );
+                }
+                else
+                {
+                    result = false;
+                }
             }
+
+            AddRange( itemsToAdd );
+
+            return result;
         }
 
         /// <inheritdoc/>
@@ -121,33 +142,59 @@ namespace Utilities.DotNet.Collections.Observables
             return true;
         }
 
-        /// <inheritdoc/>
-        void ICollectionEx.Remove( object item )
+        bool ICollectionEx.Remove( object item )
         {
             if( item is T obj )
             {
-                Remove( obj );
+                return Remove( obj );
+            }
+            else
+            {
+                return false;
             }
         }
 
         /// <inheritdoc/>
-        public void RemoveRange( IEnumerable<T> collection )
+        public bool RemoveRange( IEnumerable<T> collection )
         {
+            bool result = true;
+            var removedItems = new List<T>();
+
             foreach( var item in collection )
             {
-                m_list.Remove( item );
+                if( m_list.Remove( item ) )
+                {
+                   removedItems.Add( item );
+                }
+                else
+                {
+                    result = false;
+                }
             }
 
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, collection.ToList() ) );
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems ) );
+
+            return result;
         }
 
-        /// <inheritdoc/>
-        void ICollectionEx.RemoveRange( IEnumerable collection )
+        bool ICollectionEx.RemoveRange( IEnumerable collection )
         {
+            bool partialResult = true;
+            var itemsToRemove = new List<T>();
+
             foreach( var item in collection )
             {
-                ( (ICollectionEx) this ).Remove( item );
+                if( item is T obj )
+                {
+                    itemsToRemove.Add( obj );
+                }
+                else
+                {
+                    partialResult = false;
+                }
             }
+
+            return RemoveRange( itemsToRemove ) && partialResult;
         }
 
         /// <inheritdoc/>
@@ -169,7 +216,6 @@ namespace Utilities.DotNet.Collections.Observables
             return m_list.Contains( value );
         }
 
-        /// <inheritdoc/>
         bool ICollectionEx.Contains( object item )
         {
             if( item is T obj )

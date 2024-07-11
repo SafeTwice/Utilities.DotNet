@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Utilities.DotNet.Collections;
 using Utilities.DotNet.Collections.Observables;
@@ -22,6 +23,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var observableList = new ObservableSortedList<TestClass>();
 
             Assert.Equal( 0, observableList.Count );
+            Assert.Equal( Comparer<TestClass>.Default, observableList.Comparer );
 
             Assert.False( ( (IObservableList<TestClass>) observableList ).IsReadOnly );
 
@@ -39,11 +41,14 @@ namespace Utilities.DotNet.Test.Collections.Observables
         [Fact]
         public void Constructor_Comparer()
         {
-            var observableList = new ObservableSortedList<TestClass>( Comparer<TestClass>.Default );
+            var customComparer = Comparer<TestClass>.Create( ( x, y ) => 0 );
+
+            var observableList = new ObservableSortedList<TestClass>( customComparer );
 
             Assert.Equal( 0, observableList.Count );
 
             Assert.False( ( (IObservableList<TestClass>) observableList ).IsReadOnly );
+            Assert.Same( customComparer, observableList.Comparer );
 
             Assert.False( ( (IList) observableList ).IsReadOnly );
             Assert.False( ( (IList) observableList ).IsFixedSize );
@@ -62,6 +67,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             Assert.Equal( new[] { item1, item2, item3 }, observableList );
             Assert.Equal( 3, observableList.Count );
+            Assert.Equal( Comparer<TestClass>.Default, observableList.Comparer );
 
             Assert.False( ( (IObservableList<TestClass>) observableList ).IsReadOnly );
 
@@ -78,11 +84,13 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item2 = new TestClass( "Item2", 5 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var observableList = new ObservableSortedList<TestClass>( new[] { item3, item1, item2 },
-                Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) ) );
+            var customComparer = Comparer<TestClass>.Create( ( x, y ) => Comparer<int>.Default.Compare( x.Value, y.Value ) );
+
+            var observableList = new ObservableSortedList<TestClass>( new[] { item3, item1, item2 }, customComparer );
 
             Assert.Equal( new[] { item2, item1, item3 }, observableList );
             Assert.Equal( 3, observableList.Count );
+            Assert.Same( customComparer, observableList.Comparer );
 
             Assert.False( ( (IObservableList<TestClass>) observableList ).IsReadOnly );
 

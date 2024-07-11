@@ -45,6 +45,12 @@ namespace Utilities.DotNet.Collections
         //                            PUBLIC METHODS
         //===========================================================================
 
+        bool ICollectionEx<T>.TryAdd( T item )
+        {
+            Add( item );
+            return true;
+        }
+
         /// <inheritdoc/>
         public new IListEx<T> GetRange( int index, int count )
         {
@@ -71,49 +77,93 @@ namespace Utilities.DotNet.Collections
             return GetRange( start, length );
         }
 
-        void ICollectionEx.Add( object item )
+        bool ICollectionEx.Add( object item )
         {
             if( item is T obj )
             {
                 Add( obj );
+                return true;
             }
             else
             {
-                throw new InvalidCastException();
+                return false;
             }
         }
 
-        void ICollectionEx.AddRange( IEnumerable collection )
+        bool ICollectionEx<T>.AddRange( IEnumerable<T> collection )
         {
+            base.AddRange( collection );
+            return true;
+        }
+
+        bool ICollectionEx.AddRange( IEnumerable collection )
+        {
+            bool result = true;
+            var itemsToAdd = new List<T>();
+
             foreach( var item in collection )
             {
-                ( (ICollectionEx) this ).Add( item );
+                if( item is T obj )
+                {
+                    itemsToAdd.Add( obj );
+                }
+                else
+                {
+                    result = false;
+                }
             }
+
+            AddRange( itemsToAdd );
+
+            return result;
         }
 
-        void ICollectionEx.Remove( object item )
+        bool ICollectionEx.Remove( object item )
         {
             if( item is T obj )
             {
-                Remove( obj );
+                return Remove( obj );
+            }
+            else
+            {
+                return false;
             }
         }
 
         /// <inheritdoc/>
-        public void RemoveRange( IEnumerable<T> collection )
+        public bool RemoveRange( IEnumerable<T> collection )
         {
+            var result = true;
+            
             foreach( var item in collection )
             {
-                Remove( item );
+                if( !Remove( item ) )
+                {
+                    result = false;
+                }
             }
+
+            return result;
         }
 
-        void ICollectionEx.RemoveRange( IEnumerable collection )
+        bool ICollectionEx.RemoveRange( IEnumerable collection )
         {
+            bool partialResult = true;
+            var itemsToRemove = new List<T>();
+
             foreach( var item in collection )
             {
-                ( (ICollectionEx) this ).Remove( item );
+                if( item is T obj )
+                {
+                    itemsToRemove.Add( obj );
+                }
+                else
+                {
+                    partialResult = false;
+                }
             }
+
+            return RemoveRange( itemsToRemove ) && partialResult;
         }
 
         bool ICollectionEx.Contains( object item )
