@@ -196,20 +196,14 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public bool Remove( T item )
         {
-            int index = m_list.IndexOf( item );
+            int index = RemoveItem( item );
             if( index < 0 )
             {
                 return false;
             }
 
-            if( item is INotifyPropertyChanged notifyPropertyChangedItem )
-            {
-                notifyPropertyChangedItem.PropertyChanged -= Item_PropertyChangedEvent;
-            }
-
-            m_list.RemoveAt( index );
-
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
+
             return true;
         }
 
@@ -233,7 +227,7 @@ namespace Utilities.DotNet.Collections.Observables
 
             foreach( var item in collection )
             {
-                if( m_list.Remove( item ) )
+                if( RemoveItem( item ) >= 0 )
                 {
                     removedItems.Add( item );
                 }
@@ -353,7 +347,7 @@ namespace Utilities.DotNet.Collections.Observables
             if( needsReorder )
             {
                 m_list.RemoveAt( oldIndex );
-                int newIndex = AddItem( item );
+                int newIndex = AddItemNoAttach( item );
 
                 if( oldIndex != newIndex )
                 {
@@ -368,14 +362,7 @@ namespace Utilities.DotNet.Collections.Observables
 
         private protected int AddItem( T item )
         {
-            var insertionIndex = m_list.BinarySearch( item, Comparer );
-
-            if( insertionIndex < 0 )
-            {
-                insertionIndex = ~insertionIndex;
-            }
-
-            m_list.Insert( insertionIndex, item );
+            var insertionIndex = AddItemNoAttach( item );
 
             if( item is INotifyPropertyChanged notifyPropertyChangedItem )
             {
@@ -383,6 +370,23 @@ namespace Utilities.DotNet.Collections.Observables
             }
 
             return insertionIndex;
+        }
+
+        private protected int RemoveItem( T item )
+        {
+            int index = m_list.IndexOf( item );
+
+            if( index >= 0 )
+            {
+                if( item is INotifyPropertyChanged notifyPropertyChangedItem )
+                {
+                    notifyPropertyChangedItem.PropertyChanged -= Item_PropertyChangedEvent;
+                }
+
+                m_list.RemoveAt( index );
+            }
+
+            return index;
         }
 
         private protected void Item_PropertyChangedEvent( object? sender, PropertyChangedEventArgs e )
@@ -398,6 +402,20 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
         //                            PRIVATE METHODS
         //===========================================================================
+
+        private int AddItemNoAttach( T item )
+        {
+            var insertionIndex = m_list.BinarySearch( item, Comparer );
+
+            if( insertionIndex < 0 )
+            {
+                insertionIndex = ~insertionIndex;
+            }
+
+            m_list.Insert( insertionIndex, item );
+
+            return insertionIndex;
+        }
 
         private void DetachItems()
         {
