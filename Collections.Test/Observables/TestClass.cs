@@ -75,6 +75,10 @@ namespace Utilities.DotNet.Test.Collections.Observables
             }
         }
 
+        public override bool Equals( object? other ) => ( CompareTo( other ) == 0 );
+
+        public override int GetHashCode() => m_name.GetHashCode();
+
         //===========================================================================
         //                            PRIVATE METHODS
         //===========================================================================
