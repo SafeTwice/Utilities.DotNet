@@ -101,8 +101,11 @@ namespace Utilities.DotNet.Collections.Observables
         {
             if( value is T obj )
             {
-                Add( obj );
-                return IndexOf( obj );
+                int index = AddItem( obj );
+
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, obj, index ) );
+
+                return index;
             }
             else
             {
