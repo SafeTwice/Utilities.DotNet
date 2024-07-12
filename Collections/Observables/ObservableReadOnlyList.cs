@@ -23,7 +23,7 @@ namespace Utilities.DotNet.Collections.Observables
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ObservableReadOnlyList{T}"/> class that is a
-        /// read-only wrapper around the specified collection.
+        /// read-only wrapper around the specified list.
         /// </summary>
         /// <param name="list">List to wrap.</param>
         public ObservableReadOnlyList( IObservableReadOnlyList<T> list ) : base( list )
