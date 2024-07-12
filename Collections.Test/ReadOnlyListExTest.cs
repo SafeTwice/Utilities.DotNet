@@ -11,14 +11,14 @@ using Xunit;
 
 namespace Utilities.DotNet.Test.Collections
 {
-    public class ReadOnlyListTest
+    public class ReadOnlyListExTest
     {
         [Fact]
         public void Constructor_Default()
         {
             var baseList = new ListEx<int>();
 
-            IReadOnlyList<int> testedList = new ReadOnlyList<int>( baseList );
+            IReadOnlyList<int> testedList = new ReadOnlyListEx<int>( baseList );
 
             Assert.Equal( 0, testedList.Count );
         }
@@ -28,7 +28,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var baseList = new ListEx<int>( new[] { 8, 5, 3, 2 } );
 
-            IReadOnlyList<int> testedList = new ReadOnlyList<int>( baseList );
+            IReadOnlyList<int> testedList = new ReadOnlyListEx<int>( baseList );
 
             Assert.Equal( new[] { 8, 5, 3, 2 }, testedList );
             Assert.Equal( 4, testedList.Count );
@@ -39,7 +39,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var baseList = new ListEx<int>( new[] { 8, 5, 3, 2 } );
 
-            IReadOnlyListEx<int> testedList = new ReadOnlyList<int>( baseList );
+            IReadOnlyListEx<int> testedList = new ReadOnlyListEx<int>( baseList );
 
             var range1 = testedList.GetRange( 1, 2 );
 
@@ -55,7 +55,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var baseList = new ListEx<int>( new[] { 8, 5, 3, 2 } );
 
-            IReadOnlyListEx<int> testedList = new ReadOnlyList<int>( baseList );
+            IReadOnlyListEx<int> testedList = new ReadOnlyListEx<int>( baseList );
 
             var range1 = testedList.Slice( 1, 2 );
 
@@ -71,7 +71,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             IListEx<int> baseList = new ListEx<int>( new[] { 8, 2, 5, 3, 2, 2, 8 } );
 
-            IReadOnlyListEx<int> testedList = new ReadOnlyList<int>( baseList );
+            IReadOnlyListEx<int> testedList = new ReadOnlyListEx<int>( baseList );
 
             Assert.Equal( -1, testedList.IndexOf( 99 ) );
             Assert.Equal( 0, testedList.IndexOf( 8 ) );
@@ -85,7 +85,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             IListEx<int> baseList = new ListEx<int>( new[] { 8, 2, 5, 3, 2, 2, 8 } );
 
-            IReadOnlyListEx<int> testedList = new ReadOnlyList<int>( baseList );
+            IReadOnlyListEx<int> testedList = new ReadOnlyListEx<int>( baseList );
 
             Assert.Equal( -1, testedList.LastIndexOf( 9 ) );
             Assert.Equal( 5, testedList.LastIndexOf( 2 ) );
@@ -99,7 +99,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             IListEx<int> baseList = new ListEx<int>( new[] { 8, 5, 3, 2 } );
 
-            IReadOnlyList<int> testedList = new ReadOnlyList<int>( baseList );
+            IReadOnlyList<int> testedList = new ReadOnlyListEx<int>( baseList );
 
             Assert.Equal( 8, testedList[ 0 ] );
             Assert.Equal( 5, testedList[ 1 ] );
@@ -111,7 +111,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             IListEx<int> baseList = new ListEx<int>( new[] { 8, 5, 3, 2 } );
 
-            IReadOnlyList<int> testedList = new ReadOnlyList<int>( baseList );
+            IReadOnlyList<int> testedList = new ReadOnlyListEx<int>( baseList );
 
             Assert.Throws<ArgumentOutOfRangeException>( () => testedList[ -654 ] );
             Assert.Throws<ArgumentOutOfRangeException>( () => testedList[ -1 ] );

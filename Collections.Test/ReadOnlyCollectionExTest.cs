@@ -11,14 +11,14 @@ using Xunit;
 
 namespace Utilities.DotNet.Test.Collections
 {
-    public class ReadOnlyCollectionTest
+    public class ReadOnlyCollectionExTest
     {
         [Fact]
         public void Constructor_Default()
         {
             var baseCollection = new ListEx<int>();
 
-            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollection<int>( baseCollection );
+            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollectionEx<int>( baseCollection );
 
             Assert.Equal( 0, testedCollection.Count );
         }
@@ -28,7 +28,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var baseCollection = new ListEx<int>( new[] { 1, 3, 2, 4 } );
 
-            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollection<int>( baseCollection );
+            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollectionEx<int>( baseCollection );
 
             Assert.Equal( new[] { 1, 3, 2, 4 }, testedCollection );
             Assert.Equal( 4, testedCollection.Count );
@@ -39,7 +39,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var baseCollection = new ListEx<int>( new[] { 1, 3, 2, 4 } );
 
-            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollection<int>( baseCollection );
+            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollectionEx<int>( baseCollection );
 
             Assert.Equal( new[] { 1, 3, 2, 4 }, testedCollection );
 
@@ -53,7 +53,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var baseCollection = new ListEx<int>( new[] { 1, 3, 2, 4 } );
 
-            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollection<int>( baseCollection );
+            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollectionEx<int>( baseCollection );
 
             Assert.Equal( new[] { 1, 3, 2, 4 }, testedCollection );
 
@@ -71,7 +71,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var baseCollection = new ListEx<int>( new[] { 1, 3, 2, 4 } );
 
-            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollection<int>( baseCollection );
+            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollectionEx<int>( baseCollection );
 
             Assert.Equal( new[] { 1, 3, 2, 4 }, testedCollection );
 
@@ -85,7 +85,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             IListEx<int> baseCollection = new ListEx<int>( new[] { 1, 3, 2, 4 } );
 
-            IReadOnlyCollectionEx<int> testedCollection = new ReadOnlyCollection<int>( baseCollection );
+            IReadOnlyCollectionEx<int> testedCollection = new ReadOnlyCollectionEx<int>( baseCollection );
 
             Assert.True( testedCollection.Contains( 1 ) );
             Assert.False( testedCollection.Contains( 5 ) );
@@ -96,7 +96,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             IListEx<int> baseCollection = new ListEx<int>( new[] { 6, 9 } );
 
-            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollection<int>( baseCollection );
+            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollectionEx<int>( baseCollection );
 
             var enumerator = testedCollection.GetEnumerator();
 
@@ -114,7 +114,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             var baseCollection = new ListEx<int>( new[] { 6, 9 } );
 
-            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollection<int>( baseCollection );
+            IReadOnlyCollection<int> testedCollection = new ReadOnlyCollectionEx<int>( baseCollection );
 
             IEnumerable enumerable = testedCollection;
 

@@ -10,7 +10,7 @@ namespace Utilities.DotNet.Collections
     /// Implements a read-only set of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the set.</typeparam>
-    public class ReadOnlySetEx<T> : ReadOnlyCollection<T>, IReadOnlySetEx<T>
+    public class ReadOnlySetEx<T> : ReadOnlyCollectionEx<T>, IReadOnlySetEx<T>
     {
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS

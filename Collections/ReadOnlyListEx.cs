@@ -8,7 +8,7 @@ namespace Utilities.DotNet.Collections
     /// Implements a read-only list of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
-    public class ReadOnlyList<T> : ReadOnlyCollection<T>, IReadOnlyListEx<T>
+    public class ReadOnlyListEx<T> : ReadOnlyCollectionEx<T>, IReadOnlyListEx<T>
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -25,7 +25,7 @@ namespace Utilities.DotNet.Collections
         /// Initializes a new instance of the read-only list.
         /// </summary>
         /// <param name="list">List to wrap.</param>
-        public ReadOnlyList( IReadOnlyListEx<T> list ) : base( list )
+        public ReadOnlyListEx( IReadOnlyListEx<T> list ) : base( list )
         {
         }
 

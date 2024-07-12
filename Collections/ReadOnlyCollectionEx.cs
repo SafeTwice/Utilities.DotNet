@@ -11,7 +11,7 @@ namespace Utilities.DotNet.Collections
     /// Implements a read-only collection of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the collection.</typeparam>
-    public class ReadOnlyCollection<T> : IReadOnlyCollectionEx<T>
+    public class ReadOnlyCollectionEx<T> : IReadOnlyCollectionEx<T>
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -28,7 +28,7 @@ namespace Utilities.DotNet.Collections
         /// Initializes a new instance of the read-only collection.
         /// </summary>
         /// <param name="collection">Collection to wrap.</param>
-        public ReadOnlyCollection( IReadOnlyCollectionEx<T> collection )
+        public ReadOnlyCollectionEx( IReadOnlyCollectionEx<T> collection )
         {
             m_collection = collection;
         }
