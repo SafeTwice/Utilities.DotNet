@@ -11,7 +11,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// added, removed, moved or replaced, or when the whole set is cleared.
     /// </summary>
     /// <typeparam name="T">The type of the items in the set.</typeparam>
-    public interface IObservableSet<T> : ISet<T>, IObservableCollection<T>
+    public interface IObservableSet<T> : ISet<T>, IObservableCollection<T>, IObservableReadOnlySet<T>
     {
         /// <inheritdoc cref="ISet{T}.Add(T)"/>
         new bool Add( T item ); // Needed to disambiguate between ISet<> and ICollectionEx<> and avoid error CS0121

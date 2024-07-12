@@ -1196,7 +1196,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void SetComparisions()
+        public void SetComparisons()
         {
             // Arrange
 
@@ -1233,6 +1233,62 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             Assert.True( observableSet.SetEquals( new[] { 8, 23, 2 } ) );
             Assert.False( observableSet.SetEquals( new[] { 8, 23, 1 } ) );
+
+            // Assert unmodified state
+
+            Assert.Equal( new[] { 2, 8, 23 }, observableSet );
+
+            // Assert events
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void IReadOnlySetEx_SetComparisons()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableSet<int> observableSet = new ObservableSortedSet<int>( new[] { 8, 2, 23 } );
+
+            observableSet.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableSet, obj );
+                events.Add( args );
+            };
+
+            var readonlySet = (IReadOnlySetEx<int>) observableSet;
+
+            Assert.Equal( new[] { 2, 8, 23 }, readonlySet );
+
+            // Act & Assert
+
+            Assert.True( readonlySet.IsSubsetOf( new object[] { 23, 2, 8, 55, 12.0 } ) );
+            Assert.False( readonlySet.IsSubsetOf( new object[] { 23, 2.0, 8, 55, 12 } ) );
+            Assert.False( readonlySet.IsSubsetOf( new object[] { 22, 2, 8, 55, 12 } ) );
+
+            Assert.True( readonlySet.IsProperSubsetOf( new object[] { 23, 2, 8, 55, 12.0 } ) );
+            Assert.False( readonlySet.IsProperSubsetOf( new object[] { 23, 2.0, 8, 55, 12 } ) );
+            Assert.False( readonlySet.IsProperSubsetOf( new object[] { 22, 2, 8, 12.0 } ) );
+            Assert.False( readonlySet.IsProperSubsetOf( new object[] { 23, 2, 8 } ) );
+
+            Assert.True( readonlySet.IsSupersetOf( new object[] { 8, 23 } ) );
+            Assert.False( readonlySet.IsSupersetOf( new object[] { 8, 23.0 } ) );
+            Assert.False( readonlySet.IsSupersetOf( new object[] { 8, 23, 1 } ) );
+
+            Assert.True( readonlySet.IsProperSupersetOf( new object[] { 8, 23 } ) );
+            Assert.False( readonlySet.IsProperSupersetOf( new object[] { 8.0, 23 } ) );
+            Assert.False( readonlySet.IsProperSupersetOf( new object[] { 8, 23, 1 } ) );
+            Assert.False( readonlySet.IsProperSupersetOf( new object[] { 8, 23, 2 } ) );
+
+            Assert.True( readonlySet.Overlaps( new object[] { 12, 2, 55 } ) );
+            Assert.False( readonlySet.Overlaps( new object[] { 12, 2.0, 55 } ) );
+            Assert.False( readonlySet.Overlaps( new object[] { 12, 1, 55 } ) );
+
+            Assert.True( readonlySet.SetEquals( new object[] { 8, 23, 2 } ) );
+            Assert.False( readonlySet.SetEquals( new object[] { 8, 23.0, 2 } ) );
+            Assert.False( readonlySet.SetEquals( new object[] { 8, 23, 1 } ) );
 
             // Assert unmodified state
 

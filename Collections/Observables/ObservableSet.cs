@@ -360,6 +360,46 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public bool SetEquals( IEnumerable<T> other ) => m_set.SetEquals( other );
 
+        bool IReadOnlySetEx<T>.IsSubsetOf( IEnumerable<object> other ) => IsSubsetOf( other.OfType<T>() );
+
+        bool IReadOnlySetEx<T>.IsSupersetOf( IEnumerable<object> other )
+        {
+            try
+            {
+                return IsSupersetOf( other.Cast<T>() );
+            }
+            catch( InvalidCastException )
+            {
+                return false;
+            }
+        }
+        bool IReadOnlySetEx<T>.IsProperSubsetOf( IEnumerable<object> other ) => IsProperSubsetOf( other.OfType<T>() );
+
+        bool IReadOnlySetEx<T>.IsProperSupersetOf( IEnumerable<object> other )
+        {
+            try
+            {
+                return IsProperSupersetOf( other.Cast<T>() );
+            }
+            catch( InvalidCastException )
+            {
+                return false;
+            }
+        }
+        bool IReadOnlySetEx<T>.Overlaps( IEnumerable<object> other ) => Overlaps( other.OfType<T>() );
+
+        bool IReadOnlySetEx<T>.SetEquals( IEnumerable<object> other )
+        {
+            try
+            {
+                return SetEquals( other.Cast<T>() );
+            }
+            catch( InvalidCastException )
+            {
+                return false;
+            }
+        }
+
         //===========================================================================
         //                            PROTECTED METHODS
         //===========================================================================

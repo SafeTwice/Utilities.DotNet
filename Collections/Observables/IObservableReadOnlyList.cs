@@ -5,14 +5,14 @@
 namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
-    /// Represents a read-only view of a collection of objects that provides notifications when items are added or removed,
-    /// or when the whole collection is cleared.
+    /// Represents a read-only view of a list of objects that provides notifications when items are added or removed,
+    /// or when the whole list is cleared.
     /// </summary>
     /// <remarks>
-    /// This interface does not provide methods to modify the collection, but this does not mean that the collection is immutable,
-    /// the collection can still be modified by other means.
+    /// This interface does not provide methods to modify the list, but this does not mean that the list is immutable,
+    /// the list can still be modified by other means.
     /// </remarks>
-    /// <typeparam name="T">The type of the items in the collection.</typeparam>
+    /// <typeparam name="T">The type of the items in the list.</typeparam>
     public interface IObservableReadOnlyList<out T> : IObservableReadOnlyCollection<T>, IReadOnlyListEx<T>
     {
         //===========================================================================
