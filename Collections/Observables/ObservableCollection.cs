@@ -65,19 +65,20 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         /// <inheritdoc/>
-        public void Add( T item )
+        public bool Add( T item )
         {
             var initialIndex = m_list.Count;
 
             m_list.Add( item );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, initialIndex ) );
+
+            return true;
         }
 
-        bool ICollectionEx<T>.TryAdd( T item )
+        void ICollection<T>.Add( T item )
         {
             Add( item );
-            return true;
         }
 
         bool ICollectionEx.Add( object item )

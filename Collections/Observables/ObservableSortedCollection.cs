@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace Utilities.DotNet.Collections.Observables
 {
@@ -132,25 +131,34 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         /// <inheritdoc/>
-        public void Add( T item )
+        public bool Add( T item )
         {
             int index = AddItem( item );
 
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+            if( index >= 0 )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        bool ICollectionEx<T>.TryAdd( T item )
+        void ICollection<T>.Add( T item )
         {
-            Add( item );
-            return true;
+            if( !Add( item ) )
+            {
+                throw new InvalidOperationException();
+            }
         }
 
         bool ICollectionEx.Add( object item )
         {
             if( item is T obj )
             {
-                Add( obj );
-                return true;
+                return Add( obj );
             }
             else
             {
@@ -161,14 +169,27 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public bool AddRange( IEnumerable<T> collection )
         {
+            var result = true;
+            var addedItems = new List<T>();
+
             foreach( var item in collection )
             {
-                AddItem( item );
+                if( AddItem( item ) >= 0 )
+                {
+                    addedItems.Add( item );
+                }
+                else
+                {
+                    result = false;
+                }
             }
 
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList() ) );
+            if( addedItems.Count > 0 )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, addedItems ) );
+            }
 
-            return true;
+            return result;
         }
 
         bool ICollectionEx.AddRange( IEnumerable collection )
@@ -188,9 +209,7 @@ namespace Utilities.DotNet.Collections.Observables
                 }
             }
 
-            AddRange( itemsToAdd );
-
-            return result;
+            return AddRange( itemsToAdd ) && result;
         }
 
         /// <inheritdoc/>
@@ -278,19 +297,16 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
-        public bool Contains( T value )
-        {
-            return m_list.Contains( value );
-        }
+        public bool Contains( T value ) => ContainsItem( value );
 
         bool ICollectionEx.Contains( object item )
         {
-            return ( item is T obj ) && Contains( obj );
+            return ( item is T obj ) && ContainsItem( obj );
         }
 
         bool IReadOnlyCollectionEx<T>.Contains( object item )
         {
-            return ( item is T obj ) && Contains( obj );
+            return ( item is T obj ) && ContainsItem( obj );
         }
 
         /// <inheritdoc/>
@@ -362,6 +378,11 @@ namespace Utilities.DotNet.Collections.Observables
 
         private protected int AddItem( T item )
         {
+            if( !CanAddItem( item  ) )
+            {
+                return -1;
+            }
+
             var insertionIndex = AddItemNoAttach( item );
 
             if( item is INotifyPropertyChanged notifyPropertyChangedItem )
@@ -397,6 +418,16 @@ namespace Utilities.DotNet.Collections.Observables
         private protected void NotifyCollectionChanged( NotifyCollectionChangedEventArgs e )
         {
             CollectionChanged?.Invoke( this, e );
+        }
+
+        private protected virtual bool ContainsItem( T item )
+        {
+            return m_list.Contains( item );
+        }
+
+        private protected virtual bool CanAddItem( T item )
+        {
+            return true;
         }
 
         //===========================================================================

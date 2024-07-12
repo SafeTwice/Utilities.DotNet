@@ -45,36 +45,11 @@ namespace Utilities.DotNet.Collections
         //                            PUBLIC METHODS
         //===========================================================================
 
-        bool ICollectionEx<T>.TryAdd( T item )
+        /// <inheritdoc/>
+        public new bool Add( T item )
         {
-            Add( item );
+            base.Add( item );
             return true;
-        }
-
-        /// <inheritdoc/>
-        public new IListEx<T> GetRange( int index, int count )
-        {
-            return new ListEx<T>( base.GetRange( index, count ) );
-        }
-
-        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count )
-        {
-            return GetRange( index, count );
-        }
-
-        /// <inheritdoc/>
-#if NET8_0_OR_GREATER
-        public new IListEx<T> Slice( int start, int length )
-#else
-        public IListEx<T> Slice( int start, int length )
-#endif
-        {
-            return GetRange( start, length );
-        }
-
-        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length )
-        {
-            return GetRange( start, length );
         }
 
         bool ICollectionEx.Add( object item )
@@ -164,6 +139,32 @@ namespace Utilities.DotNet.Collections
             }
 
             return RemoveRange( itemsToRemove ) && partialResult;
+        }
+
+        /// <inheritdoc/>
+        public new IListEx<T> GetRange( int index, int count )
+        {
+            return new ListEx<T>( base.GetRange( index, count ) );
+        }
+
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count )
+        {
+            return GetRange( index, count );
+        }
+
+        /// <inheritdoc/>
+#if NET8_0_OR_GREATER
+        public new IListEx<T> Slice( int start, int length )
+#else
+        public IListEx<T> Slice( int start, int length )
+#endif
+        {
+            return GetRange( start, length );
+        }
+
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length )
+        {
+            return GetRange( start, length );
         }
 
         bool ICollectionEx.Contains( object item )

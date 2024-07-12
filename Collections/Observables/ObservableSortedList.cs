@@ -13,6 +13,20 @@ namespace Utilities.DotNet.Collections.Observables
     /// <summary>
     /// Implements an observable and sorted list of items.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A comparer implementation is required to sort and to perform comparisons.
+    /// The default comparer (<see cref="Comparer{T}.Default"/>) checks whether the list items type <typeparamref name="T"/>
+    /// implements <see cref="IComparable{T}"/> or <see cref="IComparable"/> and uses that implementation, if available.
+    /// If <typeparamref name="T"/> does not implement either interface, a <see cref="IComparer{T}"/> instance must be passed
+    /// in a constructor overload that accepts a comparer parameter.
+    /// </para>
+    /// <para>
+    /// If the list items type <typeparamref name="T"/> implements <see cref="INotifyPropertyChanged"/>, the list will be
+    /// automatically re-sorted when an item changes. Otherwise, the <see cref="ObservableSortedCollection{T}.UpdateSortOrder"/>
+    /// method must be called each time that a list item changes.
+    /// </para>
+    /// </remarks>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
     public class ObservableSortedList<T> : ObservableSortedCollection<T>, IObservableList<T>, IList
     {

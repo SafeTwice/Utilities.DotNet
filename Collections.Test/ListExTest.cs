@@ -70,83 +70,7 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void GetRange()
-        {
-            // Arrange
-
-            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
-
-            // Act
-
-            var range1 = list.GetRange( 1, 2 );
-            var range2 = list.GetRange( 0, 1 );
-
-            // Assert
-
-            Assert.Equal( new[] { 8, 2 }, range1 );
-            Assert.Equal( new[] { 5 }, range2 );
-        }
-
-        [Fact]
-        public void IReadOnlyCollectionEx_GetRange()
-        {
-            // Arrange
-
-            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
-
-            var collection = ( (IReadOnlyListEx<int>) list );
-
-            // Act
-
-            var range1 = collection.GetRange( 1, 2 );
-            var range2 = collection.GetRange( 0, 1 );
-
-            // Assert
-
-            Assert.Equal( new[] { 8, 2 }, range1 );
-            Assert.Equal( new[] { 5 }, range2 );
-        }
-
-        [Fact]
-        public void Slice()
-        {
-            // Arrange
-
-            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
-
-            // Act
-
-            var range1 = list.Slice( 1, 2 );
-            var range2 = list.Slice( 0, 1 );
-
-            // Assert
-
-            Assert.Equal( new[] { 8, 2 }, range1 );
-            Assert.Equal( new[] { 5 }, range2 );
-        }
-
-        [Fact]
-        public void IReadOnlyCollectionEx_Slice()
-        {
-            // Arrange
-
-            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
-
-            var collection = ( (IReadOnlyListEx<int>) list );
-
-            // Act
-
-            var range1 = collection.Slice( 1, 2 );
-            var range2 = collection.Slice( 0, 1 );
-
-            // Assert
-
-            Assert.Equal( new[] { 8, 2 }, range1 );
-            Assert.Equal( new[] { 5 }, range2 );
-        }
-
-        [Fact]
-        public void ICollectionExT_TryAdd()
+        public void Add()
         {
             // Arrange
 
@@ -154,11 +78,27 @@ namespace Utilities.DotNet.Test.Collections
 
             // Act
 
-            var result = ( (ICollectionEx<int>) list ).TryAdd( 5 );
+            var result = list.Add( 5 );
 
             // Assert
 
             Assert.True( result );
+            Assert.Equal( new[] { 5 }, list );
+        }
+
+        [Fact]
+        public void ICollectionT_Add()
+        {
+            // Arrange
+
+            ListEx<int> list = new();
+
+            // Act
+
+            ( (ICollection<int>) list ).Add( 5 );
+
+            // Assert
+
             Assert.Equal( new[] { 5 }, list );
         }
 
@@ -347,6 +287,82 @@ namespace Utilities.DotNet.Test.Collections
 
             Assert.False( result );
             Assert.Equal( new[] { 5, 2, 9 }, list );
+        }
+
+        [Fact]
+        public void GetRange()
+        {
+            // Arrange
+
+            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
+
+            // Act
+
+            var range1 = list.GetRange( 1, 2 );
+            var range2 = list.GetRange( 0, 1 );
+
+            // Assert
+
+            Assert.Equal( new[] { 8, 2 }, range1 );
+            Assert.Equal( new[] { 5 }, range2 );
+        }
+
+        [Fact]
+        public void IReadOnlyCollectionEx_GetRange()
+        {
+            // Arrange
+
+            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
+
+            var collection = ( (IReadOnlyListEx<int>) list );
+
+            // Act
+
+            var range1 = collection.GetRange( 1, 2 );
+            var range2 = collection.GetRange( 0, 1 );
+
+            // Assert
+
+            Assert.Equal( new[] { 8, 2 }, range1 );
+            Assert.Equal( new[] { 5 }, range2 );
+        }
+
+        [Fact]
+        public void Slice()
+        {
+            // Arrange
+
+            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
+
+            // Act
+
+            var range1 = list.Slice( 1, 2 );
+            var range2 = list.Slice( 0, 1 );
+
+            // Assert
+
+            Assert.Equal( new[] { 8, 2 }, range1 );
+            Assert.Equal( new[] { 5 }, range2 );
+        }
+
+        [Fact]
+        public void IReadOnlyCollectionEx_Slice()
+        {
+            // Arrange
+
+            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
+
+            var collection = ( (IReadOnlyListEx<int>) list );
+
+            // Act
+
+            var range1 = collection.Slice( 1, 2 );
+            var range2 = collection.Slice( 0, 1 );
+
+            // Assert
+
+            Assert.Equal( new[] { 8, 2 }, range1 );
+            Assert.Equal( new[] { 5 }, range2 );
         }
 
         [Fact]

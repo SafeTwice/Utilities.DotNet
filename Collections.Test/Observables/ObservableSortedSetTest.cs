@@ -14,25 +14,19 @@ using Xunit;
 
 namespace Utilities.DotNet.Test.Collections.Observables
 {
-    public class ObservableSetTest
+    public class ObservableSortedSetTest
     {
-        private class CustomComparer : EqualityComparer<int>
-        {
-            public override bool Equals( int x, int y ) => ( x == y );
-            public override int GetHashCode( int obj ) => obj;
-        }
-
         [Fact]
         public void Constructor_Default()
         {
             // Act
 
-            var observableSet = new ObservableSet<TestClass>();
+            var observableSet = new ObservableSortedSet<TestClass>();
 
             // Assert
 
             Assert.Equal( 0, observableSet.Count );
-            Assert.Equal( EqualityComparer<TestClass>.Default, observableSet.Comparer );
+            Assert.Equal( Comparer<TestClass>.Default, observableSet.Comparer );
 
             Assert.False( ( (ICollection<TestClass>) observableSet ).IsReadOnly );
 
@@ -50,11 +44,11 @@ namespace Utilities.DotNet.Test.Collections.Observables
         {
             // Arrange
 
-            var customComparer = new CustomComparer();
+            var customComparer = Comparer<int>.Create( ( x, y ) => Comparer<int>.Default.Compare( y, x ) );
 
             // Act
 
-            var observableSet = new ObservableSet<int>( customComparer );
+            var observableSet = new ObservableSortedSet<int>( customComparer );
 
             // Assert
 
@@ -75,13 +69,13 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Act
 
-            var observableSet = new ObservableSet<TestClass>( new[] { item1, item2, item3 } );
+            var observableSet = new ObservableSortedSet<TestClass>( new[] { item1, item3, item2 } );
 
             // Assert
 
             Assert.Equal( new[] { item1, item2, item3 }, observableSet );
             Assert.Equal( 3, observableSet.Count );
-            Assert.Equal( EqualityComparer<TestClass>.Default, observableSet.Comparer );
+            Assert.Equal( Comparer<TestClass>.Default, observableSet.Comparer );
 
             Assert.False( ( (IObservableSet<TestClass>) observableSet ).IsReadOnly );
         }
@@ -91,15 +85,15 @@ namespace Utilities.DotNet.Test.Collections.Observables
         {
             // Arrange
 
-            var customComparer = new CustomComparer();
+            var customComparer = Comparer<int>.Create( ( x, y ) => Comparer<int>.Default.Compare( y, x ) );
 
             // Act
 
-            var observableSet = new ObservableSet<int>( new[] { 8, 9, 23 }, customComparer );
+            var observableSet = new ObservableSortedSet<int>( new[] { 23, 8, 9, }, customComparer );
 
             // Assert
 
-            Assert.Equal( new[] { 8, 9, 23 }, observableSet );
+            Assert.Equal( new[] { 23, 9, 8 }, observableSet );
             Assert.Equal( 3, observableSet.Count );
             Assert.Same( customComparer, observableSet.Comparer );
 
@@ -118,7 +112,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item3 = new TestClass( "Item3", 20 );
             var item4 = new TestClass( "Item3", 25 );
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>( new[] { item1 } );
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>( new[] { item2 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -126,23 +120,23 @@ namespace Utilities.DotNet.Test.Collections.Observables
                 events.Add( args );
             };
 
-            Assert.Equal( new[] { item1 }, observableSet );
+            Assert.Equal( new[] { item2 }, observableSet );
 
             // Act: Added successfully
 
-            var result = observableSet.Add( item2 );
+            var result = observableSet.Add( item3 );
 
             // Assert state & results
 
             Assert.True( result );
-            Assert.Equal( new[] { item1, item2 }, observableSet );
+            Assert.Equal( new[] { item2, item3 }, observableSet );
 
             // Assert events
             Assert.Equal( 1, events.Count );
             Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { item2 }, events[ 0 ].NewItems );
+            Assert.Equal( new[] { item3 }, events[ 0 ].NewItems );
             Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
 
             // Arrange
@@ -151,7 +145,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Act: Added successfully
 
-            result = observableSet.Add( item3 );
+            result = observableSet.Add( item1 );
 
             // Assert state & results
 
@@ -161,9 +155,9 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             Assert.Equal( 1, events.Count );
             Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { item3 }, events[ 0 ].NewItems );
+            Assert.Equal( new[] { item1 }, events[ 0 ].NewItems );
             Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( 0, events[ 0 ].NewStartingIndex );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
 
             // Arrange
@@ -191,7 +185,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new();
+            ObservableSortedSet<int> observableSet = new();
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -199,7 +193,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
                 events.Add( args );
             };
 
-            // Act
+            // Act: Added successfully
 
             ( (ICollection<int>) observableSet ).Add( 5 );
 
@@ -213,30 +207,18 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
             Assert.Equal( new[] { 5 }, events[ 0 ].NewItems );
             Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( 0, events[ 0 ].NewStartingIndex );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-        }
 
-        [Fact]
-        public void ICollectionT_Add_AlreadyExisting()
-        {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            events.Clear();
 
-            ObservableSet<int> observableSet = new( new[] { 5 } );
+            // Act: Cannot be added
 
-            observableSet.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableSet, obj );
-                events.Add( args );
-            };
+            ( (ICollectionEx<int>) observableSet ).Add( 5 );
 
-            // Act
-
-            Assert.Throws<InvalidOperationException>( () => ( (ICollection<int>) observableSet ).Add( 5 ) );
-
-            // Assert state
+            // Assert state & results
 
             Assert.Equal( new[] { 5 }, observableSet );
 
@@ -252,7 +234,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 5 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 5 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -276,7 +258,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 13, 12 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 13, 12 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -291,7 +273,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.True( result );
-            Assert.Equal( new[] { 13, 12, 5 }, observableSet );
+            Assert.Equal( new[] { 5, 12, 13 }, observableSet );
 
             // Assert events
 
@@ -299,7 +281,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
             Assert.Equal( new[] { 5 }, events[ 0 ].NewItems );
             Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( 0, events[ 0 ].NewStartingIndex );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
         }
 
@@ -310,7 +292,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 8, 5 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 8, 5 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -325,7 +307,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.False( result );
-            Assert.Equal( new[] { 8, 5 }, observableSet );
+            Assert.Equal( new[] { 5, 8 }, observableSet );
 
             // Assert events
 
@@ -343,7 +325,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>( new[] { item2 } );
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>( new[] { item2 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -360,7 +342,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.True( result );
-            Assert.Equal( new[] { item2, item1, item3 }, observableSet );
+            Assert.Equal( new[] { item1, item2, item3 }, observableSet );
 
             // Assert events
 
@@ -383,7 +365,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>( new[] { item2 } );
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>( new[] { item2 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -400,7 +382,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.False( result );
-            Assert.Equal( new[] { item2, item1, item3 }, observableSet );
+            Assert.Equal( new[] { item1, item2, item3 }, observableSet );
 
             // Assert events
 
@@ -419,7 +401,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new();
+            ObservableSortedSet<int> observableSet = new();
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -434,7 +416,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.True( result );
-            Assert.Equal( new[] { 5, 8, 2 }, observableSet );
+            Assert.Equal( new[] { 2, 5, 8 }, observableSet );
 
             // Assert events
 
@@ -453,7 +435,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 83 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 83 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -470,7 +452,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.True( result );
-            Assert.Equal( new[] { 83, 5, 8, 2 }, observableSet );
+            Assert.Equal( new[] { 2, 5, 8, 83 }, observableSet );
 
             // Assert events
 
@@ -489,7 +471,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 33, 22 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 33, 22 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -504,7 +486,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.False( result );
-            Assert.Equal( new[] { 33, 22, 5, 2 }, observableSet );
+            Assert.Equal( new[] { 2, 5, 22, 33 }, observableSet );
 
             // Assert events
 
@@ -527,7 +509,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>( new[] { item1, item2, item3 } );
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>( new[] { item1, item2, item3 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -552,7 +534,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
             Assert.Equal( new[] { item1 }, events[ 0 ].OldItems );
             Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( 0, events[ 0 ].OldStartingIndex );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
 
             // Arrange
@@ -580,7 +562,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 5, 8, 2 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 5, 8, 2 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -595,7 +577,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.True( result );
-            Assert.Equal( new[] { 5, 2 }, observableSet );
+            Assert.Equal( new[] { 2, 5 }, observableSet );
 
             // Assert events
 
@@ -603,7 +585,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
             Assert.Equal( new[] { 8 }, events[ 0 ].OldItems );
             Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( 2, events[ 0 ].OldStartingIndex );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
         }
 
@@ -614,7 +596,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 5, 8, 2 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 5, 8, 2 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -629,7 +611,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.False( result );
-            Assert.Equal( new[] { 5, 8, 2 }, observableSet );
+            Assert.Equal( new[] { 2, 5, 8 }, observableSet );
 
             // Assert events
 
@@ -647,7 +629,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>( new[] { item1, item2, item3 } );
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>( new[] { item1, item2, item3 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -683,7 +665,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 5, 8, 2, 9 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 5, 8, 2, 9 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -739,7 +721,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 5, 8, 2, 9 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 5, 8, 2, 9 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -754,7 +736,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.False( result );
-            Assert.Equal( new[] { 5, 2, 9 }, observableSet );
+            Assert.Equal( new[] { 2, 5, 9 }, observableSet );
 
             // Assert events
 
@@ -777,7 +759,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>( new[] { item1, item2, item3 } );
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>( new[] { item1, item2, item3 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -824,7 +806,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>();
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>();
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -858,7 +840,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>( new[] { item1, item3 } );
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>( new[] { item1, item3 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -883,7 +865,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 5, 8, 2 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 5, 8, 2 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -909,7 +891,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            ObservableSet<int> observableSet = new( new[] { 5, 8, 2 } );
+            ObservableSortedSet<int> observableSet = new( new[] { 5, 8, 2 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -938,7 +920,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item1 = new TestClass( "Item1", 10 );
             var item2 = new TestClass( "Item2", 1 );
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>( new[] { item1, item2 } );
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>( new[] { item1, item2 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -973,7 +955,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item1 = new TestClass( "Item1", 10 );
             var item2 = new TestClass( "Item2", 1 );
 
-            var observableSet = new ObservableSet<TestClass>( new[] { item1, item2 } );
+            var observableSet = new ObservableSortedSet<TestClass>( new[] { item1, item2 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -1009,7 +991,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>( new[] { item1, item2, item3 } );
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>( new[] { item1, item2, item3 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -1043,7 +1025,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            var observableSet = new ObservableSet<TestClass>( new[] { item1, item2, item3 } );
+            var observableSet = new ObservableSortedSet<TestClass>( new[] { item1, item2, item3 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -1073,7 +1055,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            IObservableSet<int> observableSet = new ObservableSet<int>( new[] { 8, 2, 23 } );
+            IObservableSet<int> observableSet = new ObservableSortedSet<int>( new[] { 8, 2, 23 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -1081,7 +1063,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
                 events.Add( args );
             };
 
-            Assert.Equal( new[] { 8, 2, 23 }, observableSet );
+            Assert.Equal( new[] { 2, 8, 23 }, observableSet );
 
             // Act
 
@@ -1089,7 +1071,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert state & results
 
-            Assert.Equal( new[] { 8, 2, 23, 1, 9 }, observableSet );
+            Assert.Equal( new[] { 1, 2, 8, 9, 23 }, observableSet );
 
             // Assert events
 
@@ -1108,7 +1090,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            IObservableSet<int> observableSet = new ObservableSet<int>( new[] { 8, 2, 23 } );
+            IObservableSet<int> observableSet = new ObservableSortedSet<int>( new[] { 8, 2, 23 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -1116,7 +1098,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
                 events.Add( args );
             };
 
-            Assert.Equal( new[] { 8, 2, 23 }, observableSet );
+            Assert.Equal( new[] { 2, 8, 23 }, observableSet );
 
             // Act
 
@@ -1143,7 +1125,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            IObservableSet<int> observableSet = new ObservableSet<int>( new[] { 8, 2, 23 } );
+            IObservableSet<int> observableSet = new ObservableSortedSet<int>( new[] { 8, 2, 23 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -1151,7 +1133,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
                 events.Add( args );
             };
 
-            Assert.Equal( new[] { 8, 2, 23 }, observableSet );
+            Assert.Equal( new[] { 2, 8, 23 }, observableSet );
 
             // Act
 
@@ -1159,7 +1141,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert state & results
 
-            Assert.Equal( new[] { 8, 2 }, observableSet );
+            Assert.Equal( new[] { 2, 8 }, observableSet );
 
             // Assert events
 
@@ -1178,7 +1160,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            IObservableSet<int> observableSet = new ObservableSet<int>( new[] { 8, 2, 23 } );
+            IObservableSet<int> observableSet = new ObservableSortedSet<int>( new[] { 8, 2, 23 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -1186,7 +1168,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
                 events.Add( args );
             };
 
-            Assert.Equal( new[] { 8, 2, 23 }, observableSet );
+            Assert.Equal( new[] { 2, 8, 23 }, observableSet );
 
             // Act
 
@@ -1194,7 +1176,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert state & results
 
-            Assert.Equal( new[] { 8, 2, 1, 9 }, observableSet );
+            Assert.Equal( new[] { 1, 2, 8, 9 }, observableSet );
 
             // Assert events
 
@@ -1220,7 +1202,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             var events = new List<NotifyCollectionChangedEventArgs>();
 
-            IObservableSet<int> observableSet = new ObservableSet<int>( new[] { 8, 2, 23 } );
+            IObservableSet<int> observableSet = new ObservableSortedSet<int>( new[] { 8, 2, 23 } );
 
             observableSet.CollectionChanged += ( obj, args ) =>
             {
@@ -1228,7 +1210,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
                 events.Add( args );
             };
 
-            Assert.Equal( new[] { 8, 2, 23 }, observableSet );
+            Assert.Equal( new[] { 2, 8, 23 }, observableSet );
 
             // Act & Assert
 
@@ -1254,7 +1236,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert unmodified state
 
-            Assert.Equal( new[] { 8, 2, 23 }, observableSet );
+            Assert.Equal( new[] { 2, 8, 23 }, observableSet );
 
             // Assert events
 
@@ -1270,7 +1252,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item2 = new TestClass( "Item2", 1 );
             var item3 = new TestClass( "Item3", 20 );
 
-            IObservableSet<TestClass> observableSet = new ObservableSet<TestClass>( new[] { item1 } );
+            IObservableSet<TestClass> observableSet = new ObservableSortedSet<TestClass>( new[] { item1 } );
 
             Assert.Equal( new[] { item1 }, observableSet );
 

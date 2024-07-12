@@ -111,10 +111,11 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Act
 
-            observableCollection.Add( item2 );
+            var result = observableCollection.Add( item2 );
 
             // Assert state & results
 
+            Assert.True( result );
             Assert.Equal( new[] { item2, item1 }, observableCollection );
 
             // Assert events
@@ -130,10 +131,11 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             events.Clear();
 
-            observableCollection.Add( item3 );
+            result = observableCollection.Add( item3 );
 
             // Assert state & results
 
+            Assert.True( result );
             Assert.Equal( new[] { item2, item1, item3 }, observableCollection );
 
             // Assert events
@@ -147,7 +149,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void ICollectionExT_TryAdd()
+        public void ICollectionT_Add()
         {
             // Arrange
 
@@ -163,11 +165,10 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Act
 
-            var result = ( (ICollectionEx<int>) observableCollection ).TryAdd( 5 );
+            ( (ICollection<int>) observableCollection ).Add( 5 );
 
             // Assert state & results
 
-            Assert.True( result );
             Assert.Equal( new[] { 5 }, observableCollection );
 
             // Assert events

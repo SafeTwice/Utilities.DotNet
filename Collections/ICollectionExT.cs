@@ -27,7 +27,7 @@ namespace Utilities.DotNet.Collections
         /// </summary>
         /// <param name="item">Item to be added to the collection.</param>
         /// <returns><c>true</c> if the item could be added; <c>false</c> otherwise.</returns>
-        bool TryAdd( T item );
+        new bool Add( T item );
 
         /// <summary>
         /// Adds the items of the specified collection to the collection.

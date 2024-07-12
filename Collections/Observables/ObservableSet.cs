@@ -122,11 +122,6 @@ namespace Utilities.DotNet.Collections.Observables
             }
         }
 
-        bool ICollectionEx<T>.TryAdd( T item )
-        {
-            return Add( item );
-        }
-
         void ICollection<T>.Add( T item )
         {
             if( !Add( item ) )
