@@ -2,7 +2,6 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -109,7 +108,7 @@ namespace Utilities.DotNet.Collections
         public bool RemoveRange( IEnumerable<T> collection )
         {
             var result = true;
-            
+
             foreach( var item in collection )
             {
                 if( !Remove( item ) )

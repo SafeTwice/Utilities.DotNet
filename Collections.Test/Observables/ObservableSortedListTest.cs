@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Utilities.DotNet.Collections;
 using Utilities.DotNet.Collections.Observables;

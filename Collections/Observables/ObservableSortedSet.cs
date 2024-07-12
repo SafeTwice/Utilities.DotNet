@@ -46,7 +46,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// specified <see cref="IComparer{T}"/>.
         /// </summary>
         /// <param name="comparer"><see cref="IComparer{T}"/> implementation to use when comparing values in the set.</param>
-        public ObservableSortedSet( IComparer<T> comparer ) : base ( comparer )
+        public ObservableSortedSet( IComparer<T> comparer ) : base( comparer )
         {
         }
 

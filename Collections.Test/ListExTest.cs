@@ -175,7 +175,7 @@ namespace Utilities.DotNet.Test.Collections
         {
             // Arrange
 
-            ListEx<int> list = new( new [] { 4, 45 } );
+            ListEx<int> list = new( new[] { 4, 45 } );
 
             // Act
 

@@ -110,7 +110,7 @@ namespace Utilities.DotNet.Collections.Observables
         {
             bool result = true;
             var itemsToAdd = new List<T>();
-            
+
             foreach( var item in collection )
             {
                 if( item is T obj )
@@ -165,7 +165,7 @@ namespace Utilities.DotNet.Collections.Observables
             {
                 if( m_list.Remove( item ) )
                 {
-                   removedItems.Add( item );
+                    removedItems.Add( item );
                 }
                 else
                 {

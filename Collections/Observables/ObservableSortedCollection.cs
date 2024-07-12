@@ -378,7 +378,7 @@ namespace Utilities.DotNet.Collections.Observables
 
         private protected int AddItem( T item )
         {
-            if( !CanAddItem( item  ) )
+            if( !CanAddItem( item ) )
             {
                 return -1;
             }
