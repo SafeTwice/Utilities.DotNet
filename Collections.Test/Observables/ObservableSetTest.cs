@@ -413,40 +413,6 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void ICollectionExT_AddRange()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            ObservableSet<int> observableSet = new();
-
-            observableSet.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableSet, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = ( (ICollectionEx<int>) observableSet ).AddRange( new[] { 5, 8, 2 } );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { 5, 8, 2 }, observableSet );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { 5, 8, 2 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-        }
-
-        [Fact]
         public void ICollectionEx_AddRange()
         {
             // Arrange

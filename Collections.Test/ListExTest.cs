@@ -308,7 +308,7 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void IReadOnlyCollectionEx_GetRange()
+        public void IReadOnlyListEx_GetRange()
         {
             // Arrange
 
@@ -346,7 +346,7 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void IReadOnlyCollectionEx_Slice()
+        public void IReadOnlyListEx_Slice()
         {
             // Arrange
 
@@ -394,7 +394,7 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void IReadOnlyCollectionEx_IndexOf()
+        public void IReadOnlyListEx_IndexOf()
         {
             // Arrange
 
@@ -418,7 +418,7 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
-        public void IReadOnlyCollectionEx_LastIndexOf()
+        public void IReadOnlyListEx_LastIndexOf()
         {
             // Arrange
 
