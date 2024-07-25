@@ -161,7 +161,7 @@ namespace Utilities.DotNet
         /// <typeparam name="T">Target type of the cast.</typeparam>
         /// <param name="source"><see cref="IEnumerable{T}"/> whose elements to cast.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> that contains the cast elements.</returns>
-        /// <exception cref="ExtendedInvalidCastException">Thrown when an element could not be cast to <typeparamref name="T"/>.</exception>
+        /// <exception cref="InvalidCastExceptionEx">Thrown when an element could not be cast to <typeparamref name="T"/>.</exception>
         public static IEnumerable<T> CastAll<T>( this IEnumerable<object> source )
         {
             foreach( var item in source )
@@ -172,7 +172,7 @@ namespace Utilities.DotNet
                 }
                 else
                 {
-                    throw new ExtendedInvalidCastException( item, typeof( T ) );
+                    throw new InvalidCastExceptionEx( item, typeof( T ) );
                 }
             }
         }

@@ -10,7 +10,7 @@ namespace Utilities.DotNet.Exceptions
     /// <summary>
     /// Extension of <see cref="InvalidCastException"/>.
     /// </summary>
-    public class ExtendedInvalidCastException : InvalidCastException
+    public class InvalidCastExceptionEx : InvalidCastException
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -31,11 +31,11 @@ namespace Utilities.DotNet.Exceptions
         //===========================================================================
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExtendedInvalidCastException"/> class with the specified object and target type.
+        /// Initializes a new instance of the <see cref="InvalidCastExceptionEx"/> class with the specified object and target type.
         /// </summary>
         /// <param name="obj">The object that was being casted.</param>
         /// <param name="targetType">The target type of the cast operation.</param>
-        public ExtendedInvalidCastException( object obj, Type targetType )
+        public InvalidCastExceptionEx( object obj, Type targetType )
             : base( Localize( $"Cannot cast object '{obj}' of type {obj.GetType().FullName} to type {targetType.FullName}." ) )
         {
             Object = obj;

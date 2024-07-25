@@ -8,14 +8,14 @@ using Xunit;
 
 namespace Utilities.DotNet.Test.Exceptions
 {
-    public class ExtendedInvalidCastExceptionTest
+    public class InvalidCastExceptionExTest
     {
         [Fact]
         public void New()
         {
             string obj = "foo";
 
-            var exception = new ExtendedInvalidCastException( obj, typeof( Exception ) );
+            var exception = new InvalidCastExceptionEx( obj, typeof( Exception ) );
 
             Assert.Equal( "Cannot cast object 'foo' of type System.String to type System.Exception.", exception.Message );
             Assert.Same( obj, exception.Object );
