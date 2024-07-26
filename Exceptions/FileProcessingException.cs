@@ -89,6 +89,7 @@ namespace Utilities.DotNet.Exceptions
         {
             Line = line;
         }
+
         /// <summary>
         /// Constructor.
         /// </summary>

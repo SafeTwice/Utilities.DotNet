@@ -6,7 +6,6 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Xml.Linq;
-using Utilities.DotNet.Exceptions;
 using Utilities.DotNet.XML;
 using Xunit;
 
@@ -34,6 +33,8 @@ namespace Utilities.DotNet.Test.XML
                 "<Enum value1='OPTION1' value2=' OPTION2 ' empty='' invalid='bar'/>",
                 "<EnumFlags value1='OPTION1' value2='OPTION1, OPTION2' empty='' invalid='bar'/>",
                 "<Int value='450'/>",
+                "<Text>FooBar</Text>",
+                "<Nesting><Text>VoidDoid</Text></Nesting>",
                 "</Root>",
             };
 
@@ -66,7 +67,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "String" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.MandatoryAttribute( "bar" );
             } );
@@ -91,7 +92,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "String" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.MandatoryAttribute( "empty" );
             } );
@@ -116,7 +117,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "Int" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.MandatoryAttributeInt( "invalid" );
             } );
@@ -141,7 +142,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "UInt" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.MandatoryAttributeUInt( "invalid" );
             } );
@@ -166,7 +167,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "Double" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.MandatoryAttributeDouble( "invalid" );
             } );
@@ -193,7 +194,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "Bool" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.MandatoryAttributeBool( "invalid" );
             } );
@@ -226,7 +227,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "Enum" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.MandatoryAttributeEnum<TestEnum>( "invalid" );
             } );
@@ -262,7 +263,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "EnumFlags" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.MandatoryAttributeEnum<TestEnumFlags>( "invalid" );
             } );
@@ -317,7 +318,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "Int" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.OptionalAttributeInt( "invalid" );
             } );
@@ -352,7 +353,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "UInt" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.OptionalAttributeUInt( "invalid" );
             } );
@@ -387,7 +388,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "Double" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.OptionalAttributeDouble( "invalid" );
             } );
@@ -426,7 +427,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "Bool" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.OptionalAttributeBool( "invalid" );
             } );
@@ -465,7 +466,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "Enum" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.OptionalAttributeEnum<TestEnum>( "invalid" );
             } );
@@ -504,7 +505,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "EnumFlags" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var value = element.OptionalAttributeEnum<TestEnumFlags>( "invalid" );
             } );
@@ -531,7 +532,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var element = GetElement( "String" );
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 string attributeName;
                 var value = element.MandatoryAttribute( new string[] { "bar", "baz" }, out attributeName );
@@ -558,10 +559,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var rootElement = m_doc!.Root!;
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
-            {
-                var element = rootElement.MandatoryUniqueElement( "Foo" );
-            } );
+            var exception = Assert.Throws<XmlFileProcessingException>( () => rootElement.MandatoryUniqueElement( "Foo" ) );
 
             Assert.Equal( $"XML element 'Root' lacks mandatory child element 'Foo'", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
@@ -573,7 +571,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var rootElement = m_doc!.Root!;
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var element = rootElement.MandatoryUniqueElement( "Int" );
             } );
@@ -581,6 +579,62 @@ namespace Utilities.DotNet.Test.XML
             Assert.Equal( $"XML element 'Root' has more than 1 child element 'Int'", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 3, exception.Line );
+        }
+
+        [Fact]
+        public void MandatoryUniqueElementText_NotEmpty()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var elementText = rootElement.MandatoryUniqueElementText( "Text" );
+
+            Assert.Equal( "FooBar", elementText );
+        }
+
+        [Fact]
+        public void MandatoryUniqueElementText_Empty_Allowed()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var elementText = rootElement.MandatoryUniqueElementText( "String", true );
+
+            Assert.Equal( "", elementText );
+        }
+
+        [Fact]
+        public void MandatoryUniqueElementText_Empty_NotAllowed()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () => rootElement.MandatoryUniqueElementText( "String" ) );
+
+            Assert.Equal( $"XML element 'String' is empty", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 2, exception.Line );
+        }
+
+        [Fact]
+        public void MandatoryUniqueElementText_WithChildElements()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () => rootElement.MandatoryUniqueElementText( "Nesting" ) );
+
+            Assert.Equal( $"XML element 'Nesting' has child elements", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 11, exception.Line );
+        }
+
+        [Fact]
+        public void MandatoryUniqueElementText_NotExisting()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () => rootElement.MandatoryUniqueElementText( "Foo" ) );
+
+            Assert.Equal( $"XML element 'Root' lacks mandatory child element 'Foo'", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 1, exception.Line );
         }
 
         [Fact]
@@ -610,7 +664,7 @@ namespace Utilities.DotNet.Test.XML
         {
             var rootElement = m_doc!.Root!;
 
-            var exception = Assert.Throws<FileProcessingException>( () =>
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 var element = rootElement.OptionalUniqueElement( "Int" );
             } );
@@ -618,6 +672,48 @@ namespace Utilities.DotNet.Test.XML
             Assert.Equal( $"XML element 'Root' has more than 1 child element 'Int'", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 3, exception.Line );
+        }
+
+        [Fact]
+        public void OptionalUniqueElementText_Existing_NotEmpty()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var elementText = rootElement.OptionalUniqueElementText( "Text" );
+
+            Assert.Equal( "FooBar", elementText );
+        }
+
+        [Fact]
+        public void OptionalUniqueElementText_Existing_Empty()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var elementText = rootElement.OptionalUniqueElementText( "String" );
+
+            Assert.Equal( "", elementText );
+        }
+
+        [Fact]
+        public void OptionalUniqueElementText_WithChildElements()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () => rootElement.OptionalUniqueElementText( "Nesting" ) );
+
+            Assert.Equal( $"XML element 'Nesting' has child elements", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 11, exception.Line );
+        }
+
+        [Fact]
+        public void OptionalUniqueElementText_NotExisting()
+        {
+            var rootElement = m_doc!.Root!;
+
+            var elementText = rootElement.OptionalUniqueElementText( "Foo" );
+
+            Assert.Null( elementText );
         }
 
         [Fact]

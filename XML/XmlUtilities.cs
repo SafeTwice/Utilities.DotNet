@@ -6,10 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
-using Utilities.DotNet.Exceptions;
 using static Utilities.DotNet.XML.I18N.LibraryLocalizer;
+
+#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Utilities.DotNet.XML
 {
@@ -29,20 +31,18 @@ namespace Utilities.DotNet.XML
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="allowEmpty">Indicates if empty values are valid.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute is not present or its value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
         public static string MandatoryAttribute( this XElement element, string attributeName, bool allowEmpty = false )
         {
             var attrStr = element.Attribute( attributeName )?.Value;
 
             if( attrStr == null )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' lacks mandatory attribute '{attributeName}'" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' lacks mandatory attribute '{attributeName}'" ), element );
             }
             else if( !allowEmpty && ( attrStr.Length == 0 ) )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' mandatory attribute '{attributeName}' is empty" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' mandatory attribute '{attributeName}' is empty" ), element );
             }
 
             return attrStr;
@@ -54,15 +54,15 @@ namespace Utilities.DotNet.XML
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute is not present or its value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
         public static int MandatoryAttributeInt( this XElement element, string attributeName )
         {
             string attrStr = element.MandatoryAttribute( attributeName );
 
             if( !int.TryParse( attrStr, out var attrValue ) )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected integer value)" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected integer value)" ),
+                                                      element );
             }
 
             return attrValue;
@@ -74,15 +74,15 @@ namespace Utilities.DotNet.XML
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute is not present or its value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
         public static uint MandatoryAttributeUInt( this XElement element, string attributeName )
         {
             string attrStr = element.MandatoryAttribute( attributeName );
 
             if( !uint.TryParse( attrStr, out var attrValue ) )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected unsigned integer value)" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected unsigned integer value)" ),
+                                                      element );
             }
 
             return attrValue;
@@ -94,15 +94,15 @@ namespace Utilities.DotNet.XML
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute is not present or its value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
         public static double MandatoryAttributeDouble( this XElement element, string attributeName )
         {
             string attrStr = element.MandatoryAttribute( attributeName );
 
             if( !double.TryParse( attrStr, NumberStyles.Float, CultureInfo.InvariantCulture, out var attrValue ) )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected real number value)" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected real number value)" ),
+                                                      element );
             }
 
             return attrValue;
@@ -114,15 +114,15 @@ namespace Utilities.DotNet.XML
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute is not present or its value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
         public static bool MandatoryAttributeBool( this XElement element, string attributeName )
         {
             string attrStr = element.MandatoryAttribute( attributeName );
 
             if( !bool.TryParse( attrStr, out var attrValue ) )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected boolean value)" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected boolean value)" ),
+                                                      element );
             }
 
             return attrValue;
@@ -134,7 +134,7 @@ namespace Utilities.DotNet.XML
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute is not present or its value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
         public static T MandatoryAttributeEnum<T>( this XElement element, string attributeName ) where T : struct, Enum
         {
             var attrStr = element.MandatoryAttribute( attributeName );
@@ -142,8 +142,8 @@ namespace Utilities.DotNet.XML
             if( !Enum.TryParse( attrStr, out T attrValue ) )
             {
                 var enumValues = string.Join( ", ", Enum.GetNames( typeof( T ) ) );
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected one of: {enumValues})" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected one of: {enumValues})" ),
+                                                      element );
             }
 
             return attrValue;
@@ -167,7 +167,10 @@ namespace Utilities.DotNet.XML
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
-        public static string OptionalAttribute( this XElement element, string attributeName, string defaultValue )
+#if NET6_0_OR_GREATER
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
+        public static string? OptionalAttribute( this XElement element, string attributeName, string? defaultValue )
         {
             return element.Attribute( attributeName )?.Value ?? defaultValue;
         }
@@ -179,7 +182,7 @@ namespace Utilities.DotNet.XML
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
         public static int OptionalAttributeInt( this XElement element, string attributeName, int defaultValue = 0 )
         {
             var attrStr = element.OptionalAttribute( attributeName );
@@ -188,8 +191,8 @@ namespace Utilities.DotNet.XML
 
             if( ( attrStr != null ) && !int.TryParse( attrStr, out attrValue ) )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected integer value)" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected integer value)" ),
+                                                      element );
             }
 
             return attrValue;
@@ -202,7 +205,7 @@ namespace Utilities.DotNet.XML
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
         public static uint OptionalAttributeUInt( this XElement element, string attributeName, uint defaultValue = 0 )
         {
             var attrStr = element.OptionalAttribute( attributeName );
@@ -211,8 +214,8 @@ namespace Utilities.DotNet.XML
 
             if( ( attrStr != null ) && !uint.TryParse( attrStr, out attrValue ) )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected unsigned integer value)" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected unsigned integer value)" ),
+                                                      element );
             }
 
             return attrValue;
@@ -225,7 +228,7 @@ namespace Utilities.DotNet.XML
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
         public static double OptionalAttributeDouble( this XElement element, string attributeName, double defaultValue = 0.0 )
         {
             var attrStr = element.OptionalAttribute( attributeName );
@@ -234,8 +237,8 @@ namespace Utilities.DotNet.XML
 
             if( ( attrStr != null ) && !double.TryParse( attrStr, NumberStyles.Float, CultureInfo.InvariantCulture, out attrValue ) )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected real number value)" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected real number value)" ),
+                                                      element );
             }
 
             return attrValue;
@@ -248,7 +251,7 @@ namespace Utilities.DotNet.XML
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
         public static bool OptionalAttributeBool( this XElement element, string attributeName, bool defaultValue = false )
         {
             var attrStr = element.OptionalAttribute( attributeName );
@@ -257,8 +260,8 @@ namespace Utilities.DotNet.XML
 
             if( ( attrStr != null ) && !bool.TryParse( attrStr, out attrValue ) )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected boolean value)" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected boolean value)" ),
+                                                      element );
             }
 
             return attrValue;
@@ -271,7 +274,7 @@ namespace Utilities.DotNet.XML
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the attribute value is invalid</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
         public static T OptionalAttributeEnum<T>( this XElement element, string attributeName, T defaultValue = default ) where T : struct, Enum
         {
             var attrStr = element.OptionalAttribute( attributeName );
@@ -281,8 +284,8 @@ namespace Utilities.DotNet.XML
             if( ( attrStr != null ) && !Enum.TryParse( attrStr, out attrValue ) )
             {
                 var enumValues = string.Join( ", ", Enum.GetNames( typeof( T ) ) );
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected one of: {enumValues})" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected one of: {enumValues})" ),
+                                                      element );
             }
 
             return attrValue;
@@ -295,7 +298,7 @@ namespace Utilities.DotNet.XML
         /// <param name="attributeNames">Names of the attributes to search (in search order).</param>
         /// <param name="usedAttributeName">Name of the attribute that was found.</param>
         /// <returns>The value of the found attribute.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the none of the attributes is present</exception>
+        /// <exception cref="XmlFileProcessingException">Thrown when the none of the attributes is present.</exception>
         public static string MandatoryAttribute( this XElement element, IEnumerable<string> attributeNames, out string usedAttributeName )
         {
             foreach( var attributeName in attributeNames )
@@ -309,46 +312,71 @@ namespace Utilities.DotNet.XML
             }
 
             var attrNameList = string.Join( "', '", attributeNames );
-            throw new FileProcessingException( Localize( $"XML element '{element.Name}' lacks one of mandatory attributes ('{attrNameList}') or are empty" ),
-                                               element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+            throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' lacks one of mandatory attributes ('{attrNameList}') or are empty" ), element );
         }
 
         /// <summary>
         /// Gets a mandatory element that must be unique.
         /// </summary>
         /// <param name="element">This element.</param>
-        /// <param name="name">Name of the element.</param>
+        /// <param name="elementName">Name of the element.</param>
         /// <returns>An element.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the number of matching elements is different from 1</exception>
-        public static XElement MandatoryUniqueElement( this XElement element, string name )
+        /// <exception cref="XmlFileProcessingException">Thrown when the number of matching elements is different from 1.</exception>
+        public static XElement MandatoryUniqueElement( this XElement element, string elementName )
         {
-            var childElement = element.OptionalUniqueElement( name );
+            var childElement = element.OptionalUniqueElement( elementName );
 
             if( childElement == null )
             {
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' lacks mandatory child element '{name}'" ),
-                                                   element.BaseUri, ( (IXmlLineInfo) element ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' lacks mandatory child element '{elementName}'" ), element );
             }
 
             return childElement;
         }
 
         /// <summary>
+        /// Gets the contents of a mandatory element (that must be unique) as a <c>string</c>.
+        /// </summary>
+        /// <param name="element">This element.</param>
+        /// <param name="elementName">Name of the element.</param>
+        /// <param name="allowEmpty">Indicates if empty values are valid.</param>
+        /// <returns>The value of the contents of the element.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the number of matching elements is different from 1,
+        ///                                              or when the present element value is invalid.</exception>
+        public static string MandatoryUniqueElementText( this XElement element, string elementName, bool allowEmpty = false )
+        {
+            var childElement = element.MandatoryUniqueElement( elementName );
+
+            if( childElement.HasElements )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{elementName}' has child elements" ), childElement );
+            }
+
+            var value = childElement.Value;
+
+            if( !allowEmpty && ( value.Length == 0 ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{elementName}' is empty" ), childElement );
+            }
+
+            return value;
+        }
+
+        /// <summary>
         /// Gets an optional element that must be unique.
         /// </summary>
         /// <param name="element">This element.</param>
-        /// <param name="name">Name of the element.</param>
+        /// <param name="elementName">Name of the element.</param>
         /// <returns>An element, or <c>null</c> if the element is not present.</returns>
-        /// <exception cref="FileProcessingException">Thrown when the number of matching elements is higher than 1</exception>
-        public static XElement? OptionalUniqueElement( this XElement element, string name )
+        /// <exception cref="XmlFileProcessingException">Thrown when the number of matching elements is higher than 1.</exception>
+        public static XElement? OptionalUniqueElement( this XElement element, string elementName )
         {
-            var elements = element.Elements( name );
+            var elements = element.Elements( elementName );
 
             if( elements.Count() > 1 )
             {
                 var childElement = elements.First();
-                throw new FileProcessingException( Localize( $"XML element '{element.Name}' has more than 1 child element '{childElement.Name}'" ),
-                                                   childElement.BaseUri, ( (IXmlLineInfo) childElement ).LineNumber );
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' has more than 1 child element '{childElement.Name}'" ), childElement );
             }
             else if( elements.Count() == 1 )
             {
@@ -358,6 +386,35 @@ namespace Utilities.DotNet.XML
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Gets the contents of an optional element (that must be unique) as a <c>string</c>.
+        /// </summary>
+        /// <param name="element">This element.</param>
+        /// <param name="elementName">Name of the element.</param>
+        /// <param name="defaultValue">Value returned when the element is not present.</param>
+        /// <returns>The value of the element.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the number of matching elements is higher than 1,
+        ///                                              or when the element is not present or its value is invalid.</exception>
+#if NET6_0_OR_GREATER
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
+        public static string? OptionalUniqueElementText( this XElement element, string elementName, string? defaultValue = null )
+        {
+            var childElement = element.OptionalUniqueElement( elementName );
+
+            if( childElement == null )
+            {
+                return defaultValue;
+            }
+            
+            if( childElement.HasElements )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{elementName}' has child elements" ), childElement );
+            }
+
+            return childElement.Value;
         }
 
         /// <summary>
