@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Utilities.DotNet.Observables
 {
@@ -34,7 +35,7 @@ namespace Utilities.DotNet.Observables
         /// This method is intended for manually generating changed events when automatic generation is not suitable.
         /// </remarks>
         /// <param name="propertyName">Name of the property that changed.</param>
-        protected void OnPropertyChanged( string propertyName )
+        protected void OnPropertyChanged( [CallerMemberName] string propertyName = "" )
         {
             PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( propertyName ) );
         }
