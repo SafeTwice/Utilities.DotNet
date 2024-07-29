@@ -957,11 +957,11 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert events
 
             Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Reset, events[ 0 ].Action );
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
             Assert.Null( events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
+            Assert.Equal( new[] { item1, item2, item3 }, events[ 0 ].OldItems );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( 0, events[ 0 ].OldStartingIndex );
 
             // Arrange
 

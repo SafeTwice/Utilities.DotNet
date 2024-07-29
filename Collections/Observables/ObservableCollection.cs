@@ -235,9 +235,11 @@ namespace Utilities.DotNet.Collections.Observables
                 return;
             }
 
+            var deletedItems = new ListEx<T>( m_list );
+
             m_list.Clear();
 
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Reset ) );
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, deletedItems, 0 ) );
         }
 
         /// <inheritdoc/>
