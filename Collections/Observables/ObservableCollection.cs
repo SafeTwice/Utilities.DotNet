@@ -48,7 +48,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// </summary>
         public ObservableCollection()
         {
-            m_list = new List<T>();
+            m_list = new ListEx<T>();
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// <param name="items">Collection of initial items.</param>
         public ObservableCollection( IEnumerable<T> items )
         {
-            m_list = new List<T>( items );
+            m_list = new ListEx<T>( items );
         }
 
         //===========================================================================
@@ -108,7 +108,7 @@ namespace Utilities.DotNet.Collections.Observables
 
         bool ICollectionEx.AddRange( IEnumerable collection )
         {
-            var itemsToAdd = new List<T>();
+            var itemsToAdd = new ListEx<T>();
 
             foreach( var item in collection )
             {
@@ -158,7 +158,7 @@ namespace Utilities.DotNet.Collections.Observables
         public bool RemoveRange( IEnumerable<T> collection )
         {
             bool result = true;
-            var removedItems = new List<T>();
+            var removedItems = new ListEx<T>();
 
             foreach( var item in collection )
             {
@@ -180,7 +180,7 @@ namespace Utilities.DotNet.Collections.Observables
         bool ICollectionEx.RemoveRange( IEnumerable collection )
         {
             bool partialResult = true;
-            var itemsToRemove = new List<T>();
+            var itemsToRemove = new ListEx<T>();
 
             foreach( var item in collection )
             {

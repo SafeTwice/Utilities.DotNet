@@ -108,7 +108,7 @@ namespace Utilities.DotNet.Collections.Observables
 
         bool IListEx.InsertRange( int index, IEnumerable collection )
         {
-            var itemsToInsert = new List<T>();
+            var itemsToInsert = new ListEx<T>();
 
             foreach( var item in collection )
             {

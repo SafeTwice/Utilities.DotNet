@@ -85,7 +85,7 @@ namespace Utilities.DotNet.Collections
 
         bool ICollectionEx.AddRange( IEnumerable collection )
         {
-            var itemsToAdd = new List<T>();
+            var itemsToAdd = new ListEx<T>();
 
             foreach( var item in collection )
             {
@@ -135,7 +135,7 @@ namespace Utilities.DotNet.Collections
         bool ICollectionEx.RemoveRange( IEnumerable collection )
         {
             bool partialResult = true;
-            var itemsToRemove = new List<T>();
+            var itemsToRemove = new ListEx<T>();
 
             foreach( var item in collection )
             {
