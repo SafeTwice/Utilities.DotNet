@@ -28,7 +28,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// </para>
     /// </remarks>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
-    public class ObservableSortedList<T> : ObservableSortedCollection<T>, IObservableList<T>, IList
+    public class ObservableSortedList<T> : ObservableSortedCollection<T>, IObservableList<T>, IListEx
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -157,6 +157,27 @@ namespace Utilities.DotNet.Collections.Observables
             AddRange( collection );
         }
 
+        bool IListEx.InsertRange( int index, IEnumerable collection )
+        {
+            var itemsToInsert = new List<T>();
+
+            foreach( var item in collection )
+            {
+                if( item is T obj )
+                {
+                    itemsToInsert.Add( obj );
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            AddRange( itemsToInsert );
+
+            return true;
+        }
+
         void IList.Remove( object? value )
         {
             if( value is T obj )
@@ -206,6 +227,18 @@ namespace Utilities.DotNet.Collections.Observables
             return Replace( this[ index ], newItem );
         }
 
+        bool IListEx.Replace( int index, object newItem )
+        {
+            if( newItem is T obj )
+            {
+                return Replace( index, obj );
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         /// <inheritdoc/>
         public bool Move( T item, int newIndex )
         {
@@ -239,52 +272,51 @@ namespace Utilities.DotNet.Collections.Observables
             return ( oldIndex == newIndex );
         }
 
+        bool IListEx.Move( object item, int newIndex )
+        {
+            if( item is T obj )
+            {
+                return Move( obj, newIndex );
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         bool IList.Contains( object? value )
         {
             return ( value is T obj ) && Contains( obj );
         }
 
         /// <inheritdoc/>
-        public IObservableList<T> GetRange( int index, int count )
+        public ObservableList<T> GetRange( int index, int count )
         {
             return new ObservableList<T>( m_list.GetRange( index, count ) );
         }
 
-        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count )
-        {
-            return GetRange( index, count );
-        }
+        IObservableList<T> IObservableList<T>.GetRange( int index, int count ) => GetRange( index, count );
 
-        IObservableReadOnlyList<T> IObservableReadOnlyList<T>.GetRange( int index, int count )
-        {
-            return GetRange( index, count );
-        }
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count ) => GetRange( index, count );
 
-        IListEx<T> IListEx<T>.GetRange( int index, int count )
-        {
-            return GetRange( index, count );
-        }
+        IObservableReadOnlyList<T> IObservableReadOnlyList<T>.GetRange( int index, int count ) => GetRange( index, count );
+
+        IListEx<T> IListEx<T>.GetRange( int index, int count ) => GetRange( index, count );
+
+        IListEx IListEx.GetRange( int index, int count ) => GetRange( index, count );
 
         /// <inheritdoc/>
-        public IObservableList<T> Slice( int start, int length )
-        {
-            return GetRange( start, length );
-        }
+        public IObservableList<T> Slice( int start, int length ) => GetRange( start, length );
 
-        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length )
-        {
-            return GetRange( start, length );
-        }
+        IObservableList<T> IObservableList<T>.Slice( int start, int length ) => GetRange( start, length );
 
-        IObservableReadOnlyList<T> IObservableReadOnlyList<T>.Slice( int start, int length )
-        {
-            return GetRange( start, length );
-        }
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length ) => GetRange( start, length );
 
-        IListEx<T> IListEx<T>.Slice( int start, int length )
-        {
-            return GetRange( start, length );
-        }
+        IObservableReadOnlyList<T> IObservableReadOnlyList<T>.Slice( int start, int length ) => GetRange( start, length );
+
+        IListEx<T> IListEx<T>.Slice( int start, int length ) => GetRange( start, length );
+
+        IListEx IListEx.Slice( int start, int length ) => GetRange( start, length );
 
         /// <inheritdoc/>
         public int IndexOf( T item )
@@ -356,5 +388,15 @@ namespace Utilities.DotNet.Collections.Observables
         {
             return ( item is T obj ) ? LastIndexOf( obj, index, count ) : -1;
         }
+
+        int IListEx.IndexOf( object item, int index ) => ( (IReadOnlyListEx<T>) this ).IndexOf( item, index );
+
+        int IListEx.IndexOf( object item, int index, int count ) => ( (IReadOnlyListEx<T>) this ).IndexOf( item, index, count );
+
+        int IListEx.LastIndexOf( object item ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item );
+
+        int IListEx.LastIndexOf( object item, int index ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item, index );
+
+        int IListEx.LastIndexOf( object item, int index, int count ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item, index, count );
     }
 }

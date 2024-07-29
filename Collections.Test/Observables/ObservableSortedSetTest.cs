@@ -486,16 +486,11 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state & results
 
             Assert.False( result );
-            Assert.Equal( new[] { 2, 5, 22, 33 }, observableSet );
+            Assert.Equal( new[] { 22, 33 }, observableSet );
 
             // Assert events
 
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { 5, 2 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+            Assert.Empty( events );
         }
 
         [Fact]

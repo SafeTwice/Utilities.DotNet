@@ -26,7 +26,7 @@ namespace Utilities.DotNet.Collections
         /// Adds the items of the specified collection to the collection.
         /// </summary>
         /// <param name="collection">Collection whose items will be added to the collection.</param>
-        /// <returns><c>true</c> if all the items could be added; <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if the items could be added; <c>false</c> otherwise.</returns>
         bool AddRange( IEnumerable collection );
 
         /// <summary>

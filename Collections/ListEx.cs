@@ -5,13 +5,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Utilities.DotNet.Collections
 {
     /// <summary>
     /// Extension of <see cref="List{T}"/> that implements <see cref="IListEx{T}"/>.
     /// </summary>
-    public class ListEx<T> : List<T>, IListEx<T>, ICollectionEx
+    public class ListEx<T> : List<T>, IListEx<T>, IListEx
     {
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -73,7 +74,6 @@ namespace Utilities.DotNet.Collections
 
         bool ICollectionEx.AddRange( IEnumerable collection )
         {
-            bool result = true;
             var itemsToAdd = new List<T>();
 
             foreach( var item in collection )
@@ -84,13 +84,34 @@ namespace Utilities.DotNet.Collections
                 }
                 else
                 {
-                    result = false;
+                    return false;
                 }
             }
 
             AddRange( itemsToAdd );
 
-            return result;
+            return true;
+        }
+
+        bool IListEx.InsertRange( int index, IEnumerable collection )
+        {
+            var itemsToInsert = new List<T>();
+
+            foreach( var item in collection )
+            {
+                if( item is T obj )
+                {
+                    itemsToInsert.Add( obj );
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            InsertRange( index, itemsToInsert );
+
+            return true;
         }
 
         bool ICollectionEx.Remove( object item )
@@ -180,6 +201,18 @@ namespace Utilities.DotNet.Collections
             return true;
         }
 
+        bool IListEx.Replace( int index, object newItem )
+        {
+            if( newItem is T obj )
+            {
+                return Replace( index, obj );
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         /// <inheritdoc/>
         public bool Move( T item, int newIndex )
         {
@@ -224,31 +257,43 @@ namespace Utilities.DotNet.Collections
             return true;
         }
 
+        bool IListEx.Move( object item, int newIndex )
+        {
+            if( item is T obj )
+            {
+                return Move( obj, newIndex );
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         /// <inheritdoc/>
-        public new IListEx<T> GetRange( int index, int count )
+        public new ListEx<T> GetRange( int index, int count )
         {
             return new ListEx<T>( base.GetRange( index, count ) );
         }
 
-        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count )
-        {
-            return GetRange( index, count );
-        }
+        /// <inheritdoc/>
+        IListEx<T> IListEx<T>.GetRange( int index, int count ) => GetRange( index, count );
+
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count ) => GetRange( index, count );
+
+        IListEx IListEx.GetRange( int index, int count ) => GetRange( index, count );
 
         /// <inheritdoc/>
 #if NET8_0_OR_GREATER
-        public new IListEx<T> Slice( int start, int length )
+        public new ListEx<T> Slice( int start, int length ) => GetRange( start, length );
 #else
-        public IListEx<T> Slice( int start, int length )
+        public ListEx<T> Slice( int start, int length ) => GetRange( start, length );
 #endif
-        {
-            return GetRange( start, length );
-        }
 
-        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length )
-        {
-            return GetRange( start, length );
-        }
+        IListEx<T> IListEx<T>.Slice( int start, int length ) => GetRange( start, length );
+
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length ) => GetRange( start, length );
+
+        IListEx IListEx.Slice( int start, int length ) => GetRange( start, length );
 
         bool ICollectionEx.Contains( object item )
         {
@@ -289,5 +334,15 @@ namespace Utilities.DotNet.Collections
         {
             return ( item is T obj ) ? LastIndexOf( obj, index, count ) : -1;
         }
+
+        int IListEx.IndexOf( object item, int index ) => ( (IReadOnlyListEx<T>) this ).IndexOf( item, index );
+
+        int IListEx.IndexOf( object item, int index, int count ) => ( (IReadOnlyListEx<T>) this ).IndexOf( item, index, count );
+
+        int IListEx.LastIndexOf( object item ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item );
+
+        int IListEx.LastIndexOf( object item, int index ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item, index );
+
+        int IListEx.LastIndexOf( object item, int index, int count ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item, index, count );
     }
 }

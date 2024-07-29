@@ -85,7 +85,6 @@ namespace Utilities.DotNet.Collections
 
         bool ICollectionEx.AddRange( IEnumerable collection )
         {
-            bool result = true;
             var itemsToAdd = new List<T>();
 
             foreach( var item in collection )
@@ -96,13 +95,13 @@ namespace Utilities.DotNet.Collections
                 }
                 else
                 {
-                    result = false;
+                    return false;
                 }
             }
 
             AddRange( itemsToAdd );
 
-            return result;
+            return true;
         }
 
         bool ICollectionEx.Remove( object item )

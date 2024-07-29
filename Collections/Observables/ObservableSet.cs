@@ -167,7 +167,6 @@ namespace Utilities.DotNet.Collections.Observables
 
         bool ICollectionEx.AddRange( IEnumerable collection )
         {
-            bool result = true;
             var itemsToAdd = new List<T>();
 
             foreach( var item in collection )
@@ -178,11 +177,11 @@ namespace Utilities.DotNet.Collections.Observables
                 }
                 else
                 {
-                    result = false;
+                    return false;
                 }
             }
 
-            return AddRange( itemsToAdd ) && result;
+            return AddRange( itemsToAdd );
         }
 
         /// <inheritdoc/>

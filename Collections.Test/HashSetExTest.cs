@@ -194,7 +194,7 @@ namespace Utilities.DotNet.Test.Collections
             // Assert
 
             Assert.False( result );
-            Assert.Equal( new[] { 4, 45, 5, 2 }, set );
+            Assert.Equal( new[] { 4, 45 }, set );
         }
 
         [Fact]

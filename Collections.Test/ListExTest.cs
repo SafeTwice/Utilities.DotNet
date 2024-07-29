@@ -185,7 +185,41 @@ namespace Utilities.DotNet.Test.Collections
             // Assert
 
             Assert.False( result );
-            Assert.Equal( new[] { 4, 45, 5, 2 }, list );
+            Assert.Equal( new[] { 4, 45 }, list );
+        }
+
+        [Fact]
+        public void IListExT_InsertRange()
+        {
+            // Arrange
+
+            ListEx<int> list = new( new[] { 5, 8, 2 } );
+
+            // Act
+
+            var result = ( (IListEx) list ).InsertRange( 2, new[] { 66, 1 } );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5, 8, 66, 1 , 2 }, list );
+        }
+
+        [Fact]
+        public void IListExT_InsertRange_InvalidObject()
+        {
+            // Arrange
+
+            ListEx<int> list = new( new[] { 5, 8, 2 } );
+
+            // Act
+
+            var result = ( (IListEx) list ).InsertRange( 2, new[] { 66, 1.1 } );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5, 8, 2 }, list );
         }
 
         [Fact]
@@ -402,6 +436,40 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
+        public void IListEx_ReplaceByIndex()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = ( (IListEx) list ).Replace( 1, 3.5 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 3.5, 2.9 }, list );
+        }
+
+        [Fact]
+        public void IListEx_ReplaceByIndex_InvalidObject()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = ( (IListEx) list ).Replace( 1, 3.5f );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, list );
+        }
+
+        [Fact]
         public void Move()
         {
             // Arrange
@@ -544,21 +612,63 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
+        void IListEx_Move()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9, 44.5 } );
+
+            // Act
+
+            var result = ( (IListEx) list ).Move( 8.0, 3 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 2.9, 8.0, 44.5 }, list );
+        }
+
+        [Fact]
+        void IListEx_Move_InvalidObject()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9, 44.5 } );
+
+            // Act
+
+            var result = ( (IListEx) list ).Move( 8.0f, 3 );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9, 44.5 }, list );
+        }
+
+        [Fact]
         public void GetRange()
         {
             // Arrange
 
-            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
+            var list = new ListEx<int>( new[] { 5, 8, 2 } );
 
-            // Act
+            // Act & Assert
 
-            var range1 = list.GetRange( 1, 2 );
-            var range2 = list.GetRange( 0, 1 );
+            Assert.Equal( new[] { 8, 2 }, list.GetRange( 1, 2 ) );
+            Assert.Equal( new[] { 5 }, list.GetRange( 0, 1 ) );
+        }
 
-            // Assert
+        [Fact]
+        public void IListExT_GetRange()
+        {
+            // Arrange
 
-            Assert.Equal( new[] { 8, 2 }, range1 );
-            Assert.Equal( new[] { 5 }, range2 );
+            var list = new ListEx<int>( new[] { 5, 8, 2 } );
+
+            // Act & Assert
+
+            Assert.Equal( new[] { 8, 2 }, ( (IListEx<int>) list ).GetRange( 1, 2 ) );
+            Assert.Equal( new[] { 5 }, ( (IListEx<int>) list ).GetRange( 0, 1 ) );
         }
 
         [Fact]
@@ -566,19 +676,25 @@ namespace Utilities.DotNet.Test.Collections
         {
             // Arrange
 
-            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
+            var list = new ListEx<int>( new[] { 5, 8, 2 } );
 
-            var collection = ( (IReadOnlyListEx<int>) list );
+            // Act & Assert
 
-            // Act
+            Assert.Equal( new[] { 8, 2 }, ( (IReadOnlyListEx<int>) list ).GetRange( 1, 2 ) );
+            Assert.Equal( new[] { 5 }, ( (IReadOnlyListEx<int>) list ).GetRange( 0, 1 ) );
+        }
 
-            var range1 = collection.GetRange( 1, 2 );
-            var range2 = collection.GetRange( 0, 1 );
+        [Fact]
+        public void IListEx_GetRange()
+        {
+            // Arrange
 
-            // Assert
+            var list = new ListEx<int>( new[] { 5, 8, 2 } );
 
-            Assert.Equal( new[] { 8, 2 }, range1 );
-            Assert.Equal( new[] { 5 }, range2 );
+            // Act & Assert
+
+            Assert.Equal( new[] { 8, 2 }, (IList) ( (IListEx) list ).GetRange( 1, 2 ) );
+            Assert.Equal( new[] { 5 }, (IList) ( (IListEx) list ).GetRange( 0, 1 ) );
         }
 
         [Fact]
@@ -588,15 +704,23 @@ namespace Utilities.DotNet.Test.Collections
 
             ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
 
-            // Act
+            // Act & Assert
 
-            var range1 = list.Slice( 1, 2 );
-            var range2 = list.Slice( 0, 1 );
+            Assert.Equal( new[] { 8, 2 }, list.Slice( 1, 2 ) );
+            Assert.Equal( new[] { 5 }, list.Slice( 0, 1 ) );
+        }
 
-            // Assert
+        [Fact]
+        public void IListExT_Slice()
+        {
+            // Arrange
 
-            Assert.Equal( new[] { 8, 2 }, range1 );
-            Assert.Equal( new[] { 5 }, range2 );
+            var list = new ListEx<int>( new[] { 5, 8, 2 } );
+
+            // Act & Assert
+
+            Assert.Equal( new[] { 8, 2 }, ( (IListEx<int>) list ).Slice( 1, 2 ) );
+            Assert.Equal( new[] { 5 }, ( (IListEx<int>) list ).Slice( 0, 1 ) );
         }
 
         [Fact]
@@ -604,19 +728,25 @@ namespace Utilities.DotNet.Test.Collections
         {
             // Arrange
 
-            ListEx<int> list = new ListEx<int>( new[] { 5, 8, 2 } );
+            var list = new ListEx<int>( new[] { 5, 8, 2 } );
 
-            var collection = ( (IReadOnlyListEx<int>) list );
+            // Act & Assert
 
-            // Act
+            Assert.Equal( new[] { 8, 2 }, ( (IReadOnlyListEx<int>) list ).Slice( 1, 2 ) );
+            Assert.Equal( new[] { 5 }, ( (IReadOnlyListEx<int>) list ).Slice( 0, 1 ) );
+        }
 
-            var range1 = collection.Slice( 1, 2 );
-            var range2 = collection.Slice( 0, 1 );
+        [Fact]
+        public void IListEx_Slice()
+        {
+            // Arrange
 
-            // Assert
+            var list = new ListEx<int>( new[] { 5, 8, 2 } );
 
-            Assert.Equal( new[] { 8, 2 }, range1 );
-            Assert.Equal( new[] { 5 }, range2 );
+            // Act & Assert
+
+            Assert.Equal( new[] { 8, 2 }, (IList) ( (IListEx) list ).Slice( 1, 2 ) );
+            Assert.Equal( new[] { 5 }, (IList) ( (IListEx) list ).Slice( 0, 1 ) );
         }
 
         [Fact]
@@ -672,6 +802,30 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
+        public void IListEx_IndexOf()
+        {
+            // Arrange
+
+            var list = new ListEx<int>( new[] { 3, 6, 4, 3 } );
+
+            var collection = ( (IListEx) list );
+
+            // Act & Assert
+
+            Assert.Equal( 1, collection.IndexOf( 6 ) );
+            Assert.Equal( -1, collection.IndexOf( 10 ) );
+            Assert.Equal( -1, collection.IndexOf( 10.0 ) );
+
+            Assert.Equal( 3, collection.IndexOf( 3, 1 ) );
+            Assert.Equal( -1, collection.IndexOf( 6, 2 ) );
+            Assert.Equal( -1, collection.IndexOf( 4.0, 1 ) );
+
+            Assert.Equal( 3, collection.IndexOf( 3, 2, 2 ) );
+            Assert.Equal( -1, collection.IndexOf( 6, 2, 2 ) );
+            Assert.Equal( -1, collection.IndexOf( 3.0, 2, 2 ) );
+        }
+
+        [Fact]
         public void IReadOnlyListEx_LastIndexOf()
         {
             // Arrange
@@ -679,6 +833,30 @@ namespace Utilities.DotNet.Test.Collections
             var list = new ListEx<int>( new[] { 3, 6, 4, 3 } );
 
             var collection = ( (IReadOnlyListEx<int>) list );
+
+            // Act & Assert
+
+            Assert.Equal( 1, collection.LastIndexOf( 6 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 10 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 10.0 ) );
+
+            Assert.Equal( 0, collection.LastIndexOf( 3, 1 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 4, 1 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 4.0, 1 ) );
+
+            Assert.Equal( 0, collection.LastIndexOf( 3, 1, 2 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 3, 2, 2 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 3.0, 2, 2 ) );
+        }
+
+        [Fact]
+        public void IListEx_LastIndexOf()
+        {
+            // Arrange
+
+            var list = new ListEx<int>( new[] { 3, 6, 4, 3 } );
+
+            var collection = ( (IListEx) list );
 
             // Act & Assert
 

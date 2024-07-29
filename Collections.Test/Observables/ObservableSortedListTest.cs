@@ -223,7 +223,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void IList_Add_InvalidType()
+        public void IList_Add_InvalidObject()
         {
             // Arrange
 
@@ -398,7 +398,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void IList_Insert_InvalidType()
+        public void IList_Insert_InvalidObject()
         {
             // Arrange
 
@@ -426,6 +426,77 @@ namespace Utilities.DotNet.Test.Collections.Observables
             // Assert state
 
             Assert.Equal( new[] { item2 }, observableList );
+
+            // Assert events
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void IListExT_InsertRange()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var observableList = new ObservableSortedList<int>( new[] { 5, 8, 2 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            IListEx list = observableList;
+
+            Assert.Equal( new[] { 2, 5, 8 }, (IList) list );
+
+            // Act
+
+            var result = list.InsertRange( 2, new[] { 66, 1 } );
+
+            // Assert state
+
+            Assert.True( result );
+            Assert.Equal( new[] { 1, 2, 5, 8, 66 }, (IList) list );
+
+            // Assert events
+
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
+            Assert.Equal( new[] { 66, 1 }, events[ 0 ].NewItems );
+            Assert.Null( events[ 0 ].OldItems );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+        }
+
+        [Fact]
+        public void IListExT_InsertRange_InvalidObject()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var observableList = new ObservableSortedList<int>( new[] { 5, 8, 2 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            IListEx list = observableList;
+
+            Assert.Equal( new[] { 2, 5, 8 }, (IList) list );
+
+            // Act
+
+            var result = list.InsertRange( 2, new[] { 66, 1.1 } );
+
+            // Assert state
+
+            Assert.False( result );
+            Assert.Equal( new[] { 2, 5, 8 }, (IList) list );
 
             // Assert events
 
@@ -584,7 +655,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void IList_Remove_InvalidType()
+        public void IList_Remove_InvalidObject()
         {
             // Arrange
 
@@ -801,6 +872,73 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void IListEx_ReplaceByIndex()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableList<double> observableList = new ObservableSortedList<double>( new[] { 5.1, 8.0, 2.9 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { 2.9, 5.1, 8.0 }, observableList );
+
+            // Act
+
+            var result = ( (IListEx) observableList ).Replace( 1, 9.5 );
+
+            // Assert state & result
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 8.0, 9.5 }, observableList );
+
+            // Assert events
+
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Replace, events[ 0 ].Action );
+            Assert.Equal( new[] { 5.1 }, events[ 0 ].OldItems );
+            Assert.Equal( new[] { 9.5 }, events[ 0 ].NewItems );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+        }
+
+        [Fact]
+        public void IListEx_ReplaceByIndex_InvalidObject()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableList<double> observableList = new ObservableSortedList<double>( new[] { 5.1, 8.0, 2.9 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { 2.9, 5.1, 8.0 }, observableList );
+
+            // Act
+
+            var result = ( (IListEx) observableList ).Replace( 1, 3.5f );
+
+            // Assert state & result
+
+            Assert.False( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0 }, observableList );
+
+            // Assert events
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
         public void Move()
         {
             // Arrange
@@ -991,6 +1129,84 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void IListEx_Move()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableList<double> observableList = new ObservableSortedList<double>( new[] { 5.1, 8.0, 2.9, 44.5 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { 2.9, 5.1, 8.0, 44.5 }, observableList );
+
+            // Act: Same position
+
+            var result = ( (IListEx) observableList ).Move( 8.0, 2 );
+
+            // Assert state & result
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0, 44.5 }, observableList );
+
+            // Act: Position just after current
+
+            result = ( (IListEx) observableList ).Move( 2.9, 1 );
+
+            // Assert state & result
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0, 44.5 }, observableList );
+
+            // Act: Different position
+
+            result = ( (IListEx) observableList ).Move( 8.0, 0 );
+
+            // Assert state & result
+
+            Assert.False( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0, 44.5 }, observableList );
+
+            // Assert events
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void IListEx_Move_InvalidObject()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableList<double> observableList = new ObservableSortedList<double>( new[] { 5.1, 8.0, 2.9, 44.5 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            // Act
+
+            var result = ( (IListEx) observableList ).Move( 5.1f, 0 );
+
+            // Assert state & result
+
+            Assert.False( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0, 44.5 }, observableList );
+
+            // Assert events
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
         public void Contains()
         {
             // Arrange
@@ -1074,6 +1290,33 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void IObservableList_GetRange()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            IObservableList<TestClass> observableList = new ObservableSortedList<TestClass>( new[] { item2, item3, item2 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            // Act & Assert
+
+            Assert.Equal( new[] { item2, item3 }, observableList.GetRange( 1, 2 ) );
+            Assert.Equal( new[] { item2 }, observableList.GetRange( 0, 1 ) );
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
         public void IReadOnlyListEx_GetRange()
         {
             // Arrange
@@ -1132,7 +1375,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void IListEx_GetRange()
+        public void IListExT_GetRange()
         {
             // Arrange
 
@@ -1161,6 +1404,35 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void IListEx_GetRange()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            var observableList = new ObservableSortedList<TestClass>( new[] { item2, item3, item2 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            IListEx readOnlyList = observableList;
+
+            // Act & Assert
+
+            Assert.Equal( new[] { item2, item3 }, (IList) readOnlyList.GetRange( 1, 2 ) );
+            Assert.Equal( new[] { item2 }, (IList) readOnlyList.GetRange( 0, 1 ) );
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
         public void Slice()
         {
             // Arrange
@@ -1172,6 +1444,33 @@ namespace Utilities.DotNet.Test.Collections.Observables
             var item3 = new TestClass( "Item3", 20 );
 
             var observableList = new ObservableSortedList<TestClass>( new[] { item2, item3, item1 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            // Act & Assert
+
+            Assert.Equal( new[] { item1, item2 }, observableList.Slice( 0, 2 ) );
+            Assert.Equal( new[] { item3 }, observableList.Slice( 2, 1 ) );
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void IObservableList_Slice()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            IObservableList<TestClass> observableList = new ObservableSortedList<TestClass>( new[] { item2, item3, item1 } );
 
             observableList.CollectionChanged += ( obj, args ) =>
             {
@@ -1246,7 +1545,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void IListEx_Slice()
+        public void IListExT_Slice()
         {
             // Arrange
 
@@ -1270,6 +1569,35 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             Assert.Equal( new[] { item1, item2 }, readOnlyList.Slice( 1, 2 ) );
             Assert.Equal( new[] { item1, item1 }, readOnlyList.Slice( 0, 2 ) );
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void IListEx_Slice()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var item1 = new TestClass( "Item1", 10 );
+            var item2 = new TestClass( "Item2", 1 );
+            var item3 = new TestClass( "Item3", 20 );
+
+            var observableList = new ObservableSortedList<TestClass>( new[] { item1, item3, item1, item2 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            IListEx readOnlyList = observableList;
+
+            // Act & Assert
+
+            Assert.Equal( new[] { item1, item2 }, (IList) readOnlyList.Slice( 1, 2 ) );
+            Assert.Equal( new[] { item1, item1 }, (IList) readOnlyList.Slice( 0, 2 ) );
 
             Assert.Empty( events );
         }
@@ -1336,13 +1664,37 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void IReadOnlyCollectionEx_IndexOf()
+        public void IReadOnlyListEx_IndexOf()
         {
             // Arrange
 
             var list = new ObservableSortedList<int>( new[] { 3, 6, 4, 3 } );
 
             var collection = ( (IReadOnlyListEx<int>) list );
+
+            // Act & Assert
+
+            Assert.Equal( 3, collection.IndexOf( 6 ) );
+            Assert.Equal( -1, collection.IndexOf( 10 ) );
+            Assert.Equal( -1, collection.IndexOf( 10.0 ) );
+
+            Assert.Equal( 1, collection.IndexOf( 3, 1 ) );
+            Assert.Equal( -1, collection.IndexOf( 3, 2 ) );
+            Assert.Equal( -1, collection.IndexOf( 4.0, 1 ) );
+
+            Assert.Equal( 3, collection.IndexOf( 6, 2, 2 ) );
+            Assert.Equal( -1, collection.IndexOf( 6, 1, 2 ) );
+            Assert.Equal( -1, collection.IndexOf( 3.0, 2, 2 ) );
+        }
+
+        [Fact]
+        public void IListEx_IndexOf()
+        {
+            // Arrange
+
+            var list = new ObservableSortedList<int>( new[] { 3, 6, 4, 3 } );
+
+            var collection = ( (IListEx) list );
 
             // Act & Assert
 
@@ -1390,13 +1742,37 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void IReadOnlyCollectionEx_LastIndexOf()
+        public void IReadOnlyListEx_LastIndexOf()
         {
             // Arrange
 
             var list = new ObservableSortedList<int>( new[] { 3, 6, 4, 3 } );
 
             var collection = ( (IReadOnlyListEx<int>) list );
+
+            // Act & Assert
+
+            Assert.Equal( 3, collection.LastIndexOf( 6 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 10 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 10.0 ) );
+
+            Assert.Equal( 1, collection.LastIndexOf( 3, 2 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 6, 2 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 4.0, 1 ) );
+
+            Assert.Equal( 2, collection.LastIndexOf( 4, 2, 2 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 4, 1, 2 ) );
+            Assert.Equal( -1, collection.LastIndexOf( 3.0, 2, 2 ) );
+        }
+
+        [Fact]
+        public void IListEx_LastIndexOf()
+        {
+            // Arrange
+
+            var list = new ObservableSortedList<int>( new[] { 3, 6, 4, 3 } );
+
+            var collection = ( (IListEx) list );
 
             // Act & Assert
 
@@ -1598,7 +1974,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
-        public void IList_Indexer_Set_InvalidType()
+        public void IList_Indexer_Set_InvalidObject()
         {
             // Arrange
 
