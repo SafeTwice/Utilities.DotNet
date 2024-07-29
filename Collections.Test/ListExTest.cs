@@ -2,6 +2,7 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Utilities.DotNet.Collections;
@@ -287,6 +288,259 @@ namespace Utilities.DotNet.Test.Collections
 
             Assert.False( result );
             Assert.Equal( new[] { 5, 2, 9 }, list );
+        }
+
+        [Fact]
+        public void Replace()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = list.Replace( 8.0, 3.5 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 3.5, 2.9 }, list );
+        }
+
+        [Fact]
+        public void Replace_OldNotExisting()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = list.Replace( 8.01, 3.5 );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, list );
+        }
+
+        [Fact]
+        public void ICollectionEx_Replace()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = ( (ICollectionEx) list ).Replace( 8.0, 3.5 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 3.5, 2.9 }, list );
+        }
+
+        [Fact]
+        public void ICollectionEx_Replace_InvalidObject()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = ( (ICollectionEx) list ).Replace( 8.0, 3.5f );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, list );
+
+            // Act
+
+            result = ( (ICollectionEx) list ).Replace( 8.0f, 3.5 );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, list );
+        }
+
+        [Fact]
+        public void ReplaceByIndex()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = list.Replace( 1, 3.5 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 3.5, 2.9 }, list );
+        }
+
+        [Fact]
+        void ReplaceByIndex_OutOfRange()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act & Assert
+
+            Assert.Throws<ArgumentOutOfRangeException>( () => list.Replace( 3, 3.5 ) );
+            Assert.Throws<ArgumentOutOfRangeException>( () => list.Replace( -1, 3.5 ) );
+
+            // Assert state
+
+            Assert.Equal( new[] { 5.1, 8.0, 2.9, }, list );
+        }
+
+        [Fact]
+        public void Move()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9, 44.5 } );
+
+            // Act: Same position
+
+            var result = list.Move( 8.0, 1 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9, 44.5 }, list );
+
+            // Act: Position before current
+
+            result = list.Move( 2.9, 0 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0, 44.5 }, list );
+
+            // Act: Position just after current
+
+            result = list.Move( 8.0, 3 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0, 44.5 }, list );
+
+            // Act: Position at end
+
+            result = list.Move( 5.1, 4 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 8.0, 44.5, 5.1 }, list );
+        }
+
+        [Fact]
+        void Move_NotExisting()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9, 44.5 } );
+
+            // Act
+
+            var result = list.Move( 8.01, 1 );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9, 44.5 }, list );
+        }
+
+        [Fact]
+        void Move_OutOfRange()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9, 44.5 } );
+
+            // Act & Assert
+
+            Assert.Throws<ArgumentOutOfRangeException>( () => list.Move( 8.0, 5 ) );
+            Assert.Throws<ArgumentOutOfRangeException>( () => list.Move( 8.0, -1 ) );
+
+            // Assert state
+
+            Assert.Equal( new[] { 5.1, 8.0, 2.9, 44.5 }, list );
+        }
+
+        [Fact]
+        void MoveByIndex()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9, 44.5 } );
+
+            // Act: Same position
+
+            var result = list.Move( 1, 1 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9, 44.5 }, list );
+
+            // Act: Position before current
+
+            result = list.Move( 2, 0 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0, 44.5 }, list );
+
+            // Act: Position just after current
+
+            result = list.Move( 2, 3 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0, 44.5 }, list );
+
+            // Act: Position at end
+
+            result = list.Move( 5.1, 4 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 8.0, 44.5, 5.1 }, list );
+        }
+
+        [Fact]
+        void MoveByIndex_OutOfRange()
+        {
+            // Arrange
+
+            ListEx<double> list = new( new[] { 5.1, 8.0, 2.9, 44.5 } );
+
+            // Act & Assert
+
+            Assert.Throws<ArgumentOutOfRangeException>( () => list.Move( 0, 5 ) );
+            Assert.Throws<ArgumentOutOfRangeException>( () => list.Move( 0, -1 ) );
+            Assert.Throws<ArgumentOutOfRangeException>( () => list.Move( -2, 3 ) );
+            Assert.Throws<ArgumentOutOfRangeException>( () => list.Move( 10, 2 ) );
+            Assert.Throws<ArgumentOutOfRangeException>( () => list.Move( 10, -2 ) );
+
+            // Assert state
+
+            Assert.Equal( new[] { 5.1, 8.0, 2.9, 44.5 }, list );
         }
 
         [Fact]

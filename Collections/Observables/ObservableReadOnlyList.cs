@@ -5,7 +5,7 @@
 namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
-    /// Implements an observable read-only list of items.
+    /// Implements an observable read-only list of items that wraps another observable list.
     /// </summary>
     /// <typeparam name="T">Type of the items in the list.</typeparam>
     public class ObservableReadOnlyList<T> : ObservableReadOnlyCollection<T>, IObservableReadOnlyList<T>

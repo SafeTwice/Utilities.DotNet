@@ -255,6 +255,36 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
+        public bool Replace( T oldItem, T newItem )
+        {
+            if( !m_set.Contains( oldItem ) ||
+                ( !m_set.Comparer.Equals( oldItem, newItem ) && m_set.Contains( newItem ) ) )
+            {
+                return false;
+            }
+
+            m_set.Remove( oldItem );
+            m_set.Add( newItem );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
+
+            return true;
+        }
+
+        bool ICollectionEx.Replace( object oldItem, object newItem )
+        {
+            if( ( oldItem is T oldObj ) && ( newItem is T newObj ) )
+            {
+                Replace( oldObj, newObj );
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
         public void Clear()
         {
             if( m_set.Count == 0 )

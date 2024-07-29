@@ -42,5 +42,13 @@ namespace Utilities.DotNet.Collections
         /// <param name="collection">Collection whose items will be removed from the collection.</param>
         /// <returns><c>true</c> if all the items were present and removed; <c>false</c> otherwise.</returns>
         bool RemoveRange( IEnumerable<T> collection );
+
+        /// <summary>
+        /// Replaces an item in the collection with another item.
+        /// </summary>
+        /// <param name="oldItem">Item to replace.</param>
+        /// <param name="newItem">Replacing item.</param>
+        /// <returns><c>true</c> if the item could be replaced; <c>false</c> otherwise.</returns>
+        bool Replace( T oldItem, T newItem );
     }
 }

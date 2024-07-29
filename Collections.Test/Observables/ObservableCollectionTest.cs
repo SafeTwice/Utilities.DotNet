@@ -611,6 +611,141 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void Replace()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableCollection<double> observableCollection = new ObservableCollection<double>( new[] { 5.1, 8.0, 2.9 } );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( args );
+            };
+
+            // Act
+
+            var result = observableCollection.Replace( 8.0, 3.5 );
+
+            // Assert state & results
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 3.5, 2.9 }, observableCollection );
+
+            // Assert events
+
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Replace, events[ 0 ].Action );
+            Assert.Equal( new[] { 8.0 }, events[ 0 ].OldItems );
+            Assert.Equal( new[] { 3.5 }, events[ 0 ].NewItems );
+            Assert.Equal( 1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
+        }
+
+        [Fact]
+        public void Replace_OldNotExisting()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableCollection<double> observableCollection = new ObservableCollection<double>( new[] { 5.1, 8.0, 2.9 } );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( args );
+            };
+
+            // Act
+
+            var result = observableCollection.Replace( 8.01, 3.5 );
+
+            // Assert state & results
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, observableCollection );
+
+            // Assert events
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void ICollectionEx_Replace()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableCollection<double> observableCollection = new ObservableCollection<double>( new[] { 5.1, 8.0, 2.9 } );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( args );
+            };
+
+            // Act
+
+            var result = ( (ICollectionEx) observableCollection ).Replace( 8.0, 3.5 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 3.5, 2.9 }, observableCollection );
+
+            // Assert events
+
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Replace, events[ 0 ].Action );
+            Assert.Equal( new[] { 8.0 }, events[ 0 ].OldItems );
+            Assert.Equal( new[] { 3.5 }, events[ 0 ].NewItems );
+            Assert.Equal( 1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
+        }
+
+        [Fact]
+        public void ICollectionEx_Replace_InvalidObject()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableCollection<double> observableCollection = new ObservableCollection<double>( new[] { 5.1, 8.0, 2.9 } );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( args );
+            };
+
+            // Act
+
+            var result = ( (ICollectionEx) observableCollection ).Replace( 8.0, 3.5f );
+
+            // Assert state & results
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, observableCollection );
+
+            // Act
+
+            result = ( (ICollectionEx) observableCollection ).Replace( 8.0f, 3.5 );
+
+            // Assert state & results
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, observableCollection );
+
+            // Assert events
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
         public void Clear()
         {
             // Arrange

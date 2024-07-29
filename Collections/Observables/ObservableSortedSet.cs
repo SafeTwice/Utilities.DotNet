@@ -201,5 +201,22 @@ namespace Utilities.DotNet.Collections.Observables
         {
             return !ContainsItem( item );
         }
+
+        private protected override bool CanReplaceItem( T oldItem, T newItem )
+        {
+            if( !ContainsItem( oldItem ) )
+            {
+                return false;
+            }
+
+            if( Comparer.Compare( oldItem, newItem ) == 0 )
+            {
+                return true;
+            }
+            else
+            {
+                return !ContainsItem( newItem );
+            }
+        }
     }
 }

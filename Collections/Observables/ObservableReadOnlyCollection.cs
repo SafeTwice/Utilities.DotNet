@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
-    /// Implements an observable read-only collection of items.
+    /// Implements an observable read-only collection of items that wraps another observable collection.
     /// </summary>
     /// <typeparam name="T">Type of the items in the collection.</typeparam>
     public class ObservableReadOnlyCollection<T> : IObservableReadOnlyCollection<T>
@@ -83,6 +83,6 @@ namespace Utilities.DotNet.Collections.Observables
         //                           PROTECTED ATTRIBUTES
         //===========================================================================
 
-        protected private IObservableReadOnlyCollection<T> m_collection;
+        protected private readonly IObservableReadOnlyCollection<T> m_collection;
     }
 }

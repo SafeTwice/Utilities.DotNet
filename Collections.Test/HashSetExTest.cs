@@ -300,6 +300,117 @@ namespace Utilities.DotNet.Test.Collections
         }
 
         [Fact]
+        public void Replace()
+        {
+            // Arrange
+
+            HashSetEx<double> set = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = set.Replace( 8.0, 3.5 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 3.5, 2.9 }, set );
+        }
+
+        [Fact]
+        public void Replace_OldNotExisting()
+        {
+            // Arrange
+
+            HashSetEx<double> set = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = set.Replace( 8.01, 3.5 );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, set );
+        }
+
+        [Fact]
+        public void Replace_NewExisting()
+        {
+            // Arrange
+
+            HashSetEx<double> set = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = set.Replace( 8.0, 5.1 );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, set );
+        }
+
+        [Fact]
+        public void Replace_Same()
+        {
+            // Arrange
+
+            HashSetEx<double> set = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = set.Replace( 8.0, 8.0 );
+
+            // Assert state & results
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, set );
+        }
+
+        [Fact]
+        public void ICollectionEx_Replace()
+        {
+            // Arrange
+
+            HashSetEx<double> list = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = ( (ICollectionEx) list ).Replace( 8.0, 3.5 );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( new[] { 5.1, 3.5, 2.9 }, list );
+        }
+
+        [Fact]
+        public void ICollectionEx_Replace_InvalidObject()
+        {
+            // Arrange
+
+            HashSetEx<double> list = new( new[] { 5.1, 8.0, 2.9 } );
+
+            // Act
+
+            var result = ( (ICollectionEx) list ).Replace( 8.0, 3.5f );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, list );
+
+            // Act
+
+            result = ( (ICollectionEx) list ).Replace( 8.0f, 3.5 );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, list );
+        }
+
+        [Fact]
         public void ICollectionEx_Contains()
         {
             // Arrange

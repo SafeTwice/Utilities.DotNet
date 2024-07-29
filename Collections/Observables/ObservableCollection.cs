@@ -199,6 +199,36 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
+        public bool Replace( T oldItem, T newItem )
+        {
+            int index = m_list.IndexOf( oldItem );
+            if( index < 0 )
+            {
+                return false;
+            }
+
+            m_list.RemoveAt( index );
+            m_list.Insert( index, newItem );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem, index ) );
+
+            return true;
+        }
+
+        bool ICollectionEx.Replace( object oldItem, object newItem )
+        {
+            if( ( oldItem is T oldObj ) && ( newItem is T newObj ) )
+            {
+                Replace( oldObj, newObj );
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
         public void Clear()
         {
             if( m_list.Count == 0 )

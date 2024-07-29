@@ -24,12 +24,7 @@ namespace Utilities.DotNet.Collections.Observables
         public T this[ int index ]
         {
             get => m_list[ index ];
-            set
-            {
-                var oldItem = m_list[ index ];
-                m_list[ index ] = value;
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, value, oldItem, index ) );
-            }
+            set => Replace( index, value );
         }
 
         object? IList.this[ int index ]
@@ -142,6 +137,70 @@ namespace Utilities.DotNet.Collections.Observables
             m_list.RemoveRange( index, count );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, index ) );
+        }
+
+        /// <inheritdoc/>
+        public bool Replace( int index, T newItem )
+        {
+            if( ( index < 0 ) || ( index >= Count ) )
+            {
+                throw new ArgumentOutOfRangeException( nameof( index ) );
+            }
+
+            var oldItem = m_list[ index ];
+
+            m_list.RemoveAt( index );
+            m_list.Insert( index, newItem );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem, index ) );
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public bool Move( T item, int newIndex )
+        {
+            var oldIndex = m_list.IndexOf( item );
+            if( oldIndex >= 0 )
+            {
+                return Move( oldIndex, newIndex );
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public bool Move( int oldIndex, int newIndex )
+        {
+            if( ( oldIndex < 0 ) || ( oldIndex >= Count ) )
+            {
+                throw new ArgumentOutOfRangeException( nameof( oldIndex ) );
+            }
+
+            if( ( newIndex < 0 ) || ( newIndex > Count ) )
+            {
+                throw new ArgumentOutOfRangeException( nameof( newIndex ) );
+            }
+
+            if( oldIndex < newIndex )
+            {
+                newIndex--;
+            }
+
+            if( oldIndex == newIndex )
+            {
+                return true;
+            }
+
+            var item = m_list[ oldIndex ];
+            m_list.RemoveAt( oldIndex );
+            m_list.Insert( newIndex, item );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Move, item, newIndex, oldIndex ) );
+
+            return true;
         }
 
         bool IList.Contains( object? value )

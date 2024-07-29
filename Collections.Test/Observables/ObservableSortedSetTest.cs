@@ -749,6 +749,140 @@ namespace Utilities.DotNet.Test.Collections.Observables
         }
 
         [Fact]
+        public void Replace()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableSet<double> observableSet = new ObservableSortedSet<double>( new[] { 5.1, 8.0, 2.9 } );
+
+            observableSet.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableSet, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { 2.9, 5.1, 8.0 }, observableSet );
+
+            // Act
+
+            var result = observableSet.Replace( 8.0, 3.5 );
+
+            // Assert state & results
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 3.5, 5.1 }, observableSet );
+
+            // Assert events
+
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Replace, events[ 0 ].Action );
+            Assert.Equal( new[] { 8.0 }, events[ 0 ].OldItems );
+            Assert.Equal( new[] { 3.5 }, events[ 0 ].NewItems );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+        }
+
+        [Fact]
+        public void Replace_Same()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableSet<double> observableSet = new ObservableSortedSet<double>( new[] { 5.1, 8.0, 2.9 } );
+
+            observableSet.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableSet, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { 2.9, 5.1, 8.0 }, observableSet );
+
+            // Act
+
+            var result = observableSet.Replace( 8.0, 8.0 );
+
+            // Assert state & results
+
+            Assert.True( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0 }, observableSet );
+
+            // Assert events
+
+            Assert.Equal( 1, events.Count );
+            Assert.Equal( NotifyCollectionChangedAction.Replace, events[ 0 ].Action );
+            Assert.Equal( new[] { 8.0 }, events[ 0 ].OldItems );
+            Assert.Equal( new[] { 8.0 }, events[ 0 ].NewItems );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+        }
+
+        [Fact]
+        public void Replace_OldNotExisting()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableSet<double> observableSet = new ObservableSortedSet<double>( new[] { 5.1, 8.0, 2.9 } );
+
+            observableSet.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableSet, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { 2.9, 5.1, 8.0 }, observableSet );
+
+            // Act
+
+            var result = observableSet.Replace( 8.01, 3.5 );
+
+            // Assert state & results
+
+            Assert.False( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0 }, observableSet );
+
+            // Assert events
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void Replace_NewExisting()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            IObservableSet<double> observableSet = new ObservableSortedSet<double>( new[] { 5.1, 8.0, 2.9 } );
+
+            observableSet.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableSet, obj );
+                events.Add( args );
+            };
+
+            Assert.Equal( new[] { 2.9, 5.1, 8.0 }, observableSet );
+
+            // Act
+
+            var result = observableSet.Replace( 8.01, 3.5 );
+
+            // Assert state & results
+
+            Assert.False( result );
+            Assert.Equal( new[] { 2.9, 5.1, 8.0 }, observableSet );
+
+            // Assert events
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
         public void Clear()
         {
             // Arrange

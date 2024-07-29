@@ -2,6 +2,7 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -138,6 +139,89 @@ namespace Utilities.DotNet.Collections
             }
 
             return RemoveRange( itemsToRemove ) && partialResult;
+        }
+
+        /// <inheritdoc/>
+        public bool Replace( T oldItem, T newItem )
+        {
+            var index = IndexOf( oldItem );
+            if( index >= 0 )
+            {
+                return Replace( index, newItem );
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        bool ICollectionEx.Replace( object oldItem, object newItem )
+        {
+            if( ( oldItem is T oldObj ) && ( newItem is T newObj ) )
+            {
+                return Replace( oldObj, newObj );
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public bool Replace( int index, T newItem )
+        {
+            if( ( index < 0 ) || ( index >= Count ) )
+            {
+                throw new ArgumentOutOfRangeException( nameof( index ) );
+            }
+
+            RemoveAt( index );
+            Insert( index, newItem );
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public bool Move( T item, int newIndex )
+        {
+            var oldIndex = IndexOf( item );
+            if( oldIndex >= 0 )
+            {
+                return Move( oldIndex, newIndex );
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public bool Move( int oldIndex, int newIndex )
+        {
+            if( ( oldIndex < 0 ) || ( oldIndex >= Count ) )
+            {
+                throw new ArgumentOutOfRangeException( nameof( oldIndex ) );
+            }
+
+            if( ( newIndex < 0 ) || ( newIndex > Count ) )
+            {
+                throw new ArgumentOutOfRangeException( nameof( newIndex ) );
+            }
+
+            if( oldIndex < newIndex )
+            {
+                newIndex--;
+            }
+
+            if( oldIndex == newIndex )
+            {
+                return true;
+            }
+
+            var item = this[ oldIndex ];
+            RemoveAt( oldIndex );
+            Insert( newIndex, item );
+
+            return true;
         }
 
         /// <inheritdoc/>

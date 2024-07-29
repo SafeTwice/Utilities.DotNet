@@ -23,11 +23,33 @@ namespace Utilities.DotNet.Collections
         bool Add( object item );
 
         /// <summary>
+        /// Adds the items of the specified collection to the collection.
+        /// </summary>
+        /// <param name="collection">Collection whose items will be added to the collection.</param>
+        /// <returns><c>true</c> if all the items could be added; <c>false</c> otherwise.</returns>
+        bool AddRange( IEnumerable collection );
+
+        /// <summary>
         /// Removes the first occurrence of a specific item from the collection.
         /// </summary>
         /// <param name="item">Item to be removed.</param>
         /// <returns><c>true</c> if the item was present and removed; <c>false</c> otherwise.</returns>
         bool Remove( object item );
+
+        /// <summary>
+        /// Removes the items of the specified collection from the collection.
+        /// </summary>
+        /// <param name="collection">Collection whose items will be removed from the collection.</param>
+        /// <returns><c>true</c> if all the items were present and removed; <c>false</c> otherwise.</returns>
+        bool RemoveRange( IEnumerable collection );
+
+        /// <summary>
+        /// Replaces an item in the collection with another item.
+        /// </summary>
+        /// <param name="oldItem">Item to replace.</param>
+        /// <param name="newItem">Replacing item.</param>
+        /// <returns><c>true</c> if the item could be replaced; <c>false</c> otherwise.</returns>
+        bool Replace( object oldItem, object newItem );
 
         /// <summary>
         /// Removes all items from the collection.
@@ -41,18 +63,5 @@ namespace Utilities.DotNet.Collections
         /// <returns><c>true</c> if item is found; otherwise, <c>false</c>.</returns>
         bool Contains( object item );
 
-        /// <summary>
-        /// Adds the items of the specified collection to the collection.
-        /// </summary>
-        /// <param name="collection">Collection whose items will be added to the collection.</param>
-        /// <returns><c>true</c> if all the items could be added; <c>false</c> otherwise.</returns>
-        bool AddRange( IEnumerable collection );
-
-        /// <summary>
-        /// Removes the items of the specified collection from the collection.
-        /// </summary>
-        /// <param name="collection">Collection whose items will be removed from the collection.</param>
-        /// <returns><c>true</c> if all the items were present and removed; <c>false</c> otherwise.</returns>
-        bool RemoveRange( IEnumerable collection );
     }
 }

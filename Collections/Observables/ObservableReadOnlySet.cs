@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
-    /// Implements an observable read-only set of items.
+    /// Implements an observable read-only set of items that wraps another observable set.
     /// </summary>
     /// <typeparam name="T">Type of the items in the set.</typeparam>
     public class ObservableReadOnlySet<T> : ObservableReadOnlyCollection<T>, IObservableReadOnlySet<T>

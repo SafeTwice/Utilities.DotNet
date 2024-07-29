@@ -42,11 +42,7 @@ namespace Utilities.DotNet.Collections.Observables
         public T this[ int index ]
         {
             get => m_list[ index ];
-            set
-            {
-                RemoveAt( index );
-                Add( value );
-            }
+            set => Replace( index, value );
         }
 
         /// <inheritdoc/>
@@ -172,7 +168,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public void RemoveAt( int index )
         {
-            if( index < 0 || index >= Count )
+            if( ( index < 0 ) || ( index >= Count ) )
             {
                 throw new ArgumentOutOfRangeException( nameof( index ) );
             }
@@ -197,6 +193,50 @@ namespace Utilities.DotNet.Collections.Observables
             m_list.RemoveRange( index, count );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, index ) );
+        }
+
+        /// <inheritdoc/>
+        public bool Replace( int index, T newItem )
+        {
+            if( ( index < 0 ) || ( index >= Count ) )
+            {
+                throw new ArgumentOutOfRangeException( nameof( index ) );
+            }
+
+            return Replace( this[ index ], newItem );
+        }
+
+        /// <inheritdoc/>
+        public bool Move( T item, int newIndex )
+        {
+            var oldIndex = IndexOf( item );
+            if( oldIndex < 0 )
+            {
+                return false;
+            }
+
+            return Move( oldIndex, newIndex );
+        }
+
+        /// <inheritdoc/>
+        public bool Move( int oldIndex, int newIndex )
+        {
+            if( ( oldIndex < 0 ) || ( oldIndex >= Count ) )
+            {
+                throw new ArgumentOutOfRangeException( nameof( oldIndex ) );
+            }
+
+            if( ( newIndex < 0 ) || ( newIndex > Count ) )
+            {
+                throw new ArgumentOutOfRangeException( nameof( newIndex ) );
+            }
+
+            if( oldIndex < newIndex )
+            {
+                newIndex--;
+            }
+
+            return ( oldIndex == newIndex );
         }
 
         bool IList.Contains( object? value )

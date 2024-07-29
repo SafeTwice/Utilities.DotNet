@@ -12,7 +12,7 @@ namespace Utilities.DotNet.Collections
     /// <summary>
     /// Extension of <see cref="HashSet{T}"/> that implements <see cref="IReadOnlySetEx{T}"/>.
     /// </summary>
-    public class HashSetEx<T> : HashSet<T>, ICollectionEx<T>, IReadOnlySetEx<T>, ICollectionEx
+    public class HashSetEx<T> : HashSet<T>, ISetEx<T>, IReadOnlySetEx<T>, ICollectionEx
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -151,6 +151,34 @@ namespace Utilities.DotNet.Collections
             }
 
             return RemoveRange( itemsToRemove ) && partialResult;
+        }
+
+        /// <inheritdoc/>
+        public bool Replace( T oldItem, T newItem )
+        {
+            if( !Contains( oldItem ) ||
+                ( !Comparer.Equals( oldItem, newItem ) && Contains( newItem ) ) )
+            {
+                return false;
+            }
+
+            Remove( oldItem );
+            Add( newItem );
+
+            return true;
+        }
+
+        bool ICollectionEx.Replace( object oldItem, object newItem )
+        {
+            if( ( oldItem is T oldObj ) && ( newItem is T newObj ) )
+            {
+                Replace( oldObj, newObj );
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         bool ICollectionEx.Contains( object item )

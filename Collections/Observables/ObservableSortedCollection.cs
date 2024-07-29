@@ -282,6 +282,35 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
+        public bool Replace( T oldItem, T newItem )
+        {
+            if( !CanReplaceItem( oldItem, newItem ) )
+            {
+                return false;
+            }
+
+            RemoveItem( oldItem );
+            var insertionIndex = AddItem( newItem );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
+
+            return true;
+        }
+
+        bool ICollectionEx.Replace( object oldItem, object newItem )
+        {
+            if( ( oldItem is T oldObj ) && ( newItem is T newObj ) )
+            {
+                Replace( oldObj, newObj );
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
         public void Clear()
         {
             if( m_list.Count == 0 )
@@ -428,6 +457,11 @@ namespace Utilities.DotNet.Collections.Observables
         private protected virtual bool CanAddItem( T item )
         {
             return true;
+        }
+
+        private protected virtual bool CanReplaceItem( T oldItem, T newItem )
+        {
+            return ContainsItem( oldItem );
         }
 
         //===========================================================================

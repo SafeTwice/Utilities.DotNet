@@ -2,10 +2,8 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Utilities.DotNet.Collections;
 using Utilities.DotNet.Collections.Observables;
 using Xunit;
 

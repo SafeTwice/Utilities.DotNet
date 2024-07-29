@@ -24,17 +24,6 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <summary>
-        /// Creates a shallow copy of a range of elements in the source list.
-        /// </summary>
-        /// <param name="index">The zero-based list index at which the range starts.</param>
-        /// <param name="count">The number of elements in the range.</param>
-        /// <returns>Shallow copy of a range of elements in the source list.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> or <paramref name="count"/> are less than 0.</exception>
-        /// <exception cref="System.ArgumentException">Thrown when <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of
-        ///                                            elements in the list.</exception>
-        new IListEx<T> GetRange( int index, int count );
-
-        /// <summary>
         /// Inserts the elements of a collection into the list at the specified index.
         /// </summary>
         /// <param name="index">Zero-based index at which the new elements should be inserted.</param>
@@ -52,6 +41,41 @@ namespace Utilities.DotNet.Collections
         /// <exception cref="System.ArgumentException">Thrown when <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of
         ///                                            elements in the list.</exception>
         void RemoveRange( int index, int count );
+
+        /// <summary>
+        /// Moves an item in the collection.
+        /// </summary>
+        /// <param name="item">Item to move.</param>
+        /// <param name="newIndex">New index for the item.</param>
+        /// <returns><c>true</c> if the item could be moved; <c>false</c> otherwise.</returns>
+        bool Move( T item, int newIndex );
+
+        /// <summary>
+        /// Moves an item in the collection.
+        /// </summary>
+        /// <param name="oldIndex">Index of the item to move.</param>
+        /// <param name="newIndex">New index for the item.</param>
+        /// <returns><c>true</c> if the item could be moved; <c>false</c> otherwise.</returns>
+        bool Move( int oldIndex, int newIndex );
+
+        /// <summary>
+        /// Replaces an item in the collection with another item.
+        /// </summary>
+        /// <param name="index">Index of the item to replace.</param>
+        /// <param name="newItem">Replacing item.</param>
+        /// <returns><c>true</c> if the item could be replaced; <c>false</c> otherwise.</returns>
+        bool Replace( int index, T newItem );
+
+        /// <summary>
+        /// Creates a shallow copy of a range of elements in the source list.
+        /// </summary>
+        /// <param name="index">The zero-based list index at which the range starts.</param>
+        /// <param name="count">The number of elements in the range.</param>
+        /// <returns>Shallow copy of a range of elements in the source list.</returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> or <paramref name="count"/> are less than 0.</exception>
+        /// <exception cref="System.ArgumentException">Thrown when <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of
+        ///                                            elements in the list.</exception>
+        new IListEx<T> GetRange( int index, int count );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of its first occurrence within the range of elements in the list that
