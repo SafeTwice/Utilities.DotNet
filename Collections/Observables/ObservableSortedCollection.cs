@@ -29,7 +29,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// </para>
     /// </remarks>
     /// <typeparam name="T">Type of the items in the collection.</typeparam>
-    public class ObservableSortedCollection<T> : IObservableCollection<T>, ICollectionEx
+    public class ObservableSortedCollection<T> : IObservableCollection<T>, IObservableCollection
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES

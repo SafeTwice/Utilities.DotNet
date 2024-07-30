@@ -21,7 +21,7 @@ namespace Utilities.DotNet.Collections
         /// <param name="index">Zero-based index at which the new elements should be inserted.</param>
         /// <param name="collection">Collection whose elements should be inserted into the list.</param>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is less than 0 or greater than
-        ///                                                      <see cref="ICollection{T}.Count">Count</see>.</exception>
+        ///                                                      <see cref="ICollection.Count">Count</see>.</exception>
         /// <returns><c>true</c> if the items could be inserted; <c>false</c> otherwise.</returns>
         bool InsertRange( int index, IEnumerable collection );
 

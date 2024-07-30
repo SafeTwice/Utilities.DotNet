@@ -29,7 +29,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// </para>
     /// </remarks>
     /// <typeparam name="T">Type of the items in the set.</typeparam>
-    public class ObservableSet<T> : IObservableSet<T>, ICollectionEx
+    public class ObservableSet<T> : IObservableSet<T>, IObservableCollection
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
