@@ -187,5 +187,17 @@ namespace Utilities.DotNet
         {
             return ( source.Distinct().Count() == source.Count() );
         }
+
+        /// <summary>
+        /// Determines whether all elements in the sequence are distinct.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the sequence.</typeparam>
+        /// <param name="source">The sequence to check for distinctness.</param>
+        /// <param name="comparer">The equality comparer to use for comparing elements.</param>
+        /// <returns><c>true</c> if all elements in the sequence are distinct; otherwise, <c>false</c>.</returns>
+        public static bool AllDistinct<T>( this IEnumerable<T> source, IEqualityComparer<T> comparer )
+        {
+            return ( source.Distinct( comparer ).Count() == source.Count() );
+        }
     }
 }

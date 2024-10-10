@@ -186,5 +186,26 @@ namespace Utilities.DotNet.Test
         {
             Assert.Equal( expectedResult, input.AllDistinct() );
         }
+
+        private class IntComparer : IEqualityComparer<int>
+        {
+            public bool Equals( int x, int y )
+            {
+                return ( x % 10 ) == ( y % 10 );
+            }
+
+            public int GetHashCode( int obj )
+            {
+                return ( obj % 10 );
+            }
+        }
+
+        [Theory]
+        [InlineData( new int[] { 3, 32, 56 }, true )]
+        [InlineData( new int[] { 3, 33, 56 }, false )]
+        public void AllDistinct_WithComparer( int[] input, bool expectedResult )
+        {
+            Assert.Equal( expectedResult, input.AllDistinct( new IntComparer() ) );
+        }
     }
 }
