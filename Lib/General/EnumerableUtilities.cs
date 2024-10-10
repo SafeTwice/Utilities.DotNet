@@ -176,5 +176,16 @@ namespace Utilities.DotNet
                 }
             }
         }
+
+        /// <summary>
+        /// Determines whether all elements in the sequence are distinct.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the sequence.</typeparam>
+        /// <param name="source">The sequence to check for distinctness.</param>
+        /// <returns><c>true</c> if all elements in the sequence are distinct; otherwise, <c>false</c>.</returns>
+        public static bool AllDistinct<T>( this IEnumerable<T> source )
+        {
+            return ( source.Distinct().Count() == source.Count() );
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2019-2021 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2019-2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -157,14 +157,26 @@ namespace Utilities.DotNet.Test
         }
 
         [Theory]
-        [InlineData( new byte[] { 0x46, 0x6F, 0x6F }, "", "466F6F" )]
-        [InlineData( new byte[] { 0x46, 0x6F, 0x6F, 0x00, 0x46, 0x00 }, " ", "46 6F 6F 00 46 00" )]
-        [InlineData( new byte[] { 0x00, 0x46, 0x6F, 0x6F }, ".", "00.46.6F.6F" )]
-        [InlineData( new byte[] { }, ".", "" )]
-        public void ToHexString( byte[] input, string separator, string expectedOutput )
+        [InlineData( "48656C6C6F20576F726C64", new byte[] { 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x57, 0x6F, 0x72, 0x6C, 0x64 } )]
+        [InlineData( "5468697320697320616E6F746865722074657374", new byte[] { 0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x6E, 0x6F, 0x74, 0x68, 0x65, 0x72, 0x20, 0x74, 0x65, 0x73, 0x74 } )]
+        [InlineData( "", new byte[] { } )]
+        public void ParseHexString( string hexString, byte[] expectedArray )
         {
-            var result = input.ToHexString( separator );
-            Assert.Equal( expectedOutput, result );
+            byte[] resultArray = ArrayUtilities.ParseHexString( hexString );
+
+            Assert.Equal( expectedArray, resultArray );
+        }
+
+        [Fact]
+        public void ParseHexString_InvalidContents()
+        {
+            Assert.Throws<ArgumentException>( () => ArrayUtilities.ParseHexString( "48L6" ) );
+        }
+
+        [Fact]
+        public void ParseHexString_InvalidLength()
+        {
+            Assert.Throws<ArgumentException>( () => ArrayUtilities.ParseHexString( "486" ) );
         }
     }
 }
