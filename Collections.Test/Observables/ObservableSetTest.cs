@@ -364,12 +364,28 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert events
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             Assert.Equal( 1, events.Count );
             Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
             Assert.Equal( new[] { item1, item3 }, events[ 0 ].NewItems );
             Assert.Null( events[ 0 ].OldItems );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+#else
+            Assert.Equal( 2, events.Count );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
+            Assert.Equal( new[] { item1 }, events[ 0 ].NewItems );
+            Assert.Null( events[ 0 ].OldItems );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 1 ].Action );
+            Assert.Equal( new[] { item3 }, events[ 1 ].NewItems );
+            Assert.Null( events[ 1 ].OldItems );
+            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
+#endif
         }
 
         [Fact]
@@ -404,12 +420,28 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert events
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             Assert.Equal( 1, events.Count );
             Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
             Assert.Equal( new[] { item1, item3 }, events[ 0 ].NewItems );
             Assert.Null( events[ 0 ].OldItems );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+#else
+            Assert.Equal( 2, events.Count );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
+            Assert.Equal( new[] { item1 }, events[ 0 ].NewItems );
+            Assert.Null( events[ 0 ].OldItems );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 1 ].Action );
+            Assert.Equal( new[] { item3 }, events[ 1 ].NewItems );
+            Assert.Null( events[ 1 ].OldItems );
+            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
+#endif
         }
 
         [Fact]
@@ -440,12 +472,34 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert events
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             Assert.Equal( 1, events.Count );
             Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
             Assert.Equal( new[] { 5, 8, 2 }, events[ 0 ].NewItems );
             Assert.Null( events[ 0 ].OldItems );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+#else
+            Assert.Equal( 3, events.Count );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
+            Assert.Equal( new[] { 5 }, events[ 0 ].NewItems );
+            Assert.Null( events[ 0 ].OldItems );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 1 ].Action );
+            Assert.Equal( new[] { 8 }, events[ 1 ].NewItems );
+            Assert.Null( events[ 1 ].OldItems );
+            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 2 ].Action );
+            Assert.Equal( new[] { 2 }, events[ 2 ].NewItems );
+            Assert.Null( events[ 2 ].OldItems );
+            Assert.Equal( -1, events[ 2 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 2 ].OldStartingIndex );
+#endif
         }
 
         [Fact]
@@ -629,12 +683,28 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert events
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             Assert.Equal( 1, events.Count );
             Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
             Assert.Equal( new[] { item2, item1 }, events[ 0 ].OldItems );
             Assert.Null( events[ 0 ].NewItems );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+#else
+            Assert.Equal( 2, events.Count );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
+            Assert.Equal( new[] { item2 }, events[ 0 ].OldItems );
+            Assert.Null( events[ 0 ].NewItems );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 1 ].Action );
+            Assert.Equal( new[] { item1 }, events[ 1 ].OldItems );
+            Assert.Null( events[ 1 ].NewItems );
+            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
+            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
+#endif
         }
 
         [Fact]
@@ -663,12 +733,28 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert events
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             Assert.Equal( 1, events.Count );
             Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
             Assert.Equal( new[] { 8, 2 }, events[ 0 ].OldItems );
             Assert.Null( events[ 0 ].NewItems );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+#else
+            Assert.Equal( 2, events.Count );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
+            Assert.Equal( new[] { 8 }, events[ 0 ].OldItems );
+            Assert.Null( events[ 0 ].NewItems );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 1 ].Action );
+            Assert.Equal( new[] { 2 }, events[ 1 ].OldItems );
+            Assert.Null( events[ 1 ].NewItems );
+            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
+            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
+#endif
 
             // Arrange
 
@@ -956,12 +1042,34 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert events
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             Assert.Equal( 1, events.Count );
             Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
             Assert.Null( events[ 0 ].NewItems );
             Assert.Equal( new[] { item1, item2, item3 }, events[ 0 ].OldItems );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( 0, events[ 0 ].OldStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+#else
+            Assert.Equal( 3, events.Count );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
+            Assert.Null( events[ 0 ].NewItems );
+            Assert.Equal( new[] { item1 }, events[ 0 ].OldItems );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 1 ].Action );
+            Assert.Null( events[ 1 ].NewItems );
+            Assert.Equal( new[] { item2 }, events[ 1 ].OldItems );
+            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 2 ].Action );
+            Assert.Null( events[ 2 ].NewItems );
+            Assert.Equal( new[] { item3 }, events[ 2 ].OldItems );
+            Assert.Equal( -1, events[ 2 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 2 ].OldStartingIndex );
+#endif
 
             // Arrange
 
@@ -1252,12 +1360,28 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert events
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             Assert.Equal( 1, events.Count );
             Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
             Assert.Equal( new[] { 1, 9 }, events[ 0 ].NewItems );
             Assert.Null( events[ 0 ].OldItems );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
             Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+#else
+            Assert.Equal( 2, events.Count );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
+            Assert.Equal( new[] { 1 }, events[ 0 ].NewItems );
+            Assert.Null( events[ 0 ].OldItems );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 1 ].Action );
+            Assert.Equal( new[] { 9 }, events[ 1 ].NewItems );
+            Assert.Null( events[ 1 ].OldItems );
+            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
+#endif
         }
 
         [Fact]
@@ -1357,6 +1481,7 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             // Assert events
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             Assert.Equal( 2, events.Count );
 
             Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
@@ -1370,6 +1495,27 @@ namespace Utilities.DotNet.Test.Collections.Observables
             Assert.Null( events[ 1 ].OldItems );
             Assert.Equal( -1, events[ 1 ].NewStartingIndex );
             Assert.Equal( -1, events[ 1 ].OldStartingIndex );
+#else
+            Assert.Equal( 3, events.Count );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
+            Assert.Equal( new[] { 23 }, events[ 0 ].OldItems );
+            Assert.Null( events[ 0 ].NewItems );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 1 ].Action );
+            Assert.Equal( new[] { 1 }, events[ 1 ].NewItems );
+            Assert.Null( events[ 1 ].OldItems );
+            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 2 ].Action );
+            Assert.Equal( new[] { 9 }, events[ 2 ].NewItems );
+            Assert.Null( events[ 2 ].OldItems );
+            Assert.Equal( -1, events[ 2 ].NewStartingIndex );
+            Assert.Equal( -1, events[ 2 ].OldStartingIndex );
+#endif
         }
 
         [Fact]

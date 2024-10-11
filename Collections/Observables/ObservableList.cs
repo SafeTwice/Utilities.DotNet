@@ -103,7 +103,16 @@ namespace Utilities.DotNet.Collections.Observables
         {
             m_list.InsertRange( index, collection );
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), index ) );
+#else
+            int i = 0;
+            foreach( var insertedItem in collection )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, insertedItem, index + i ) );
+                i++;
+            }
+#endif
         }
 
         bool IListEx.InsertRange( int index, IEnumerable collection )
@@ -157,7 +166,14 @@ namespace Utilities.DotNet.Collections.Observables
 
             m_list.RemoveRange( index, count );
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, index ) );
+#else
+            foreach( var removedItem in removedItems )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItem, index ) );
+            }
+#endif
         }
 
         /// <inheritdoc/>

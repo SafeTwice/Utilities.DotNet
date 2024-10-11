@@ -101,7 +101,16 @@ namespace Utilities.DotNet.Collections.Observables
 
             m_list.AddRange( collection );
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), initialIndex ) );
+#else
+            int i = 0;
+            foreach( var addedItem in collection )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, addedItem, ( initialIndex + i ) ) );
+                i++;
+            }
+#endif
 
             return true;
         }
@@ -172,7 +181,14 @@ namespace Utilities.DotNet.Collections.Observables
                 }
             }
 
+#if BULK_NOTIFY_RANGE_ACTIONS
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems ) );
+#else
+            foreach( var removedItem in removedItems )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItem ) );
+            }
+#endif
 
             return result;
         }
@@ -235,11 +251,18 @@ namespace Utilities.DotNet.Collections.Observables
                 return;
             }
 
-            var deletedItems = new ListEx<T>( m_list );
+            var removedItems = new ListEx<T>( m_list );
 
             m_list.Clear();
 
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, deletedItems, 0 ) );
+#if BULK_NOTIFY_RANGE_ACTIONS
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, 0 ) );
+#else
+            foreach( var removedItem in removedItems )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItem, 0 ) );
+            }
+#endif
         }
 
         /// <inheritdoc/>

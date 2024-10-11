@@ -121,6 +121,8 @@ namespace Utilities.DotNet.Test.Collections.Observables
         [Fact]
         public void ClearObservedCollection()
         {
+            // Arrange
+
             var events = new List<NotifyCollectionChangedEventArgs>();
 
             var item1 = new TestClass( "Item1", 10 );
@@ -139,19 +141,50 @@ namespace Utilities.DotNet.Test.Collections.Observables
 
             Assert.Equal( new[] { item2, item1, item3 }, testedCollection );
 
+            // Act
+
             baseCollection.Clear();
 
+            // Assert
+
             Assert.Empty( testedCollection );
+
+#if BULK_NOTIFY_RANGE_ACTIONS
             Assert.Equal( 1, events.Count );
             Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
             Assert.Null( events[ 0 ].NewItems );
             Assert.Equal( new[] { item2, item1, item3 }, events[ 0 ].OldItems );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
             Assert.Equal( 0, events[ 0 ].OldStartingIndex );
+#else
+            Assert.Equal( 3, events.Count );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
+            Assert.Null( events[ 0 ].NewItems );
+            Assert.Equal( new[] { item2 }, events[ 0 ].OldItems );
+            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( 0, events[ 0 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 1 ].Action );
+            Assert.Null( events[ 1 ].NewItems );
+            Assert.Equal( new[] { item1 }, events[ 1 ].OldItems );
+            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
+            Assert.Equal( 0, events[ 1 ].OldStartingIndex );
+
+            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 2 ].Action );
+            Assert.Null( events[ 2 ].NewItems );
+            Assert.Equal( new[] { item3 }, events[ 2 ].OldItems );
+            Assert.Equal( -1, events[ 2 ].NewStartingIndex );
+            Assert.Equal( 0, events[ 2 ].OldStartingIndex );
+#endif
 
             events.Clear();
 
+            // Act
+
             baseCollection.Clear();
+
+            // Assert
 
             Assert.Empty( events );
         }
