@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Utilities.DotNet.Types;
 
 namespace Utilities.DotNet.Services
@@ -20,21 +21,17 @@ namespace Utilities.DotNet.Services
         /// <summary>
         /// Global services provider.
         /// </summary>
-        public static IServiceProvider GlobalServices { get; } = new ServiceProvider();
+        public static IServiceProvider GlobalServices { get; } = new ServiceProvider( true );
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
         //===========================================================================
 
-        static ServiceProvider()
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ServiceProvider() : this( false )
         {
-            var registererTypes = TypeUtilities.FindSubclasses( typeof( IGlobalServiceRegisterer ) );
-
-            foreach( var registererType in registererTypes )
-            {
-                var serviceRegisterer = (IGlobalServiceRegisterer) Activator.CreateInstance( registererType )!;
-                serviceRegisterer.RegisterServices( GlobalServices );
-            }
         }
 
         //===========================================================================
@@ -82,7 +79,14 @@ namespace Utilities.DotNet.Services
 
             if( service == null )
             {
-                throw new InvalidOperationException( "Service type not registered" );
+                if( m_isGlobal )
+                {
+                    service = GetAutoRegisteredGlobalService<TService>();
+                }
+                else
+                {
+                    throw new InvalidOperationException( "Service type not registered" );
+                }
             }
 
             return service;
@@ -100,6 +104,15 @@ namespace Utilities.DotNet.Services
         }
 
         //===========================================================================
+        //                          PRIVATE CONSTRUCTORS
+        //===========================================================================
+
+        private ServiceProvider( bool isGlobal )
+        {
+            m_isGlobal = isGlobal;
+        }
+
+        //===========================================================================
         //                            PRIVATE METHODS
         //===========================================================================
 
@@ -113,10 +126,38 @@ namespace Utilities.DotNet.Services
             m_services.Add( serviceType, serviceInstance );
         }
 
+        private TService GetAutoRegisteredGlobalService<TService>() where TService : class
+        {
+            var serviceCreatorTypes = TypeUtilities.FindSubclasses( typeof( IAutoRegisteredGlobalServiceCreator<TService> ) );
+
+            var serviceCreatorsCount = serviceCreatorTypes.Count();
+
+            if( serviceCreatorsCount == 0 )
+            {
+                throw new InvalidOperationException( "Service type not registered" );
+            }
+            else if( serviceCreatorsCount > 1 )
+            {
+                throw new InvalidOperationException( "Multiple auto-registered global service implementations found for this service" );
+            }
+
+            var serviceCreatorType = serviceCreatorTypes.First();
+
+            var serviceCreator = (IAutoRegisteredGlobalServiceCreator<TService>) Activator.CreateInstance( serviceCreatorType )!;
+
+            var serviceInstance = serviceCreator.CreateServiceInstance();
+
+            RegisterService( serviceInstance );
+
+            return serviceInstance;
+        }
+
         //===========================================================================
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
         private Dictionary<Type, object> m_services = new();
+
+        private bool m_isGlobal;
     }
 }

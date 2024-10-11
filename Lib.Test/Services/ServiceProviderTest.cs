@@ -163,5 +163,21 @@ namespace Utilities.DotNet.Test.Services
 
             Assert.Throws<InvalidOperationException>( () => serviceProvider.GetService<ITestService>() );
         }
+
+        [Fact]
+        public void GetGlobalService()
+        {
+            // Prepare
+
+            var service = new TestService();
+
+            // Execute
+
+            ServiceProvider.GlobalServices.RegisterServiceByInterface( service );
+
+            // Verify
+
+            Assert.Equal( service, ServiceProvider.GetGlobalService<ITestService>() );
+        }
     }
 }

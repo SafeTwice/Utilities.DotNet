@@ -5,19 +5,22 @@
 namespace Utilities.DotNet.Services
 {
     /// <summary>
-    /// Represents a class that registers services.
+    /// Represents a service that is automatically registered with the <see cref="ServiceProvider.GlobalServices">global service provider</see>.
     /// </summary>
-    public interface IServiceRegisterer
+    /// <remarks>
+    /// Derived classes must implement a default constructor.
+    /// </remarks>
+    public interface IAutoRegisteredGlobalServiceCreator<TService> where TService : class
     {
         //===========================================================================
         //                                  METHODS
         //===========================================================================
 
         /// <summary>
-        /// Registers services with the given service provider.
+        /// Creates an instance of the service.
         /// </summary>
-        /// <param name="serviceProvider">Service provided into which services must be registered.</param>
-        void RegisterServices( IServiceProvider serviceProvider );
+        /// <returns>Instance of the service.</returns>
+        TService CreateServiceInstance();
     }
 }
 
