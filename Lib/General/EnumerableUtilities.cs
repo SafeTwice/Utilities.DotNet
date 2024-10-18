@@ -178,7 +178,7 @@ namespace Utilities.DotNet
         }
 
         /// <summary>
-        /// Determines whether all elements in the sequence are distinct.
+        /// Determines whether all elements in a sequence are distinct.
         /// </summary>
         /// <typeparam name="T">The type of the elements in the sequence.</typeparam>
         /// <param name="source">The sequence to check for distinctness.</param>
@@ -189,7 +189,7 @@ namespace Utilities.DotNet
         }
 
         /// <summary>
-        /// Determines whether all elements in the sequence are distinct.
+        /// Determines whether all elements in a sequence are distinct.
         /// </summary>
         /// <typeparam name="T">The type of the elements in the sequence.</typeparam>
         /// <param name="source">The sequence to check for distinctness.</param>
@@ -198,6 +198,16 @@ namespace Utilities.DotNet
         public static bool AllDistinct<T>( this IEnumerable<T> source, IEqualityComparer<T> comparer )
         {
             return ( source.Distinct( comparer ).Count() == source.Count() );
+        }
+
+        /// <summary>
+        /// Disposes all the elements in a sequence.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the sequence.</typeparam>
+        /// <param name="source">The sequence to dispose its elements.</param>
+        public static void DisposeAll<T>( this IEnumerable<T> source ) where T : IDisposable
+        {
+            source.ForEach( item => item.Dispose() );
         }
     }
 }

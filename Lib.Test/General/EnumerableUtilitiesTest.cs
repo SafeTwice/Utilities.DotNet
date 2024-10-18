@@ -207,5 +207,28 @@ namespace Utilities.DotNet.Test
         {
             Assert.Equal( expectedResult, input.AllDistinct( new IntComparer() ) );
         }
+
+        private class DisposableTestClass : IDisposable
+        {
+            public bool Disposed { get; private set; } = false;
+
+            public void Dispose() { Disposed = true; }
+        }
+
+        [Fact]
+        public void DisposeAll()
+        {
+            // Arrange
+
+            var input = new DisposableTestClass[] { new DisposableTestClass(), new DisposableTestClass(), new DisposableTestClass() };
+
+            // Act
+
+            input.DisposeAll();
+
+            // Assert
+
+            Assert.True( input.All( x => x.Disposed ) );
+        }
     }
 }
