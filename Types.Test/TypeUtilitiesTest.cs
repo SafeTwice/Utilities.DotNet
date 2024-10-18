@@ -3,6 +3,8 @@
 /// @license    See LICENSE.txt
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using Utilities.DotNet.Types;
 using Xunit;
@@ -169,6 +171,16 @@ namespace Utilities.DotNet.Test.Exceptions
             Assert.True( AnotherType.Initialized <= referenceTime2 );
             Assert.False( YetAnotherType.Initialized <= referenceTime2 );
             Assert.True( YetAnotherType.Initialized <= referenceTime3 );
+        }
+
+        [Theory]
+        [InlineData( "IList", typeof( IList ) )]
+        [InlineData( "ArrayList", typeof( ArrayList ) )]
+        [InlineData( "List<Double>", typeof( List<double> ) )]
+        [InlineData( "LinkedList<IEnumerable<Int32>>", typeof( LinkedList<IEnumerable<int>> ) )]
+        public void GetPrettyName( string expected, Type type )
+        {
+            Assert.Equal( expected, TypeUtilities.GetPrettyName( type ) );
         }
     }
 }

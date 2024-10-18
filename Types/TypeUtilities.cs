@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -35,7 +36,7 @@ namespace Utilities.DotNet.Types
         /// <param name="baseType">Base type.</param>
         /// <param name="nonAbstractOnly">If <c>true</c>, only non-abstract classes are returned.</param>
         /// <returns>Collection of types.</returns>
-        public static IEnumerable<Type> FindSubclasses( Type baseType, bool nonAbstractOnly = true )
+        public static IEnumerable<Type> FindSubclasses( this Type baseType, bool nonAbstractOnly = true )
         {
             return FindSubclasses( baseType, AppDomain.CurrentDomain.GetAssemblies(), nonAbstractOnly );
         }
@@ -47,7 +48,7 @@ namespace Utilities.DotNet.Types
         /// <param name="assemblies">Assemblies to search.</param>
         /// <param name="nonAbstractOnly">If <c>true</c>, only non-abstract classes are returned.</param>
         /// <returns>Collection of types.</returns>
-        public static IEnumerable<Type> FindSubclasses<BaseType>( IEnumerable<Assembly> assemblies, bool nonAbstractOnly = true )
+        public static IEnumerable<Type> FindSubclasses<BaseType>( this IEnumerable<Assembly> assemblies, bool nonAbstractOnly = true )
         {
             return FindSubclasses( typeof( BaseType ), assemblies, nonAbstractOnly );
         }
@@ -59,7 +60,7 @@ namespace Utilities.DotNet.Types
         /// <param name="assemblies">Assemblies to search.</param>
         /// <param name="nonAbstractOnly">If <c>true</c>, only non-abstract classes are returned.</param>
         /// <returns>Collection of types.</returns>
-        public static IEnumerable<Type> FindSubclasses( Type baseType, IEnumerable<Assembly> assemblies, bool nonAbstractOnly = true )
+        public static IEnumerable<Type> FindSubclasses( this Type baseType, IEnumerable<Assembly> assemblies, bool nonAbstractOnly = true )
         {
             List<Type> types = new();
 
@@ -78,7 +79,7 @@ namespace Utilities.DotNet.Types
         /// <param name="assembly">Assembly to search.</param>
         /// <param name="nonAbstractOnly">If <c>true</c>, only non-abstract classes are returned.</param>
         /// <returns>Collection of types.</returns>
-        public static IEnumerable<Type> FindSubclasses<BaseType>( Assembly assembly, bool nonAbstractOnly = true )
+        public static IEnumerable<Type> FindSubclasses<BaseType>( this Assembly assembly, bool nonAbstractOnly = true )
         {
             return FindSubclasses( typeof( BaseType ), assembly, nonAbstractOnly );
         }
@@ -90,7 +91,7 @@ namespace Utilities.DotNet.Types
         /// <param name="assembly">Assembly to search.</param>
         /// <param name="nonAbstractOnly">If <c>true</c>, only non-abstract classes are returned.</param>
         /// <returns>Collection of types.</returns>
-        public static IEnumerable<Type> FindSubclasses( Type baseType, Assembly assembly, bool nonAbstractOnly = true )
+        public static IEnumerable<Type> FindSubclasses( this Type baseType, Assembly assembly, bool nonAbstractOnly = true )
         {
             return FindSubclasses( baseType, assembly, nonAbstractOnly, true );
         }
@@ -110,7 +111,7 @@ namespace Utilities.DotNet.Types
         /// in all the loaded assemblies.
         /// </summary>
         /// <param name="baseType">Base type.</param>
-        public static void RunClassConstructors( Type baseType )
+        public static void RunClassConstructors( this Type baseType )
         {
             RunClassConstructors( baseType, AppDomain.CurrentDomain.GetAssemblies() );
         }
@@ -121,7 +122,7 @@ namespace Utilities.DotNet.Types
         /// </summary>
         /// <typeparam name="BaseType">Base type.</typeparam>
         /// <param name="assemblies">Assemblies to search for classes.</param>
-        public static void RunClassConstructors<BaseType>( IEnumerable<Assembly> assemblies )
+        public static void RunClassConstructors<BaseType>( this IEnumerable<Assembly> assemblies )
         {
             RunClassConstructors( typeof( BaseType ), assemblies );
         }
@@ -132,7 +133,7 @@ namespace Utilities.DotNet.Types
         /// </summary>
         /// <param name="baseType">Base type.</param>
         /// <param name="assemblies">Assemblies to search for classes.</param>
-        public static void RunClassConstructors( Type baseType, IEnumerable<Assembly> assemblies )
+        public static void RunClassConstructors( this Type baseType, IEnumerable<Assembly> assemblies )
         {
             foreach( var assembly in assemblies )
             {
@@ -146,7 +147,7 @@ namespace Utilities.DotNet.Types
         /// </summary>
         /// <typeparam name="BaseType">Base type.</typeparam>
         /// <param name="assembly">Assembly to search for classes.</param>
-        public static void RunClassConstructors<BaseType>( Assembly assembly )
+        public static void RunClassConstructors<BaseType>( this Assembly assembly )
         {
             RunClassConstructors( typeof( BaseType ), assembly );
         }
@@ -157,7 +158,7 @@ namespace Utilities.DotNet.Types
         /// </summary>
         /// <param name="baseType">Base type.</param>
         /// <param name="assembly">Assembly to search for classes.</param>
-        public static void RunClassConstructors( Type baseType, Assembly assembly )
+        public static void RunClassConstructors( this Type baseType, Assembly assembly )
         {
             var subTypes = FindSubclasses( baseType, assembly, false, false );
 
@@ -165,6 +166,29 @@ namespace Utilities.DotNet.Types
             {
                 RuntimeHelpers.RunClassConstructor( subType.TypeHandle );
             }
+        }
+
+        /// <summary>
+        /// Gets the pretty name of the specified type.
+        /// </summary>
+        /// <param name="type">A type.</param>
+        /// <returns>The pretty name of the type.</returns>
+        public static string GetPrettyName( this Type type )
+        {
+            string typeName = type.Name;
+
+            if( type.IsGenericType )
+            {
+                var genericArguments = type.GetGenericArguments();
+                var genericArgumentsNames = genericArguments.Select( t => t.GetPrettyName() );
+                string genericArgumentsString = string.Join( ", ", genericArgumentsNames );
+
+                var prettyTypeName = typeName.Substring( 0, typeName.IndexOf( '`' ) );
+
+                typeName = $"{prettyTypeName}<{genericArgumentsString}>";
+            }
+
+            return typeName;
         }
 
         //===========================================================================
