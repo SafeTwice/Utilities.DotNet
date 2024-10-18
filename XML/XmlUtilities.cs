@@ -199,6 +199,35 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
+        /// Gets an optional attribute value as an <c>int?</c> with value <c>null</c> when the attribute is not present.
+        /// </summary>
+        /// <param name="element">This element.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="defaultValue">Value returned when the attribute is not present.</param>
+        /// <returns>The value of the attribute.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
+        public static int? OptionalAttributeNullableInt( this XElement element, string attributeName, int? defaultValue = null )
+        {
+            string? attrStr = element.OptionalAttribute( attributeName );
+
+            int? attrNullableValue = defaultValue;
+
+            if ( attrStr is null )
+            {
+                return attrNullableValue;
+            }
+
+
+            if( !int.TryParse( attrStr, out int attrValue ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected integer value)" ),
+                                                      element );
+            }
+
+            return attrValue;
+        }
+
+        /// <summary>
         /// Gets an optional attribute value as an <c>uint</c>.
         /// </summary>
         /// <param name="element">This element.</param>
@@ -238,6 +267,34 @@ namespace Utilities.DotNet.XML
             if( ( attrStr != null ) && !double.TryParse( attrStr, NumberStyles.Float, CultureInfo.InvariantCulture, out attrValue ) )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected real number value)" ),
+                                                      element );
+            }
+
+            return attrValue;
+        }
+        /// <summary>
+        /// Gets an optional attribute value as an <c>double?</c> with value <c>null</c> when the attribute is not present.
+        /// </summary>
+        /// <param name="element">This element.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="defaultValue">Value returned when the attribute is not present.</param>
+        /// <returns>The value of the attribute.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
+        public static double? OptionalAttributeNullableDouble( this XElement element, string attributeName, double? defaultValue = null )
+        {
+            string? attrStr = element.OptionalAttribute( attributeName );
+
+            double? attrNullableValue = defaultValue;
+
+            if( attrStr is null )
+            {
+                return attrNullableValue;
+            }
+
+
+            if( !double.TryParse( attrStr, out double attrValue ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected real value)" ),
                                                       element );
             }
 
