@@ -13,6 +13,8 @@ using static Utilities.DotNet.XML.I18N.LibraryLocalizer;
 using System.Diagnostics.CodeAnalysis;
 #endif
 
+#pragma warning disable S4136 // Method overloads should be grouped together
+
 namespace Utilities.DotNet.XML
 {
     /// <summary>
@@ -174,23 +176,12 @@ namespace Utilities.DotNet.XML
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
-        /// <returns>The value of the attribute, or <c>null</c> if the attribute is not present.</returns>
-        public static string? OptionalAttribute( this XElement element, string attributeName )
-        {
-            return element.Attribute( attributeName )?.Value;
-        }
-
-        /// <summary>
-        /// Gets an optional attribute value as a <c>string</c>.
-        /// </summary>
-        /// <param name="element">This element.</param>
-        /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
-#if NET6_0_OR_GREATER
+#if !NETFRAMEWORK
         [return: NotNullIfNotNull( nameof( defaultValue ) )]
 #endif
-        public static string? OptionalAttribute( this XElement element, string attributeName, string? defaultValue )
+        public static string? OptionalAttribute( this XElement element, string attributeName, string? defaultValue = null )
         {
             return element.Attribute( attributeName )?.Value ?? defaultValue;
         }
@@ -203,19 +194,30 @@ namespace Utilities.DotNet.XML
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
-        public static int OptionalAttributeInt( this XElement element, string attributeName, int defaultValue = 0 )
+#if !NETFRAMEWORK
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
+        public static int? OptionalAttributeInt( this XElement element, string attributeName, int? defaultValue )
         {
             var attrStr = element.OptionalAttribute( attributeName );
+            if( attrStr is null )
+            {
+                return defaultValue;
+            }
 
-            int attrValue = defaultValue;
-
-            if( ( attrStr != null ) && !int.TryParse( attrStr, out attrValue ) )
+            if( !int.TryParse( attrStr, out var attrValue ) )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected integer value)" ),
                                                       element );
             }
 
             return attrValue;
+        }
+
+        /// <inheritdoc cref="OptionalAttributeInt(XElement, string, int?)"/>/>
+        public static int OptionalAttributeInt( this XElement element, string attributeName, int defaultValue = 0 )
+        {
+            return element.OptionalAttributeInt( attributeName, null ) ?? defaultValue;
         }
 
         /// <summary>
@@ -226,19 +228,30 @@ namespace Utilities.DotNet.XML
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
-        public static uint OptionalAttributeUInt( this XElement element, string attributeName, uint defaultValue = 0 )
+#if !NETFRAMEWORK
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
+        public static uint? OptionalAttributeUInt( this XElement element, string attributeName, uint? defaultValue )
         {
             var attrStr = element.OptionalAttribute( attributeName );
+            if( attrStr is null )
+            {
+                return defaultValue;
+            }
 
-            uint attrValue = defaultValue;
-
-            if( ( attrStr != null ) && !uint.TryParse( attrStr, out attrValue ) )
+            if( !uint.TryParse( attrStr, out var attrValue ) )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected unsigned integer value)" ),
                                                       element );
             }
 
             return attrValue;
+        }
+
+        /// <inheritdoc cref="OptionalAttributeUInt(XElement, string, uint?)"/>/>
+        public static uint OptionalAttributeUInt( this XElement element, string attributeName, uint defaultValue = 0U )
+        {
+            return element.OptionalAttributeUInt( attributeName, null ) ?? defaultValue;
         }
 
         /// <summary>
@@ -249,19 +262,30 @@ namespace Utilities.DotNet.XML
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
-        public static double OptionalAttributeDouble( this XElement element, string attributeName, double defaultValue = 0.0 )
+#if !NETFRAMEWORK
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
+        public static double? OptionalAttributeDouble( this XElement element, string attributeName, double? defaultValue )
         {
             var attrStr = element.OptionalAttribute( attributeName );
+            if( attrStr is null )
+            {
+                return defaultValue;
+            }
 
-            double attrValue = defaultValue;
-
-            if( ( attrStr != null ) && !double.TryParse( attrStr, NumberStyles.Float, CultureInfo.InvariantCulture, out attrValue ) )
+            if( !double.TryParse( attrStr, NumberStyles.Float, CultureInfo.InvariantCulture, out var attrValue ) )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected real number value)" ),
                                                       element );
             }
 
             return attrValue;
+        }
+
+        /// <inheritdoc cref="OptionalAttributeDouble(XElement, string, double?)"/>/>
+        public static double OptionalAttributeDouble( this XElement element, string attributeName, double defaultValue = 0.0 )
+        {
+            return element.OptionalAttributeDouble( attributeName, null ) ?? defaultValue;
         }
 
         /// <summary>
@@ -272,19 +296,30 @@ namespace Utilities.DotNet.XML
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
-        public static bool OptionalAttributeBool( this XElement element, string attributeName, bool defaultValue = false )
+#if !NETFRAMEWORK
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
+        public static bool? OptionalAttributeBool( this XElement element, string attributeName, bool? defaultValue )
         {
             var attrStr = element.OptionalAttribute( attributeName );
+            if( attrStr is null )
+            {
+                return defaultValue;
+            }
 
-            bool attrValue = defaultValue;
-
-            if( ( attrStr != null ) && !bool.TryParse( attrStr, out attrValue ) )
+            if( !bool.TryParse( attrStr, out var attrValue ) )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected boolean value)" ),
                                                       element );
             }
 
             return attrValue;
+        }
+
+        /// <inheritdoc cref="OptionalAttributeBool(XElement, string, bool?)"/>/>
+        public static bool OptionalAttributeBool( this XElement element, string attributeName, bool defaultValue = false )
+        {
+            return element.OptionalAttributeBool( attributeName, null ) ?? defaultValue;
         }
 
         /// <summary>
@@ -295,13 +330,18 @@ namespace Utilities.DotNet.XML
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
-        public static T OptionalAttributeEnum<T>( this XElement element, string attributeName, T defaultValue = default ) where T : struct, Enum
+#if !NETFRAMEWORK
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
+        public static T? OptionalAttributeEnum<T>( this XElement element, string attributeName, T? defaultValue ) where T : struct, Enum
         {
             var attrStr = element.OptionalAttribute( attributeName );
+            if( attrStr is null )
+            {
+                return defaultValue;
+            }
 
-            T attrValue = defaultValue;
-
-            if( ( attrStr != null ) && !Enum.TryParse( attrStr, out attrValue ) )
+            if( !Enum.TryParse( attrStr, out T attrValue ) )
             {
                 var enumValues = string.Join( ", ", Enum.GetNames( typeof( T ) ) );
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected one of: {enumValues})" ),
@@ -309,6 +349,12 @@ namespace Utilities.DotNet.XML
             }
 
             return attrValue;
+        }
+
+        /// <inheritdoc cref="OptionalAttributeEnum{T}(XElement, string, T?)"/>/>
+        public static T OptionalAttributeEnum<T>( this XElement element, string attributeName, T defaultValue = default ) where T : struct, Enum
+        {
+            return element.OptionalAttributeEnum<T>( attributeName, null ) ?? defaultValue;
         }
 
         /// <summary>
@@ -319,10 +365,12 @@ namespace Utilities.DotNet.XML
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
+#if !NETFRAMEWORK
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
         public static Guid? OptionalAttributeGuid( this XElement element, string attributeName, Guid? defaultValue = null )
         {
             var attrStr = element.OptionalAttribute( attributeName );
-
             if( attrStr == null )
             {
                 return defaultValue;
@@ -443,7 +491,7 @@ namespace Utilities.DotNet.XML
         /// <returns>The value of the element.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the number of matching elements is higher than 1,
         ///                                              or when the element is not present or its value is invalid.</exception>
-#if NET6_0_OR_GREATER
+#if !NETFRAMEWORK
         [return: NotNullIfNotNull( nameof( defaultValue ) )]
 #endif
         public static string? OptionalUniqueElementText( this XElement element, string elementName, string? defaultValue = null )
