@@ -3,10 +3,9 @@
 /// @license    See LICENSE.txt
 
 using System;
-using Utilities.DotNet.Services;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Services
+namespace Utilities.DotNet.Services.Test
 {
     public class ServiceProviderTest
     {
@@ -33,7 +32,7 @@ namespace Utilities.DotNet.Test.Services
 
             // Execute
 
-            serviceProvider.RegisterService( typeof( ITestService), service );
+            serviceProvider.RegisterService( typeof( ITestService ), service );
 
             // Verify
 

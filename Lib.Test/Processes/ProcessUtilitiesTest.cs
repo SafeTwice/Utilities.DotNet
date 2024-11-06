@@ -3,10 +3,9 @@
 /// @license    See LICENSE.txt
 
 using System.Linq;
-using Utilities.DotNet.Processes;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Processes
+namespace Utilities.DotNet.Processes.Test
 {
     public static class ProcessUtilitiesTest
     {

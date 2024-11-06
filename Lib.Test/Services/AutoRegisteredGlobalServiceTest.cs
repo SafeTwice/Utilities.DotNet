@@ -3,10 +3,9 @@
 /// @license    See LICENSE.txt
 
 using System;
-using Utilities.DotNet.Services;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Services
+namespace Utilities.DotNet.Services.Test
 {
     public class AutoRegisteredGlobalServiceTest
     {

@@ -6,7 +6,7 @@ using System;
 using System.Reflection;
 using Xunit;
 
-namespace Utilities.DotNet.Test.General
+namespace Utilities.DotNet.Test
 {
     public class DisposableObjectTest
     {

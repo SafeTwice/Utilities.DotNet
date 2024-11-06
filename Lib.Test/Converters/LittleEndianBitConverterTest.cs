@@ -2,10 +2,9 @@
 /// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using Utilities.DotNet.Converters;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Converters
+namespace Utilities.DotNet.Converters.Test
 {
     public class LittleEndianBitConverterTest
     {
@@ -86,7 +85,7 @@ namespace Utilities.DotNet.Test.Converters
         {
             // Execute
 
-           var outputValue = LittleEndianBitConverter.ToInt64( inputValue, startIndex );
+            var outputValue = LittleEndianBitConverter.ToInt64( inputValue, startIndex );
 
             // Verify
 

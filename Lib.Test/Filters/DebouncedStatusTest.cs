@@ -2,10 +2,9 @@
 /// @copyright  Copyright (c) 2020 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using Utilities.DotNet.Filters;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Filters
+namespace Utilities.DotNet.Filters.Test
 {
     public class DebouncedStatusTest
     {

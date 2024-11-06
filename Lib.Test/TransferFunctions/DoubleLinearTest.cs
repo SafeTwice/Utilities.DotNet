@@ -2,10 +2,9 @@
 /// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using Utilities.DotNet.TransferFunctions;
 using Xunit;
 
-namespace Utilities.DotNet.Test.TransferFunctions
+namespace Utilities.DotNet.TransferFunctions.Test
 {
     public class DoubleLinearTest
     {

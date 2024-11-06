@@ -4,10 +4,9 @@
 
 using System;
 using System.Reflection;
-using Utilities.DotNet.Observables;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Observables
+namespace Utilities.DotNet.Observables.Test
 {
     public class ObservableDisposableObjectTest
     {

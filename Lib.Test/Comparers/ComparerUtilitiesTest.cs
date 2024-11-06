@@ -2,10 +2,9 @@
 /// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using Utilities.DotNet.Comparers;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Comparers
+namespace Utilities.DotNet.Comparers.Test
 {
     public class ComparerUtilitiesTest
     {

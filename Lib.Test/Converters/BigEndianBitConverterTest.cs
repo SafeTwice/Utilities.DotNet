@@ -2,16 +2,15 @@
 /// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using Utilities.DotNet.Converters;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Converters
+namespace Utilities.DotNet.Converters.Test
 {
     public class BigEndianBitConverterTest
     {
         [Theory]
-        [InlineData( new byte[] { 0x07, 0x82 }, 0,  1922u )]
-        [InlineData( new byte[] { 0x00, 0xFE, 0xD0 }, 1,  65232u )]
+        [InlineData( new byte[] { 0x07, 0x82 }, 0, 1922u )]
+        [InlineData( new byte[] { 0x00, 0xFE, 0xD0 }, 1, 65232u )]
         public void ToUInt16( byte[] inputValue, int startIndex, ushort expectedValue )
         {
             // Execute
@@ -52,7 +51,7 @@ namespace Utilities.DotNet.Test.Converters
         }
 
         [Theory]
-        [InlineData( new byte[] { 0x7F, 0xD5  }, 0, 32725 )]
+        [InlineData( new byte[] { 0x7F, 0xD5 }, 0, 32725 )]
         [InlineData( new byte[] { 0x00, 0x83, 0x87 }, 1, -31865 )]
         public void ToInt16( byte[] inputValue, int startIndex, short expectedValue )
         {
@@ -86,7 +85,7 @@ namespace Utilities.DotNet.Test.Converters
         {
             // Execute
 
-           var outputValue = BigEndianBitConverter.ToInt64( inputValue, startIndex );
+            var outputValue = BigEndianBitConverter.ToInt64( inputValue, startIndex );
 
             // Verify
 

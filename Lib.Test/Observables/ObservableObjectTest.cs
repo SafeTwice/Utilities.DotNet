@@ -2,12 +2,9 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using System;
-using System.Reflection;
-using Utilities.DotNet.Observables;
 using Xunit;
 
-namespace Utilities.DotNet.Test.General
+namespace Utilities.DotNet.Observables.Test
 {
     public class ObservableObjectTest
     {

@@ -6,10 +6,9 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
-using Utilities.DotNet.Logs;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Logs
+namespace Utilities.DotNet.Logs.Test
 {
     public class FileLogTest : IDisposable
     {
@@ -21,7 +20,7 @@ namespace Utilities.DotNet.Test.Logs
             TWO = 0x02,
         }
 
-        private string m_filename = Path.GetTempPath() + $"/{typeof(FileLogTest).FullName}-{DateTime.Now:yyyy-MM-dd-HH-mm-ss-fff}";
+        private string m_filename = Path.GetTempPath() + $"/{typeof( FileLogTest ).FullName}-{DateTime.Now:yyyy-MM-dd-HH-mm-ss-fff}";
 
         public void Dispose()
         {

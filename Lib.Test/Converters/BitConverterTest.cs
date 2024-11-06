@@ -2,10 +2,9 @@
 /// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using Utilities.DotNet.Converters;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Converters
+namespace Utilities.DotNet.Converters.Test
 {
     public class BitConverterTest
     {
@@ -72,7 +71,7 @@ namespace Utilities.DotNet.Test.Converters
         [Theory]
         [InlineData( new byte[] { 0xD3, 0x7F }, 0, false, 32723 )]
         [InlineData( new byte[] { 0xFF, 0x22, 0x85, 0x83, 0x00 }, 2, false, -31867 )]
-        [InlineData( new byte[] { 0x7F, 0xD5  }, 0, true, 32725 )]
+        [InlineData( new byte[] { 0x7F, 0xD5 }, 0, true, 32725 )]
         [InlineData( new byte[] { 0x00, 0x83, 0x87 }, 1, true, -31865 )]
         public void ToInt16( byte[] inputValue, int startIndex, bool reversed, short expectedValue )
         {
@@ -122,7 +121,7 @@ namespace Utilities.DotNet.Test.Converters
 
             // Execute
 
-           var outputValue = bitConverter.ToInt64( inputValue, startIndex );
+            var outputValue = bitConverter.ToInt64( inputValue, startIndex );
 
             // Verify
 

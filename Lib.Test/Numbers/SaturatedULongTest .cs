@@ -3,10 +3,9 @@
 /// @license    See LICENSE.txt
 
 using System;
-using Utilities.DotNet.Numbers;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Numbers
+namespace Utilities.DotNet.Numbers.Test
 {
     public class SaturatedULongTest
     {
