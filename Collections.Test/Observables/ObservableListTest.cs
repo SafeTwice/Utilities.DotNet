@@ -6,15 +6,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Utilities.DotNet.Collections;
-using Utilities.DotNet.Collections.Observables;
 using Xunit;
-using Xunit.Abstractions;
 
 #pragma warning disable xUnit2013 // Do not use equality check to check for collection size.
 #pragma warning disable xUnit2017 // Do not use Contains() to check if a value exists in a collection
 
-namespace Utilities.DotNet.Test.Collections.Observables
+namespace Utilities.DotNet.Collections.Observables.Test
 {
     public class ObservableListTest
     {

@@ -4,12 +4,11 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using Utilities.DotNet.Collections;
 using Xunit;
 
 #pragma warning disable xUnit2013 // Do not use equality check to check for testedCollection size.
 
-namespace Utilities.DotNet.Test.Collections
+namespace Utilities.DotNet.Collections.Test
 {
     public class ReadOnlyCollectionExTest
     {
