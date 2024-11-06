@@ -6,10 +6,9 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Xml.Linq;
-using Utilities.DotNet.XML;
 using Xunit;
 
-namespace Utilities.DotNet.Test.XML
+namespace Utilities.DotNet.XML.Test
 {
     public class XmlFileProcessingExceptionTest
     {
