@@ -3,10 +3,9 @@
 /// @license    See LICENSE.txt
 
 using System;
-using Utilities.DotNet.Exceptions;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Exceptions
+namespace Utilities.DotNet.Exceptions.Test
 {
     public class InvalidCastExceptionExTest
     {

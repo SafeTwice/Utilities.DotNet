@@ -9,7 +9,7 @@ using System.Threading;
 using Utilities.DotNet.Types;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Exceptions
+namespace Utilities.DotNet.Exceptions.Test
 {
     internal interface IBaseType
     {

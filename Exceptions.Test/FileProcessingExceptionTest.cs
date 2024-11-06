@@ -4,10 +4,9 @@
 
 using System;
 using System.Globalization;
-using Utilities.DotNet.Exceptions;
 using Xunit;
 
-namespace Utilities.DotNet.Test.Exceptions
+namespace Utilities.DotNet.Exceptions.Test
 {
     public class FileProcessingExceptionTest
     {
@@ -91,7 +90,7 @@ namespace Utilities.DotNet.Test.Exceptions
         public void NoFilenameAndLine_InnerException()
         {
             var innerException = new Exception( "chazz" );
-            var exception = new FileProcessingException( "foo55",  5987765, innerException );
+            var exception = new FileProcessingException( "foo55", 5987765, innerException );
 
             Assert.Equal( "foo55", exception.ShortMessage );
             Assert.Null( exception.Filename );
