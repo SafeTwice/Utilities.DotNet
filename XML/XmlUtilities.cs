@@ -150,6 +150,26 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
+        /// Gets a mandatory attribute value as a <see cref="Guid"/>.
+        /// </summary>
+        /// <param name="element">This element.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <returns>The value of the attribute.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
+        public static Guid MandatoryAttributeGuid( this XElement element, string attributeName )
+        {
+            string attrStr = element.MandatoryAttribute( attributeName );
+
+            if( !Guid.TryParse( attrStr, out var attrValue ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected GUID value)" ),
+                                                      element );
+            }
+
+            return attrValue;
+        }
+
+        /// <summary>
         /// Gets an optional attribute value as a <c>string</c>.
         /// </summary>
         /// <param name="element">This element.</param>
@@ -292,6 +312,32 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
+        /// Gets an optional attribute value as a <see cref="Guid"/>.
+        /// </summary>
+        /// <param name="element">This element.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="defaultValue">Value returned when the attribute is not present.</param>
+        /// <returns>The value of the attribute.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
+        public static Guid? OptionalAttributeGuid( this XElement element, string attributeName, Guid? defaultValue = null )
+        {
+            var attrStr = element.OptionalAttribute( attributeName );
+
+            if( attrStr == null )
+            {
+                return defaultValue;
+            }
+
+            if( !Guid.TryParse( attrStr, out var attrValue ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected GUID value)" ),
+                                                      element );
+            }
+
+            return attrValue;
+        }
+
+        /// <summary>
         /// Gets a mandatory attribute value from a set of attributes as a <c>string</c>.
         /// </summary>
         /// <param name="element">This element.</param>
@@ -408,7 +454,7 @@ namespace Utilities.DotNet.XML
             {
                 return defaultValue;
             }
-            
+
             if( childElement.HasElements )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{elementName}' has child elements" ), childElement );

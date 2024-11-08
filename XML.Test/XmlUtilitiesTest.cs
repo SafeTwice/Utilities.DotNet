@@ -34,6 +34,7 @@ namespace Utilities.DotNet.XML.Test
                 "<Int value='450'/>",
                 "<Text>FooBar</Text>",
                 "<Nesting><Text>VoidDoid</Text></Nesting>",
+                "<Guid value='089e1f22-b2d0-41a8-ab19-65eac650e589' invalid='foo'/>",
                 "</Root>",
             };
 
@@ -201,6 +202,31 @@ namespace Utilities.DotNet.XML.Test
             Assert.Equal( $"XML element 'Bool' attribute 'invalid' has an invalid value 'bar' (expected boolean value)", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 6, exception.Line );
+        }
+
+        [Fact]
+        public void MandatoryAttributeGuid_Existing()
+        {
+            var element = GetElement( "Guid" );
+
+            var value = element.MandatoryAttributeGuid( "value" );
+
+            Assert.Equal( Guid.Parse( "089e1f22-b2d0-41a8-ab19-65eac650e589" ), value );
+        }
+
+        [Fact]
+        public void MandatoryAttributeGuid_Invalid()
+        {
+            var element = GetElement( "Guid" );
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
+            {
+                var value = element.MandatoryAttributeGuid( "invalid" );
+            } );
+
+            Assert.Equal( $"XML element 'Guid' attribute 'invalid' has an invalid value 'foo' (expected GUID value)", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 12, exception.Line );
         }
 
         public enum TestEnum
@@ -412,7 +438,7 @@ namespace Utilities.DotNet.XML.Test
         [Fact]
         public void OptionalAttributeBool_NotExisting()
         {
-            var element = GetElement( "Double" );
+            var element = GetElement( "Bool" );
 
             var valueTrue = element.OptionalAttributeBool( "bar", true );
             var valueFalse = element.OptionalAttributeBool( "baz", false );
@@ -434,6 +460,43 @@ namespace Utilities.DotNet.XML.Test
             Assert.Equal( $"XML element 'Bool' attribute 'invalid' has an invalid value 'bar' (expected boolean value)", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 6, exception.Line );
+        }
+
+        [Fact]
+        public void OptionalAttributeGuid_Existing()
+        {
+            var element = GetElement( "Guid" );
+
+            var value = element.OptionalAttributeGuid( "value" );
+
+            Assert.Equal( Guid.Parse( "089e1f22-b2d0-41a8-ab19-65eac650e589" ), value );
+        }
+
+        [Fact]
+        public void OptionalAttributeGuid_NotExisting()
+        {
+            var element = GetElement( "Guid" );
+
+            var value1 = element.OptionalAttributeGuid( "bar" );
+            var value2 = element.OptionalAttributeGuid( "bar", Guid.Empty );
+
+            Assert.Null( value1 );
+            Assert.Equal( Guid.Empty, value2 );
+        }
+
+        [Fact]
+        public void OptionalAttributeGuid_Invalid()
+        {
+            var element = GetElement( "Guid" );
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
+            {
+                var value = element.OptionalAttributeGuid( "invalid" );
+            } );
+
+            Assert.Equal( $"XML element 'Guid' attribute 'invalid' has an invalid value 'foo' (expected GUID value)", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 12, exception.Line );
         }
 
         [Theory]
