@@ -11,6 +11,7 @@ namespace Utilities.DotNet.Observables
     /// <summary>
     /// Base class for <see cref="ObservableObject"/>s that implement the <see cref="IDisposable"/> interface."/>
     /// </summary>
+    [DebuggerDisplay( "TraceInfo = {TraceInfo}" )]
     public abstract class ObservableDisposableObject : ObservableObject, IDisposable
     {
         //===========================================================================

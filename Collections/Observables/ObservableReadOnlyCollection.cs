@@ -5,6 +5,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Utilities.DotNet.Collections.Observables
@@ -13,6 +14,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// Implements an observable read-only collection of items that wraps another observable collection.
     /// </summary>
     /// <typeparam name="T">Type of the items in the collection.</typeparam>
+    [DebuggerDisplay( "Count = {Count}" )]
     public class ObservableReadOnlyCollection<T> : IObservableReadOnlyCollection<T>
     {
         //===========================================================================

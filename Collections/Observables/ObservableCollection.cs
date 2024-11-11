@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
+using System.Diagnostics;
 
 namespace Utilities.DotNet.Collections.Observables
 {
@@ -14,6 +14,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// Implements an observable collection of items.
     /// </summary>
     /// <typeparam name="T">Type of the items in the collection.</typeparam>
+    [DebuggerDisplay( "Count = {Count}" )]
     public class ObservableCollection<T> : IObservableCollection<T>, IObservableCollection
     {
         //===========================================================================

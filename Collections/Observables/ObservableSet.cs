@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Utilities.DotNet.Collections.Observables
@@ -29,6 +30,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// </para>
     /// </remarks>
     /// <typeparam name="T">Type of the items in the set.</typeparam>
+    [DebuggerDisplay( "Count = {Count}" )]
     public class ObservableSet<T> : IObservableSet<T>, IObservableCollection
     {
         //===========================================================================

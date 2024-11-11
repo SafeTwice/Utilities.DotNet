@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Utilities.DotNet.Collections.Observables
@@ -29,6 +30,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// </para>
     /// </remarks>
     /// <typeparam name="T">Type of the items in the collection.</typeparam>
+    [DebuggerDisplay( "Count = {Count}" )]
     public class ObservableSortedCollection<T> : IObservableCollection<T>, IObservableCollection
     {
         //===========================================================================
