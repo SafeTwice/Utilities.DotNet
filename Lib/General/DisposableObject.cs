@@ -8,6 +8,8 @@ using Utilities.DotNet.Types;
 
 namespace Utilities.DotNet
 {
+#pragma warning disable S3881
+
     /// <summary>
     /// Base class for objects that implement the <see cref="IDisposable"/> interface."/>
     /// </summary>
@@ -65,4 +67,6 @@ namespace Utilities.DotNet
         {
         }
     }
+
+#pragma warning restore S3881
 }

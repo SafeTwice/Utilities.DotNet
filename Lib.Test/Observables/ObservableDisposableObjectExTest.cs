@@ -8,9 +8,9 @@ using Xunit;
 
 namespace Utilities.DotNet.Observables.Test
 {
-    public class ObservableDisposableObjectTest
+    public class ObservableDisposableObjectExTest
     {
-        private class TestClass : ObservableDisposableObject
+        private class TestClass : ObservableDisposableObjectEx
         {
             protected override void Dispose( bool disposing )
             {

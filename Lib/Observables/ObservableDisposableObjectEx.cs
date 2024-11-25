@@ -11,10 +11,10 @@ namespace Utilities.DotNet.Observables
 #pragma warning disable S3881
 
     /// <summary>
-    /// Base class for <see cref="ObservableObject"/>s that implement the <see cref="IDisposable"/> interface.
+    /// Base class for <see cref="ObservableObjectEx"/>es that implement the <see cref="IDisposable"/> interface.
     /// </summary>
     [DebuggerDisplay( "TraceInfo = {TraceInfo}" )]
-    public abstract class ObservableDisposableObject : ObservableObject, IDisposable
+    public class ObservableDisposableObjectEx : ObservableObjectEx, IDisposable
     {
         //===========================================================================
         //                               FINALIZER
@@ -23,7 +23,7 @@ namespace Utilities.DotNet.Observables
         /// <summary>
         /// Finalizer.
         /// </summary>
-        ~ObservableDisposableObject()
+        ~ObservableDisposableObjectEx()
         {
             Debug.Print( $"Finalizing {GetType().GetPrettyName()} [{TraceInfo}]" );
 
@@ -67,7 +67,7 @@ namespace Utilities.DotNet.Observables
         protected virtual void Dispose( bool disposing )
         {
         }
-    }
 
 #pragma warning restore S3881
+    }
 }
