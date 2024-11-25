@@ -2,6 +2,7 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System.Linq;
 using Xunit;
 
 namespace Utilities.DotNet.Collections.Observables.Test
@@ -149,7 +150,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
 
             // Assert
 
-            Assert.Equal( collection, readOnlySet );
+            Assert.Equal( collection.OrderBy( i => i ), readOnlySet.OrderBy( i => i ) );
         }
     }
 }

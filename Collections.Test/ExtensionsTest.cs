@@ -2,6 +2,7 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System.Linq;
 using Xunit;
 
 namespace Utilities.DotNet.Collections.Test
@@ -85,7 +86,7 @@ namespace Utilities.DotNet.Collections.Test
 
             // Assert
 
-            Assert.Equal( set, readOnlySet );
+            Assert.Equal( set.OrderBy( i => i ), readOnlySet.OrderBy( i => i ) );
         }
     }
 }

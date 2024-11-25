@@ -102,8 +102,6 @@ namespace Utilities.DotNet.Test
             var input = new int[] { 1, 2, 3, 4, 5 };
             var parameters = new double[] { 2.0, 3.3, 1.5, 0.5 };
 
-            IEnumerable<double> output;
-
             // Act & Assert
 
             Assert.Throws<ArgumentException>( () => input.Select( ( x, y ) => x + y, parameters ).Count() );
@@ -135,8 +133,6 @@ namespace Utilities.DotNet.Test
 
             var input = new int[] { 1, 2, 3, 4, 5 };
             var parameters = new double[] { 2.0, 3.3, 1.5, 0.5 };
-
-            IEnumerable<double> output;
 
             // Act & Assert
 
@@ -208,12 +204,14 @@ namespace Utilities.DotNet.Test
             Assert.Equal( expectedResult, input.AllDistinct( new IntComparer() ) );
         }
 
+#pragma warning disable S3881
         private class DisposableTestClass : IDisposable
         {
             public bool Disposed { get; private set; } = false;
 
             public void Dispose() { Disposed = true; }
         }
+#pragma warning restore S3881
 
         [Fact]
         public void DisposeAll()
@@ -228,7 +226,7 @@ namespace Utilities.DotNet.Test
 
             // Assert
 
-            Assert.True( input.All( x => x.Disposed ) );
+            Assert.True( Array.TrueForAll( input, x => x.Disposed ) );
         }
     }
 }

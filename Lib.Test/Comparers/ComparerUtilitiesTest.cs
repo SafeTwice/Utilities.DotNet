@@ -27,7 +27,7 @@ namespace Utilities.DotNet.Comparers.Test
 
             // Act
 
-            var comparer = ComparerUtilities.CreateComparer<TestClass?>( o => new object[] { o.IntValue } );
+            var comparer = ComparerUtilities.CreateComparer<TestClass?>( o => new object?[] { o?.IntValue } );
 
             // Assert
 
