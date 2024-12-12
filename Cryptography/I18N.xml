@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<I18N>
+  <Entry>
+    <!-- Found in: ECDsaShaSignatureDescription.cs -->
+    <Key>Key must be an ECDsa</Key>
+    <Value lang="es">La clave debe ser un ECDsa</Value>
+    <Value lang="ca">La clau ha de ser un ECDsa</Value>
+    <Value lang="fr">La clé doit être un ECDsa</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: ECDsaShaSignatureDescription.cs -->
+    <Key>Key must have a size of at least {0} bits</Key>
+    <Value lang="es">La clave debe tener un tamaño de {0} bits mínimo</Value>
+    <Value lang="ca">La clau ha de tenir una mida de mínim {0} bits</Value>
+    <Value lang="fr">La clé doit avoir une taille d'au moins {0} bits</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: ECDsaShaSignatureDescription.cs -->
+    <Key>Key must have a size of at most {0} bits</Key>
+    <Value lang="es">La clave debe tener un tamaño de {0} bits máximo</Value>
+    <Value lang="ca">La clau ha de tenir una mida de màxim {0} bits</Value>
+    <Value lang="fr">La clé doit avoir une taille d'au plus {0} bits</Value>
+  </Entry>
+</I18N>

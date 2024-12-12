@@ -23,6 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.DotNet.Collection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.DotNet.Collections.Test", "Collections.Test\Utilities.DotNet.Collections.Test.csproj", "{F46A860C-A917-48F0-AB13-15608DC3A3B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.Cryptography", "Cryptography\Utilities.DotNet.Cryptography.csproj", "{0A3D8AA4-138A-46A2-B5D4-C8EAF30013D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.Cryptography.Test", "Cryptography.Test\Utilities.DotNet.Cryptography.Test.csproj", "{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug No-I18N|Any CPU = Debug No-I18N|Any CPU
@@ -111,6 +115,22 @@ Global
 		{F46A860C-A917-48F0-AB13-15608DC3A3B3}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
 		{F46A860C-A917-48F0-AB13-15608DC3A3B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F46A860C-A917-48F0-AB13-15608DC3A3B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A3D8AA4-138A-46A2-B5D4-C8EAF30013D6}.Debug No-I18N|Any CPU.ActiveCfg = Debug No-I18N|Any CPU
+		{0A3D8AA4-138A-46A2-B5D4-C8EAF30013D6}.Debug No-I18N|Any CPU.Build.0 = Debug No-I18N|Any CPU
+		{0A3D8AA4-138A-46A2-B5D4-C8EAF30013D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A3D8AA4-138A-46A2-B5D4-C8EAF30013D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A3D8AA4-138A-46A2-B5D4-C8EAF30013D6}.Release No-I18N|Any CPU.ActiveCfg = Release No-I18N|Any CPU
+		{0A3D8AA4-138A-46A2-B5D4-C8EAF30013D6}.Release No-I18N|Any CPU.Build.0 = Release No-I18N|Any CPU
+		{0A3D8AA4-138A-46A2-B5D4-C8EAF30013D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A3D8AA4-138A-46A2-B5D4-C8EAF30013D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Debug No-I18N|Any CPU.ActiveCfg = Debug|Any CPU
+		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Debug No-I18N|Any CPU.Build.0 = Debug|Any CPU
+		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Release No-I18N|Any CPU.ActiveCfg = Release|Any CPU
+		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
+		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
