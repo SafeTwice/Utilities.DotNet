@@ -206,7 +206,8 @@ namespace Utilities.DotNet
         /// </summary>
         /// <param name="hexString">String containing the hexadecimal representation of a byte array.</param>
         /// <returns>The byte array that corresponds to the input string.</returns>
-        public static byte[] ParseHexString( string hexString )
+        /// <exception cref="ArgumentException">Thrown if the input string is not a valid hexadecimal string.</exception>
+        public static byte[] ParseHexString( this string hexString )
         {
             if( ( hexString.Length % 2 ) != 0 )
             {
