@@ -1,4 +1,4 @@
-# Utilities.DotNet.Converters
+# Utilities.DotNet.XML
 
 ## About
 
@@ -100,5 +100,5 @@ previous parent if necessary.
 ## Full API Documentation
 
 You can browse the full API documentation for:
- - [The last release (stable)](https://safetwice.github.io/Utilities.DotNet/stable/namespace_utilities_1_1_dot_net_1_1_converters)
- - [Main branch (unstable)](https://safetwice.github.io/Utilities.DotNet/main/namespace_utilities_1_1_dot_net_1_1_converters)
+ - [The last release (stable)](https://safetwice.github.io/Utilities.DotNet/stable/namespace_utilities_1_1_dot_net_1_1_xml)
+ - [Main branch (unstable)](https://safetwice.github.io/Utilities.DotNet/main/namespace_utilities_1_1_dot_net_1_1_xml)
