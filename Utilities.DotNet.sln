@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.Cryptograp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.Cryptography.Test", "Cryptography.Test\Utilities.DotNet.Cryptography.Test.csproj", "{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.Cryptography.XML", "Cryptography.Xml\Utilities.DotNet.Cryptography.XML.csproj", "{2A3FEB96-322D-4A1F-9512-5B5256F3AEC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.Cryptography.XML.Test", "Cryptography.XML.Test\Utilities.DotNet.Cryptography.XML.Test.csproj", "{A9B38312-65DF-455A-AA87-10E18F190F33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug No-I18N|Any CPU = Debug No-I18N|Any CPU
@@ -131,6 +135,22 @@ Global
 		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
 		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29F20BD9-8F76-48F0-A778-D81EB1A54BD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A3FEB96-322D-4A1F-9512-5B5256F3AEC2}.Debug No-I18N|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A3FEB96-322D-4A1F-9512-5B5256F3AEC2}.Debug No-I18N|Any CPU.Build.0 = Debug|Any CPU
+		{2A3FEB96-322D-4A1F-9512-5B5256F3AEC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A3FEB96-322D-4A1F-9512-5B5256F3AEC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A3FEB96-322D-4A1F-9512-5B5256F3AEC2}.Release No-I18N|Any CPU.ActiveCfg = Release|Any CPU
+		{2A3FEB96-322D-4A1F-9512-5B5256F3AEC2}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
+		{2A3FEB96-322D-4A1F-9512-5B5256F3AEC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A3FEB96-322D-4A1F-9512-5B5256F3AEC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9B38312-65DF-455A-AA87-10E18F190F33}.Debug No-I18N|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9B38312-65DF-455A-AA87-10E18F190F33}.Debug No-I18N|Any CPU.Build.0 = Debug|Any CPU
+		{A9B38312-65DF-455A-AA87-10E18F190F33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9B38312-65DF-455A-AA87-10E18F190F33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9B38312-65DF-455A-AA87-10E18F190F33}.Release No-I18N|Any CPU.ActiveCfg = Release|Any CPU
+		{A9B38312-65DF-455A-AA87-10E18F190F33}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
+		{A9B38312-65DF-455A-AA87-10E18F190F33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9B38312-65DF-455A-AA87-10E18F190F33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
