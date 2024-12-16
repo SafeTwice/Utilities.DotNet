@@ -6,6 +6,22 @@ The _Utilities.DotNet.Cyptography_ package provides cryptography-related classes
 
 ## Usage
 
+### Extensions to X509Certificate2
+
+The following extension methods for `System.Security.Cryptography.X509Certificate2` are provided:
+
+| Method | Description |
+|--------|-------------|
+| GetBasicConstraints | Gets the [basic constraints](https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509basicconstraintsextension) extension. |
+| IsCertificateAuthority | Indicates whether the certificate is a certificate authority. |
+| PathLengthConstraint | Gets the path length constraint. |
+| GetKeyUsage | Gets the [key usage](https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509keyusageextension) extension. |
+| GetKeyUsageFlags | Gets the key usage flags. |
+| GetSubjectKeyIdentifier | Gets the Subject Key Identifier. |
+| GetSubjectKeyIdentifierBytes | Gets the Subject Key Identifier bytes. |
+| GetAuthorityKeyIdentifier | Gets the Authority Key Identifier. |
+| GetAuthorityKeyIdentifierBytes | Gets the Authority Key Identifier bytes. |
+
 ### Elliptic Curve Digital Signature Algorithm (ECDSA-SHA) support
 
 As of .NET 9, the ECDSA-SHA algorithm is not supported out-of-the-box for signing.
