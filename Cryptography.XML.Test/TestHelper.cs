@@ -35,7 +35,7 @@ namespace Utilities.DotNet.Cryptography.XML.Test
             return certificateRequest.CreateSelfSigned( startDate, endDate );
         }
 
-        public static string GetSignedXmlText( X509Certificate2 key )
+        public static string GetSignedXmlText( X509Certificate2 key, bool addSKI )
         {
             var xmlText = "<Root><Data>Value</Data></Root>";
 
@@ -49,13 +49,16 @@ namespace Utilities.DotNet.Cryptography.XML.Test
             reference.AddTransform( new XmlDsigEnvelopedSignatureTransform() );
             signedXml.AddReference( reference );
 
-            var skidBytes = key.GetSubjectKeyIdentifierBytes()!.Value;
-            var keyInfoData = new KeyInfoX509Data();
-            keyInfoData.AddSubjectKeyId( skidBytes.ToArray() );
+            if( addSKI )
+            {
+                var skidBytes = key.GetSubjectKeyIdentifierBytes()!.Value;
+                var keyInfoData = new KeyInfoX509Data();
+                keyInfoData.AddSubjectKeyId( skidBytes.ToArray() );
 
-            var keyInfo = new KeyInfo();
-            keyInfo.AddClause( keyInfoData );
-            signedXml.KeyInfo = keyInfo;
+                var keyInfo = new KeyInfo();
+                keyInfo.AddClause( keyInfoData );
+                signedXml.KeyInfo = keyInfo;
+            }
 
             signedXml.ComputeSignature();
 

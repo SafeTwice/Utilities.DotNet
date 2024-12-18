@@ -19,11 +19,11 @@ namespace Utilities.DotNet.Cryptography.XML.Test
         }
 
         [Fact]
-        public void SubjectKeyIdentifier()
+        public void SubjectKeyIdentifier_Present()
         {
             // Arrange
 
-            var xmlSignedText = TestHelper.GetSignedXmlText( m_signingKey );
+            var xmlSignedText = TestHelper.GetSignedXmlText( m_signingKey, true );
 
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml( xmlSignedText );
@@ -47,6 +47,33 @@ namespace Utilities.DotNet.Cryptography.XML.Test
             Assert.Equal( subjectKeyIdentifier, subjectKeyIdentifierBytes.Value.ToArray().ToHexString() );
 
             Assert.Equal( m_signingKey.GetSubjectKeyIdentifier(), subjectKeyIdentifier );
+        }
+
+        [Fact]
+        public void SubjectKeyIdentifier_NotPresent()
+        {
+            // Arrange
+
+            var xmlSignedText = TestHelper.GetSignedXmlText( m_signingKey, false );
+
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml( xmlSignedText );
+
+            var signedXml = new SignedXml( xmlDoc );
+            signedXml.LoadXml( xmlDoc.DocumentElement![ "Signature" ]! );
+
+            Assert.True( signedXml.CheckSignature( m_signingKey.GetRSAPublicKey()! ) );
+
+            // Act
+
+            var subjectKeyIdentifier = signedXml.GetSubjectKeyIdentifier();
+
+            var subjectKeyIdentifierBytes = signedXml.GetSubjectKeyIdentifierBytes();
+
+            // Assert
+
+            Assert.Null( subjectKeyIdentifier );
+            Assert.Null( subjectKeyIdentifierBytes );
         }
     }
 }

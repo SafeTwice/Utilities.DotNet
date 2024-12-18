@@ -35,8 +35,8 @@ namespace Utilities.DotNet.Cryptography.XML
         /// <returns>Subject key identifier bytes or <c>null</c> if not found.</returns>
         public static ReadOnlyMemory<byte>? GetSubjectKeyIdentifierBytes( this KeyInfo keyInfo )
         {
-            var keyIdArray = (byte[]?) keyInfo.OfType<KeyInfoX509Data>().FirstOrDefault()?.SubjectKeyIds?[ 0 ];
-            return ( keyIdArray == null ) ? null : new ReadOnlyMemory<byte>( keyIdArray );
+            byte[]? keyIdArray = (byte[]?) keyInfo.OfType<KeyInfoX509Data>().FirstOrDefault()?.SubjectKeyIds?[ 0 ];
+            return ( keyIdArray == null ) ? (ReadOnlyMemory<byte>?) null : new ReadOnlyMemory<byte>( keyIdArray );
         }
     }
 }
