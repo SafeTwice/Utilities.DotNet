@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.Cryptograp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.Cryptography.XML.Test", "Cryptography.XML.Test\Utilities.DotNet.Cryptography.XML.Test.csproj", "{A9B38312-65DF-455A-AA87-10E18F190F33}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.System", "System\Utilities.DotNet.System.csproj", "{43FEDC0E-30EC-4135-8C93-90E273C72009}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.System.Test", "System.Test\Utilities.DotNet.System.Test.csproj", "{C213E1DB-D106-4DE7-9AB8-1814E70B6895}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug No-I18N|Any CPU = Debug No-I18N|Any CPU
@@ -151,6 +155,22 @@ Global
 		{A9B38312-65DF-455A-AA87-10E18F190F33}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
 		{A9B38312-65DF-455A-AA87-10E18F190F33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9B38312-65DF-455A-AA87-10E18F190F33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43FEDC0E-30EC-4135-8C93-90E273C72009}.Debug No-I18N|Any CPU.ActiveCfg = Debug|Any CPU
+		{43FEDC0E-30EC-4135-8C93-90E273C72009}.Debug No-I18N|Any CPU.Build.0 = Debug|Any CPU
+		{43FEDC0E-30EC-4135-8C93-90E273C72009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43FEDC0E-30EC-4135-8C93-90E273C72009}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43FEDC0E-30EC-4135-8C93-90E273C72009}.Release No-I18N|Any CPU.ActiveCfg = Release|Any CPU
+		{43FEDC0E-30EC-4135-8C93-90E273C72009}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
+		{43FEDC0E-30EC-4135-8C93-90E273C72009}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43FEDC0E-30EC-4135-8C93-90E273C72009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Debug No-I18N|Any CPU.ActiveCfg = Debug|Any CPU
+		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Debug No-I18N|Any CPU.Build.0 = Debug|Any CPU
+		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Release No-I18N|Any CPU.ActiveCfg = Release|Any CPU
+		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
+		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

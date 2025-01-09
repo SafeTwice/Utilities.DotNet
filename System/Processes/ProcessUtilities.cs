@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Utilities.DotNet.Processes
+namespace Utilities.DotNet.System.Processes
 {
     /// <summary>
     /// Process utilities.

@@ -1,11 +1,11 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System.Linq;
 using Xunit;
 
-namespace Utilities.DotNet.Processes.Test
+namespace Utilities.DotNet.System.Processes.Test
 {
     public static class ProcessUtilitiesTest
     {

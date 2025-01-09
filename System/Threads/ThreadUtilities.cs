@@ -1,12 +1,12 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2023-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Utilities.DotNet.Threads
+namespace Utilities.DotNet.System.Threads
 {
     /// <summary>
     /// Thread utilities.
