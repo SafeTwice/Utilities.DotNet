@@ -6,7 +6,7 @@
 
     <PropertyGroup>
         <TargetFrameworks>net472;net48;net6.0;net7.0;net8.0</TargetFrameworks>
-        <Version>1.3.0</Version>
+        <Version>1.4.1.100</Version>
         <Configurations>Debug;Release;Debug No-I18N;Release No-I18N</Configurations>
         <DebugType>embedded</DebugType>
         <NoWarn>NETSDK1138;CS1587</NoWarn>
