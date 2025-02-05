@@ -795,7 +795,7 @@ namespace Utilities.DotNet.XML.Test
         }
 
         [Fact]
-        public void AddUnique_AlredyExisting()
+        public void AddUnique_AlreadyExisting()
         {
             var container = new XElement( "Container" );
 
