@@ -9,7 +9,7 @@ using System.Net.Sockets;
 namespace Utilities.Net.Network
 {
     /// <summary>
-    /// {Enter brief class description here...}
+    /// Utility class for network-related operations.
     /// </summary>
     public static class NetworkUtilities
     {
@@ -17,13 +17,18 @@ namespace Utilities.Net.Network
         //                            PUBLIC METHODS
         //===========================================================================
 
+        /// <summary>
+        /// Gets the IPv4 address of a host.
+        /// </summary>
+        /// <param name="hostname">Name of the host (or its IPv4 address).</param>
+        /// <returns>The IPv4 address of the host, or <see langword="null"/> if it could not be resolved.</returns>
         public static IPAddress? GetIP4Address( string hostname )
         {
-            try
+            if( IPAddress.TryParse( hostname, out var ipAddress ) )
             {
-                return IPAddress.Parse( hostname );
+                return ipAddress;
             }
-            catch
+            else
             {
                 var hostEntry = Dns.GetHostEntry( hostname );
 
