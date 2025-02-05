@@ -35,6 +35,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.System", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.System.Test", "System.Test\Utilities.DotNet.System.Test.csproj", "{C213E1DB-D106-4DE7-9AB8-1814E70B6895}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.Services", "Services\Utilities.DotNet.Services.csproj", "{830C821B-43A9-4D68-9594-F16EA725CCB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.Services.Test", "Services.Test\Utilities.DotNet.Services.Test.csproj", "{AAC101F5-BDA1-48D0-9640-AB97B7DBF246}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug No-I18N|Any CPU = Debug No-I18N|Any CPU
@@ -171,6 +175,22 @@ Global
 		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
 		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C213E1DB-D106-4DE7-9AB8-1814E70B6895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{830C821B-43A9-4D68-9594-F16EA725CCB1}.Debug No-I18N|Any CPU.ActiveCfg = Debug|Any CPU
+		{830C821B-43A9-4D68-9594-F16EA725CCB1}.Debug No-I18N|Any CPU.Build.0 = Debug|Any CPU
+		{830C821B-43A9-4D68-9594-F16EA725CCB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{830C821B-43A9-4D68-9594-F16EA725CCB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{830C821B-43A9-4D68-9594-F16EA725CCB1}.Release No-I18N|Any CPU.ActiveCfg = Release|Any CPU
+		{830C821B-43A9-4D68-9594-F16EA725CCB1}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
+		{830C821B-43A9-4D68-9594-F16EA725CCB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{830C821B-43A9-4D68-9594-F16EA725CCB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAC101F5-BDA1-48D0-9640-AB97B7DBF246}.Debug No-I18N|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAC101F5-BDA1-48D0-9640-AB97B7DBF246}.Debug No-I18N|Any CPU.Build.0 = Debug|Any CPU
+		{AAC101F5-BDA1-48D0-9640-AB97B7DBF246}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAC101F5-BDA1-48D0-9640-AB97B7DBF246}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAC101F5-BDA1-48D0-9640-AB97B7DBF246}.Release No-I18N|Any CPU.ActiveCfg = Release|Any CPU
+		{AAC101F5-BDA1-48D0-9640-AB97B7DBF246}.Release No-I18N|Any CPU.Build.0 = Release|Any CPU
+		{AAC101F5-BDA1-48D0-9640-AB97B7DBF246}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAC101F5-BDA1-48D0-9640-AB97B7DBF246}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

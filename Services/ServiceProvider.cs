@@ -41,10 +41,12 @@ namespace Utilities.DotNet.Services
         /// <inheritdoc/>
         public void RegisterService( Type serviceType, object serviceInstance )
         {
+#pragma warning disable S2219
             if( !serviceType.IsAssignableFrom( serviceInstance.GetType() ) )
             {
                 throw new ArgumentException( "The service instance does not implement the service type" );
             }
+#pragma warning restore S2219
 
             DoRegisterService( serviceType, serviceInstance );
         }
@@ -156,8 +158,8 @@ namespace Utilities.DotNet.Services
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private Dictionary<Type, object> m_services = new();
+        private readonly Dictionary<Type, object> m_services = new();
 
-        private bool m_isGlobal;
+        private readonly bool m_isGlobal;
     }
 }
