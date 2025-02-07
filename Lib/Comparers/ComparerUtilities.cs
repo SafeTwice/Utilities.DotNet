@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace Utilities.DotNet.Comparers
 {
     /// <summary>
-    /// {Enter brief class description here...}
+    /// Utility class for creating comparers.
     /// </summary>
     public static class ComparerUtilities
     {

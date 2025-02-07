@@ -60,6 +60,9 @@ namespace Utilities.DotNet.Logs
         //                               FINALIZER
         //===========================================================================
 
+        /// <summary>
+        /// Finalizer.
+        /// </summary>
         ~FileLog()
         {
             Dispose();

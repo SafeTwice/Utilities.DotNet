@@ -8,7 +8,7 @@ using System.Threading;
 namespace Utilities.DotNet.Tasks
 {
     /// <summary>
-    /// {Enter brief class description here...}
+    /// Represents the State of a task.
     /// </summary>
     public class TaskState
     {
@@ -52,14 +52,6 @@ namespace Utilities.DotNet.Tasks
             m_onStatusUpdated = onStatusUpdated;
             m_onProgressUpdated = onProgressUpdated;
         }
-
-        //===========================================================================
-        //                            PUBLIC METHODS
-        //===========================================================================
-
-        //===========================================================================
-        //                            PRIVATE METHODS
-        //===========================================================================
 
         //===========================================================================
         //                           PRIVATE ATTRIBUTES
