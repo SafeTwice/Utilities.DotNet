@@ -1,55 +1,55 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFrameworks>net472;net48;net8.0</TargetFrameworks>
-        <Version>1.0.0</Version>
-        <Configurations>Debug;Release</Configurations>
-        <DebugType>embedded</DebugType>
-        <NoWarn>NETSDK1138;CS1587</NoWarn>
-        <EnablePackageValidation>true</EnablePackageValidation>
-        <Title>$(AssemblyName)</Title>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Authors>SafeTwice S.L.</Authors>
-        <PackageProjectUrl>https://github.com/SafeTwice/Utilities.DotNet</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/SafeTwice/Utilities.DotNet.git</RepositoryUrl>
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <PackageTags>.net;dotnet;utilities;util;cryptography;crypto;xml</PackageTags>
-        <Company>www.safetwice.com</Company>
-        <Description>XML Cryptography utilities library for .NET</Description>
-        <Copyright>Copyright © 2024 SafeTwice S.L.</Copyright>
-        <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <Nullable>enable</Nullable>
-        <LangVersion>10</LangVersion>
-        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>net472;net48;net8.0</TargetFrameworks>
+    <Version>1.0.0</Version>
+    <Configurations>Debug;Release</Configurations>
+    <DebugType>embedded</DebugType>
+    <NoWarn>NETSDK1138;CS1587</NoWarn>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <Title>$(AssemblyName)</Title>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Authors>SafeTwice S.L.</Authors>
+    <PackageProjectUrl>https://github.com/SafeTwice/Utilities.DotNet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SafeTwice/Utilities.DotNet.git</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageTags>.net;dotnet;utilities;util;cryptography;crypto;xml</PackageTags>
+    <Company>www.safetwice.com</Company>
+    <Description>XML Cryptography utilities library for .NET</Description>
+    <Copyright>Copyright © 2024 SafeTwice S.L.</Copyright>
+    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Nullable>enable</Nullable>
+    <LangVersion>10</LangVersion>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Lib\Utilities.DotNet.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lib\Utilities.DotNet.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <None Include="README.md">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-        </None>
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
-    <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)'=='release'">
-        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)'=='release'">
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.0" />
+  </ItemGroup>
 
 </Project>
