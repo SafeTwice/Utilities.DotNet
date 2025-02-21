@@ -6,7 +6,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>net472;net48;net6.0;net7.0;net8.0</TargetFrameworks>
-    <Version>1.4.1.100</Version>
+    <Version>1.5-rc1</Version>
+    <AssemblyVersion>1.4.1.100</AssemblyVersion>
     <Configurations>Debug;Release;Debug No-I18N;Release No-I18N</Configurations>
     <DebugType>embedded</DebugType>
     <NoWarn>NETSDK1138;CS1587</NoWarn>
@@ -20,7 +21,7 @@
     <PackageTags>.net;dotnet;utilities;util;exceptions;exception</PackageTags>
     <Company>www.safetwice.com</Company>
     <Description>Exception utilities library for .NET</Description>
-    <Copyright>Copyright © 2022-2024 SafeTwice S.L.</Copyright>
+    <Copyright>Copyright © 2025 SafeTwice S.L.</Copyright>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
