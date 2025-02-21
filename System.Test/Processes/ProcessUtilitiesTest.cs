@@ -18,10 +18,10 @@ namespace Utilities.DotNet.System.Processes.Test
 
             // Assert
 
-            var testModule = result.Where( mi => ( mi.name == "USER32.dll" ) );
+            var testModules = result.Where( mi => ( mi.name == "USER32.dll" ) );
 
-            Assert.True( testModule.Count() == 1 );
-            Assert.True( testModule.First().version.Length > 0 );
+            Assert.Single( testModules );
+            Assert.NotEmpty( testModules.First().version );
         }
 
         [Fact]
@@ -33,10 +33,10 @@ namespace Utilities.DotNet.System.Processes.Test
 
             // Assert
 
-            var testAssembly = result.Where( ai => ( ai.name == "Utilities.DotNet.Test" ) );
+            var testAssemblies = result.Where( ai => ( ai.name == "Utilities.DotNet.System.Test" ) );
 
-            Assert.True( testAssembly.Count() == 1 );
-            Assert.True( testAssembly.First().version == "1.0.0.0" );
+            Assert.Single( testAssemblies );
+            Assert.Equal( "1.0.0.0", testAssemblies.First().version );
         }
     }
 }
