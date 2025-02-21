@@ -22,6 +22,7 @@ namespace Utilities.DotNet.Test
             // Assert
 
             Assert.True( result );
+            Assert.NotNull( uri );
             Assert.Equal( expectedScheme, uri.Scheme );
             Assert.Equal( expectedHost, uri.Host );
             Assert.Equal( expectedPort, uri.Port );
@@ -59,6 +60,7 @@ namespace Utilities.DotNet.Test
             // Assert
 
             Assert.True( result );
+            Assert.NotNull( uri );
             Assert.Equal( expectedScheme, uri.Scheme );
             Assert.Equal( expectedHost, uri.Host );
             Assert.Equal( expectedPort, uri.Port );
@@ -79,6 +81,7 @@ namespace Utilities.DotNet.Test
             // Assert
 
             Assert.True( result );
+            Assert.NotNull( uri );
             Assert.Equal( expectedScheme, uri.Scheme );
             Assert.Equal( expectedHost, uri.Host );
             Assert.Equal( expectedPort, uri.Port );
