@@ -6,8 +6,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net472;net48;net6.0;net7.0;net8.0</TargetFrameworks>
-    <Version>1.5-rc1</Version>
-    <AssemblyVersion>1.4.1.100</AssemblyVersion>
     <Configurations>Debug;Release;Debug No-I18N;Release No-I18N</Configurations>
     <DebugType>embedded</DebugType>
     <NoWarn>NETSDK1138;CS1587</NoWarn>
@@ -28,6 +26,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Version>1.5-rc1</Version>
+    <AssemblyVersion>1.4.1.100</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)'=='release'">
