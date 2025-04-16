@@ -18,6 +18,7 @@ namespace Utilities.DotNet.XML.Test
         public XmlFileProcessingExceptionTest()
         {
             CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
             var filename = Path.GetTempFileName();
 

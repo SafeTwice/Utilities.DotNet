@@ -13,6 +13,7 @@ namespace Utilities.DotNet.Exceptions.Test
         public FileProcessingExceptionTest()
         {
             CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
         }
 
         [Fact]

@@ -18,6 +18,7 @@ namespace Utilities.DotNet.XML.Test
         public XmlUtilitiesTest()
         {
             CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
             var filename = Path.GetTempFileName();
 
@@ -29,8 +30,8 @@ namespace Utilities.DotNet.XML.Test
                 "<UInt value='435' empty='' invalid='bar'/>",
                 "<Double value='23.645' empty='' invalid='bar'/>",
                 "<Bool true='true' false='false' empty='' invalid='bar'/>",
-                "<Enum value1='OPTION1' value2=' OPTION2 ' empty='' invalid='bar'/>",
-                "<EnumFlags value1='OPTION1' value2='OPTION1, OPTION2' empty='' invalid='bar'/>",
+                "<Enum value1='Option1' value2=' Option2 ' empty='' invalid='bar'/>",
+                "<EnumFlags value1='Option1' value2='Option1, Option2' empty='' invalid='bar'/>",
                 "<Int value='450'/>",
                 "<Text>FooBar</Text>",
                 "<Nesting><Text>VoidDoid</Text></Nesting>",
@@ -69,7 +70,7 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.MandatoryAttribute( "bar" );
+                element.MandatoryAttribute( "bar" );
             } );
 
             Assert.Equal( $"XML element 'String' lacks mandatory attribute 'bar'", exception.ShortMessage );
@@ -119,7 +120,7 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.MandatoryAttributeInt( "invalid" );
+                element.MandatoryAttributeInt( "invalid" );
             } );
 
             Assert.Equal( $"XML element 'Int' attribute 'invalid' has an invalid value 'bar' (expected integer value)", exception.ShortMessage );
@@ -144,7 +145,7 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.MandatoryAttributeUInt( "invalid" );
+                element.MandatoryAttributeUInt( "invalid" );
             } );
 
             Assert.Equal( $"XML element 'UInt' attribute 'invalid' has an invalid value 'bar' (expected unsigned integer value)", exception.ShortMessage );
@@ -196,7 +197,7 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.MandatoryAttributeBool( "invalid" );
+                element.MandatoryAttributeBool( "invalid" );
             } );
 
             Assert.Equal( $"XML element 'Bool' attribute 'invalid' has an invalid value 'bar' (expected boolean value)", exception.ShortMessage );
@@ -221,7 +222,7 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.MandatoryAttributeGuid( "invalid" );
+                element.MandatoryAttributeGuid( "invalid" );
             } );
 
             Assert.Equal( $"XML element 'Guid' attribute 'invalid' has an invalid value 'foo' (expected GUID value)", exception.ShortMessage );
@@ -229,20 +230,20 @@ namespace Utilities.DotNet.XML.Test
             Assert.Equal( 12, exception.Line );
         }
 
-        public enum TestEnum
+        public enum ETest
         {
-            OPTION1,
-            OPTION2,
+            Option1,
+            Option2,
         }
 
         [Theory]
-        [InlineData( "value1", TestEnum.OPTION1 )]
-        [InlineData( "value2", TestEnum.OPTION2 )]
-        public void MandatoryAttributeEnum_Existing( string attribute, TestEnum expectedValue )
+        [InlineData( "value1", ETest.Option1 )]
+        [InlineData( "value2", ETest.Option2 )]
+        public void MandatoryAttributeEnum_Existing( string attribute, ETest expectedValue )
         {
             var element = GetElement( "Enum" );
 
-            var value = element.MandatoryAttributeEnum<TestEnum>( attribute );
+            var value = element.MandatoryAttributeEnum<ETest>( attribute );
 
             Assert.Equal( expectedValue, value );
         }
@@ -254,31 +255,31 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.MandatoryAttributeEnum<TestEnum>( "invalid" );
+                element.MandatoryAttributeEnum<ETest>( "invalid" );
             } );
 
-            Assert.Equal( $"XML element 'Enum' attribute 'invalid' has an invalid value 'bar' (expected one of: OPTION1, OPTION2)", exception.ShortMessage );
+            Assert.Equal( $"XML element 'Enum' attribute 'invalid' has an invalid value 'bar' (expected one of: Option1, Option2)", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 7, exception.Line );
         }
 
         [Flags]
-        public enum TestEnumFlags
+        public enum EFlagsTest
         {
-            NONE = 0,
-            OPTION1 = 0x01,
-            OPTION2 = 0x02,
-            OPTION3 = 0x04,
+            None = 0,
+            Option1 = 0x01,
+            Option2 = 0x02,
+            Option3 = 0x04,
         }
 
         [Theory]
-        [InlineData( "value1", TestEnumFlags.OPTION1 )]
-        [InlineData( "value2", TestEnumFlags.OPTION1 | TestEnumFlags.OPTION2 )]
-        public void MandatoryAttributeEnumFlags_Existing( string attribute, TestEnumFlags expectedValue )
+        [InlineData( "value1", EFlagsTest.Option1 )]
+        [InlineData( "value2", EFlagsTest.Option1 | EFlagsTest.Option2 )]
+        public void MandatoryAttributeEnumFlags_Existing( string attribute, EFlagsTest expectedValue )
         {
             var element = GetElement( "EnumFlags" );
 
-            var value = element.MandatoryAttributeEnum<TestEnumFlags>( attribute );
+            var value = element.MandatoryAttributeEnum<EFlagsTest>( attribute );
 
             Assert.Equal( expectedValue, value );
         }
@@ -290,10 +291,10 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.MandatoryAttributeEnum<TestEnumFlags>( "invalid" );
+                element.MandatoryAttributeEnum<EFlagsTest>( "invalid" );
             } );
 
-            Assert.Equal( $"XML element 'EnumFlags' attribute 'invalid' has an invalid value 'bar' (expected one of: NONE, OPTION1, OPTION2, OPTION3)", exception.ShortMessage );
+            Assert.Equal( $"XML element 'EnumFlags' attribute 'invalid' has an invalid value 'bar' (expected one of: None, Option1, Option2, Option3)", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 8, exception.Line );
         }
@@ -345,7 +346,7 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.OptionalAttributeInt( "invalid" );
+                element.OptionalAttributeInt( "invalid" );
             } );
 
             Assert.Equal( $"XML element 'Int' attribute 'invalid' has an invalid value 'bar' (expected integer value)", exception.ShortMessage );
@@ -415,7 +416,7 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.OptionalAttributeDouble( "invalid" );
+                element.OptionalAttributeDouble( "invalid" );
             } );
 
             Assert.Equal( $"XML element 'Double' attribute 'invalid' has an invalid value 'bar' (expected real number value)", exception.ShortMessage );
@@ -454,7 +455,7 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.OptionalAttributeBool( "invalid" );
+                element.OptionalAttributeBool( "invalid" );
             } );
 
             Assert.Equal( $"XML element 'Bool' attribute 'invalid' has an invalid value 'bar' (expected boolean value)", exception.ShortMessage );
@@ -491,7 +492,7 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.OptionalAttributeGuid( "invalid" );
+                element.OptionalAttributeGuid( "invalid" );
             } );
 
             Assert.Equal( $"XML element 'Guid' attribute 'invalid' has an invalid value 'foo' (expected GUID value)", exception.ShortMessage );
@@ -500,14 +501,14 @@ namespace Utilities.DotNet.XML.Test
         }
 
         [Theory]
-        [InlineData( "value1", TestEnum.OPTION2, TestEnum.OPTION1 )]
-        [InlineData( "value2", TestEnum.OPTION1, TestEnum.OPTION2 )]
-        public void OptionalAttributeEnum_Existing( string attribute, TestEnum defaultValue, TestEnum expectedValue )
+        [InlineData( "value1", ETest.Option2, ETest.Option1 )]
+        [InlineData( "value2", ETest.Option1, ETest.Option2 )]
+        public void OptionalAttributeEnum_Existing( string attribute, ETest defaultValue, ETest expectedValue )
         {
 
             var element = GetElement( "Enum" );
 
-            var value = element.OptionalAttributeEnum<TestEnum>( attribute, defaultValue );
+            var value = element.OptionalAttributeEnum<ETest>( attribute, defaultValue );
 
             Assert.Equal( expectedValue, value );
         }
@@ -518,9 +519,9 @@ namespace Utilities.DotNet.XML.Test
 
             var element = GetElement( "Enum" );
 
-            var value = element.OptionalAttributeEnum<TestEnum>( "bar", TestEnum.OPTION2 );
+            var value = element.OptionalAttributeEnum<ETest>( "bar", ETest.Option2 );
 
-            Assert.Equal( TestEnum.OPTION2, value );
+            Assert.Equal( ETest.Option2, value );
         }
 
         [Fact]
@@ -530,23 +531,23 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.OptionalAttributeEnum<TestEnum>( "invalid" );
+                element.OptionalAttributeEnum<ETest>( "invalid" );
             } );
 
-            Assert.Equal( $"XML element 'Enum' attribute 'invalid' has an invalid value 'bar' (expected one of: OPTION1, OPTION2)", exception.ShortMessage );
+            Assert.Equal( $"XML element 'Enum' attribute 'invalid' has an invalid value 'bar' (expected one of: Option1, Option2)", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 7, exception.Line );
         }
 
         [Theory]
-        [InlineData( "value1", TestEnumFlags.OPTION2, TestEnumFlags.OPTION1 )]
-        [InlineData( "value2", TestEnumFlags.NONE, TestEnumFlags.OPTION1 | TestEnumFlags.OPTION2 )]
-        public void OptionalAttributeEnumFlags_Existing( string attribute, TestEnumFlags defaultValue, TestEnumFlags expectedValue )
+        [InlineData( "value1", EFlagsTest.Option2, EFlagsTest.Option1 )]
+        [InlineData( "value2", EFlagsTest.None, EFlagsTest.Option1 | EFlagsTest.Option2 )]
+        public void OptionalAttributeEnumFlags_Existing( string attribute, EFlagsTest defaultValue, EFlagsTest expectedValue )
         {
 
             var element = GetElement( "EnumFlags" );
 
-            var value = element.OptionalAttributeEnum<TestEnumFlags>( attribute, defaultValue );
+            var value = element.OptionalAttributeEnum<EFlagsTest>( attribute, defaultValue );
 
             Assert.Equal( expectedValue, value );
         }
@@ -557,9 +558,9 @@ namespace Utilities.DotNet.XML.Test
 
             var element = GetElement( "EnumFlags" );
 
-            var value = element.OptionalAttributeEnum<TestEnumFlags>( "bar", TestEnumFlags.OPTION2 );
+            var value = element.OptionalAttributeEnum<EFlagsTest>( "bar", EFlagsTest.Option2 );
 
-            Assert.Equal( TestEnumFlags.OPTION2, value );
+            Assert.Equal( EFlagsTest.Option2, value );
         }
 
         [Fact]
@@ -569,10 +570,10 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var value = element.OptionalAttributeEnum<TestEnumFlags>( "invalid" );
+                var value = element.OptionalAttributeEnum<EFlagsTest>( "invalid" );
             } );
 
-            Assert.Equal( $"XML element 'EnumFlags' attribute 'invalid' has an invalid value 'bar' (expected one of: NONE, OPTION1, OPTION2, OPTION3)", exception.ShortMessage );
+            Assert.Equal( $"XML element 'EnumFlags' attribute 'invalid' has an invalid value 'bar' (expected one of: None, Option1, Option2, Option3)", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 8, exception.Line );
         }
@@ -597,7 +598,7 @@ namespace Utilities.DotNet.XML.Test
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
                 string attributeName;
-                var value = element.MandatoryAttribute( new string[] { "bar", "baz" }, out attributeName );
+                element.MandatoryAttribute( new string[] { "bar", "baz" }, out attributeName );
             } );
 
             Assert.Equal( $"XML element 'String' lacks one of mandatory attributes ('bar', 'baz') or are empty", exception.ShortMessage );
@@ -635,7 +636,7 @@ namespace Utilities.DotNet.XML.Test
 
             var exception = Assert.Throws<XmlFileProcessingException>( () =>
             {
-                var element = rootElement.MandatoryUniqueElement( "Int" );
+                rootElement.MandatoryUniqueElement( "Int" );
             } );
 
             Assert.Equal( $"XML element 'Root' has more than 1 child element 'Int'", exception.ShortMessage );
