@@ -13,7 +13,7 @@ namespace Utilities.DotNet.XML.Test
     public class XmlFileProcessingExceptionTest
     {
         private readonly Uri m_fileuri;
-        private XDocument m_doc;
+        private readonly XDocument m_doc;
 
         public XmlFileProcessingExceptionTest()
         {

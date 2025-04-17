@@ -353,7 +353,7 @@ namespace Utilities.DotNet.XML
             return attrValue;
         }
 
-        /// <inheritdoc cref="OptionalAttributeEnum{T}(XElement, string, T?)"/>/>
+        /// <inheritdoc cref="OptionalAttributeEnum{T}(XElement, string, T?, bool)"/>/>
         public static T OptionalAttributeEnum<T>( this XElement element, string attributeName, T defaultValue = default, bool ignoreCase = false ) where T : struct, Enum
         {
             return element.OptionalAttributeEnum<T>( attributeName, null, ignoreCase ) ?? defaultValue;

@@ -8,7 +8,7 @@
     <TargetFrameworks>net472;net48;net6.0;net7.0;net8.0</TargetFrameworks>
     <Configurations>Debug;Release;Debug No-I18N;Release No-I18N</Configurations>
     <DebugType>embedded</DebugType>
-    <NoWarn>NETSDK1138;CS1587</NoWarn>
+    <NoWarn>NETSDK1138;CS1587;IDE0270</NoWarn>
     <EnablePackageValidation>true</EnablePackageValidation>
     <Title>$(AssemblyName)</Title>
     <PackageReadmeFile>README.md</PackageReadmeFile>
