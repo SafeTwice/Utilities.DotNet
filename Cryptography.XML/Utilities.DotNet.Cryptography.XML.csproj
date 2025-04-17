@@ -50,7 +50,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.2" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.4" />
   </ItemGroup>
 
 </Project>
