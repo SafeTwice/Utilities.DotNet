@@ -173,6 +173,61 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
+        /// Gets a mandatory attribute value as a <see cref="DateTime"/>.
+        /// </summary>
+        /// <remarks>
+        /// The format must be a valid format string for the <see cref="DateTime.Parse(string, IFormatProvider, DateTimeStyles)"/> method.
+        /// </remarks>
+        /// <param name="element">This element.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="formatProvider">An object that supplies culture-specific formatting information about the attribute value.</param>
+        /// <param name="styles">A bitwise combination of enumeration values that defines how to interpret the parsed date in relation
+        ///                      to the current time zone or the current date.</param>
+        /// <returns>The value of the attribute.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
+        public static DateTime MandatoryAttributeDateTime( this XElement element, string attributeName, IFormatProvider? formatProvider = null,
+                                                           DateTimeStyles styles = DateTimeStyles.None )
+        {
+            string attrStr = element.MandatoryAttribute( attributeName );
+
+            if( !DateTime.TryParse( attrStr, ( formatProvider ?? CultureInfo.InvariantCulture ), styles, out var attrValue ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected date/time value)" ),
+                                                      element );
+            }
+
+            return attrValue;
+        }
+
+        /// <summary>
+        /// Gets a mandatory attribute value as a <see cref="DateTime"/>.
+        /// </summary>
+        /// <remarks>
+        /// The format must be a valid format string for the <see cref="DateTime.ParseExact(string, string, IFormatProvider, DateTimeStyles)"/> method.
+        /// </remarks>
+        /// <param name="element">This element.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="format">The required format of the attribute value.</param>
+        /// <param name="formatProvider">An object that supplies culture-specific formatting information about the attribute value.</param>
+        /// <param name="styles">A bitwise combination of enumeration values that defines how to interpret the parsed date in relation
+        ///                      to the current time zone or the current date.</param>
+        /// <returns>The value of the attribute.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
+        public static DateTime MandatoryAttributeDateTime( this XElement element, string attributeName, string format,
+                                                           IFormatProvider? formatProvider = null, DateTimeStyles styles = DateTimeStyles.None )
+        {
+            string attrStr = element.MandatoryAttribute( attributeName );
+
+            if( !DateTime.TryParseExact( attrStr, format, ( formatProvider ?? CultureInfo.InvariantCulture ), styles, out var attrValue ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected date/time value)" ),
+                                                      element );
+            }
+
+            return attrValue;
+        }
+
+        /// <summary>
         /// Gets an optional attribute value as a <c>string</c>.
         /// </summary>
         /// <param name="element">This element.</param>
@@ -381,6 +436,63 @@ namespace Utilities.DotNet.XML
             if( !Guid.TryParse( attrStr, out var attrValue ) )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected GUID value)" ),
+                                                      element );
+            }
+
+            return attrValue;
+        }
+
+        /// <summary>
+        /// Gets an optional attribute value as a <see cref="DateTime"/>.
+        /// </summary>
+        /// <param name="element">This element.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="formatProvider">An object that supplies culture-specific formatting information about the attribute value.</param>
+        /// <param name="styles">A bitwise combination of enumeration values that defines how to interpret the parsed date in relation
+        ///                      to the current time zone or the current date.</param>
+        /// <returns>The value of the attribute.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
+        public static DateTime? OptionalAttributeDateTime( this XElement element, string attributeName, IFormatProvider? formatProvider = null,
+                                                           DateTimeStyles styles = DateTimeStyles.None )
+        {
+            var attrStr = element.OptionalAttribute( attributeName );
+            if( attrStr == null )
+            {
+                return null;
+            }
+
+            if( !DateTime.TryParse( attrStr, ( formatProvider ?? CultureInfo.InvariantCulture ), styles, out var attrValue ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected date/time value)" ),
+                                                      element );
+            }
+
+            return attrValue;
+        }
+
+        /// <summary>
+        /// Gets an optional attribute value as a <see cref="DateTime"/>.
+        /// </summary>
+        /// <param name="element">This element.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="format">The required format of the attribute value.</param>
+        /// <param name="formatProvider">An object that supplies culture-specific formatting information about the attribute value.</param>
+        /// <param name="styles">A bitwise combination of enumeration values that defines how to interpret the parsed date in relation
+        ///                      to the current time zone or the current date.</param>
+        /// <returns>The value of the attribute.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
+        public static DateTime? OptionalAttributeDateTime( this XElement element, string attributeName, string format,
+                                                           IFormatProvider? formatProvider = null, DateTimeStyles styles = DateTimeStyles.None )
+        {
+            var attrStr = element.OptionalAttribute( attributeName );
+            if( attrStr == null )
+            {
+                return null;
+            }
+
+            if( !DateTime.TryParseExact( attrStr, format, ( formatProvider ?? CultureInfo.InvariantCulture ), styles, out var attrValue ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected date/time value)" ),
                                                       element );
             }
 

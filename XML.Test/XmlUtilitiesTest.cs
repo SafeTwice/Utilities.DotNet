@@ -36,6 +36,8 @@ namespace Utilities.DotNet.XML.Test
                 "<Text>FooBar</Text>",
                 "<Nesting><Text>VoidDoid</Text></Nesting>",
                 "<Guid value='089e1f22-b2d0-41a8-ab19-65eac650e589' invalid='foo'/>",
+                "<DateTime invariant='12/06/2028' fr='11/08/2025' ja='2027/09/07' local='2029-02-15T12:25:36.0000000-07:00' " +
+                          "utc='2039-11-30T23:45:22.1900000Z' invalid='foo'/>",
                 "</Root>",
             };
 
@@ -312,6 +314,104 @@ namespace Utilities.DotNet.XML.Test
             Assert.Equal( $"XML element 'Guid' attribute 'invalid' has an invalid value 'foo' (expected GUID value)", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 12, exception.Line );
+        }
+
+        [Theory]
+        [InlineData( "invariant", 2028, 12, 6, null )]
+        [InlineData( "fr", 2025, 8, 11, "fr-FR" )]
+        [InlineData( "ja", 2027, 9, 7, "ja-JP" )]
+        public void MandatoryAttributeDateTime_Existing( string attribute, int year, int month, int day, string? culture )
+        {
+            // Arrange
+
+            var element = GetElement( "DateTime" );
+
+            var cultureInfo = ( culture != null ) ? new CultureInfo( culture ) : null;
+
+            // Act
+
+            var value = element.MandatoryAttributeDateTime( attribute, cultureInfo );
+
+            // Assert
+
+            Assert.Equal( year, value.Year );
+            Assert.Equal( month, value.Month );
+            Assert.Equal( day, value.Day );
+            Assert.Equal( 0, value.Hour );
+            Assert.Equal( 0, value.Minute );
+            Assert.Equal( 0, value.Second );
+            Assert.Equal( 0, value.Millisecond );
+            Assert.Equal( DateTimeKind.Unspecified, value.Kind );
+        }
+
+        //"<DateTime local='2029-02-15T12:25:36.0000000-07:00' utc='2039-11-30T23:45:22.1900000Z' invalid='foo'/>",
+
+        [Theory]
+        [InlineData( "local", 2029, 2, 15, 20, 25, 36, 0, DateTimeKind.Local )]
+        [InlineData( "utc", 2039, 11, 30, 23, 45, 22, 190, DateTimeKind.Utc )]
+        public void MandatoryAttributeDateTime_WithFormat_Existing( string attribute, int year, int month, int day,
+                                                                    int hour, int minute, int second, int milliseconds, DateTimeKind kind )
+        {
+            // Arrange
+
+            var element = GetElement( "DateTime" );
+
+            // Act
+
+            var value = element.MandatoryAttributeDateTime( attribute, "o", styles: DateTimeStyles.RoundtripKind );
+
+            // Assert
+
+            Assert.Equal( year, value.Year );
+            Assert.Equal( month, value.Month );
+            Assert.Equal( day, value.Day );
+            Assert.Equal( hour, value.Hour );
+            Assert.Equal( minute, value.Minute );
+            Assert.Equal( second, value.Second );
+            Assert.Equal( milliseconds, value.Millisecond );
+            Assert.Equal( kind, value.Kind );
+        }
+
+        [Fact]
+        public void MandatoryAttributeDataTime_Invalid()
+        {
+            // Arrange
+
+            var element = GetElement( "DateTime" );
+
+            // Act
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
+            {
+                element.MandatoryAttributeDateTime( "invalid" );
+            } );
+
+            // Assert
+
+            Assert.Equal( $"XML element 'DateTime' attribute 'invalid' has an invalid value 'foo' (expected date/time value)", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 13, exception.Line );
+        }
+
+        [Fact]
+        public void MandatoryAttributeDataTime_WithFormat_Invalid()
+        {
+            // Arrange
+
+            var element = GetElement( "DateTime" );
+
+            // Act
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
+            {
+                element.MandatoryAttributeDateTime( "invalid", "s" );
+            } );
+
+            // Assert
+
+            Assert.Equal( $"XML element 'DateTime' attribute 'invalid' has an invalid value 'foo' (expected date/time value)", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 13, exception.Line );
         }
 
         public enum ETest
@@ -731,6 +831,138 @@ namespace Utilities.DotNet.XML.Test
             Assert.Equal( $"XML element 'Guid' attribute 'invalid' has an invalid value 'foo' (expected GUID value)", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 12, exception.Line );
+        }
+
+        [Theory]
+        [InlineData( "invariant", 2028, 12, 6, null )]
+        [InlineData( "fr", 2025, 8, 11, "fr-FR" )]
+        [InlineData( "ja", 2027, 9, 7, "ja-JP" )]
+        public void OptionalAttributeDateTime_Existing( string attribute, int year, int month, int day, string? culture )
+        {
+            // Arrange
+
+            var element = GetElement( "DateTime" );
+
+            var cultureInfo = ( culture != null ) ? new CultureInfo( culture ) : null;
+
+            // Act
+
+            var value = element.OptionalAttributeDateTime( attribute, cultureInfo );
+
+            // Assert
+
+            Assert.NotNull( value );
+            Assert.Equal( year, value.Value.Year );
+            Assert.Equal( month, value.Value.Month );
+            Assert.Equal( day, value.Value.Day );
+            Assert.Equal( 0, value.Value.Hour );
+            Assert.Equal( 0, value.Value.Minute );
+            Assert.Equal( 0, value.Value.Second );
+            Assert.Equal( 0, value.Value.Millisecond );
+            Assert.Equal( DateTimeKind.Unspecified, value.Value.Kind );
+        }
+
+        //"<DateTime local='2029-02-15T12:25:36.0000000-07:00' utc='2039-11-30T23:45:22.1900000Z' invalid='foo'/>",
+
+        [Theory]
+        [InlineData( "local", 2029, 2, 15, 20, 25, 36, 0, DateTimeKind.Local )]
+        [InlineData( "utc", 2039, 11, 30, 23, 45, 22, 190, DateTimeKind.Utc )]
+        public void OptionalAttributeDateTime_WithFormat_Existing( string attribute, int year, int month, int day,
+                                                                    int hour, int minute, int second, int milliseconds, DateTimeKind kind )
+        {
+            // Arrange
+
+            var element = GetElement( "DateTime" );
+
+            // Act
+
+            var value = element.OptionalAttributeDateTime( attribute, "o", styles: DateTimeStyles.RoundtripKind );
+
+            // Assert
+
+            Assert.NotNull( value );
+            Assert.Equal( year, value.Value.Year );
+            Assert.Equal( month, value.Value.Month );
+            Assert.Equal( day, value.Value.Day );
+            Assert.Equal( hour, value.Value.Hour );
+            Assert.Equal( minute, value.Value.Minute );
+            Assert.Equal( second, value.Value.Second );
+            Assert.Equal( milliseconds, value.Value.Millisecond );
+            Assert.Equal( kind, value.Value.Kind );
+        }
+
+        [Fact]
+        public void OptionalAttributeDateTime_NotExisting()
+        {
+            // Arrange
+
+            var element = GetElement( "DateTime" );
+
+            // Act
+
+            var value = element.OptionalAttributeDateTime( "bar" );
+
+            // Assert
+
+            Assert.Null( value );
+        }
+
+        [Fact]
+        public void OptionalAttributeDateTime_WithFormat_NotExisting()
+        {
+            // Arrange
+
+            var element = GetElement( "DateTime" );
+
+            // Act
+
+            var value = element.OptionalAttributeDateTime( "bar", "g" );
+
+            // Assert
+
+            Assert.Null( value );
+        }
+
+        [Fact]
+        public void OptionalAttributeDataTime_Invalid()
+        {
+            // Arrange
+
+            var element = GetElement( "DateTime" );
+
+            // Act
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
+            {
+                element.OptionalAttributeDateTime( "invalid" );
+            } );
+
+            // Assert
+
+            Assert.Equal( $"XML element 'DateTime' attribute 'invalid' has an invalid value 'foo' (expected date/time value)", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 13, exception.Line );
+        }
+
+        [Fact]
+        public void OptionalAttributeDataTime_WithFormat_Invalid()
+        {
+            // Arrange
+
+            var element = GetElement( "DateTime" );
+
+            // Act
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
+            {
+                element.OptionalAttributeDateTime( "invalid", "s" );
+            } );
+
+            // Assert
+
+            Assert.Equal( $"XML element 'DateTime' attribute 'invalid' has an invalid value 'foo' (expected date/time value)", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 13, exception.Line );
         }
 
         [Theory]
