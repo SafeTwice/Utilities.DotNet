@@ -1186,7 +1186,7 @@ namespace Utilities.DotNet.XML.Test
             // Assert
 
             Assert.Equal( container, child.Parent );
-            Assert.Single( container.Elements(), new Action<XElement>( e => Assert.Equal( child, e ) ) );
+            Assert.Single( container.Elements(), child );
         }
 
         [Fact]
@@ -1207,7 +1207,7 @@ namespace Utilities.DotNet.XML.Test
             // Assert
 
             Assert.Equal( container, child.Parent );
-            Assert.Single( container.Elements(), new Action<XElement>( e => Assert.Equal( child, e ) ) );
+            Assert.Single( container.Elements(), child );
         }
 
         [Fact]
@@ -1229,7 +1229,7 @@ namespace Utilities.DotNet.XML.Test
 
             Assert.Equal( container2, child.Parent );
             Assert.Empty( container1.Elements() );
-            Assert.Single( container2.Elements(), new Action<XElement>( e => Assert.Equal( child, e ) ) );
+            Assert.Single( container2.Elements(), child );
         }
     }
 }
