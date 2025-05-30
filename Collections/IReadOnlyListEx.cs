@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System.Collections.Generic;
@@ -34,7 +34,7 @@ namespace Utilities.DotNet.Collections
         /// </remarks>
         /// <param name="item">Object to locate in the list.</param>
         /// <returns>Zero-based index of the first occurrence of item within the entire list, if found; otherwise, -1.</returns>
-        int IndexOf( object item );
+        int IndexOf( object? item );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of its first occurrence within the range of elements in the list that
@@ -47,7 +47,7 @@ namespace Utilities.DotNet.Collections
         /// <param name="index">Zero-based starting index of the search. 0 (zero) is valid in an empty list.</param>
         /// <returns>Zero-based index of the first occurrence of item within the specified range of elements in the list, if found; otherwise, -1.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list.</exception>
-        int IndexOf( object item, int index );
+        int IndexOf( object? item, int index );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of the first occurrence within the range of elements in the list that starts
@@ -64,7 +64,7 @@ namespace Utilities.DotNet.Collections
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list,
         ///                                                      <paramref name="count"/> is less than 0, or <paramref name="index"/> and <paramref name="count"/>
         ///                                                      do not denote a valid range of elements in the list.</exception>
-        int IndexOf( object item, int index, int count );
+        int IndexOf( object? item, int index, int count );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of the last occurrence within the entire list.
@@ -74,7 +74,7 @@ namespace Utilities.DotNet.Collections
         /// </remarks>
         /// <param name="item">Object to locate in the list.</param>
         /// <returns>Zero-based index of the last occurrence of item within the entire the list, if found; otherwise, -1.</returns>
-        int LastIndexOf( object item );
+        int LastIndexOf( object? item );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of the last occurrence within the range of elements in the list
@@ -87,7 +87,7 @@ namespace Utilities.DotNet.Collections
         /// <param name="index">Zero-based starting index of the backward search.</param>
         /// <returns>Zero-based index of the last occurrence of item within the specified range of elements in the list, if found; otherwise, -1.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list.</exception>
-        int LastIndexOf( object item, int index );
+        int LastIndexOf( object? item, int index );
 
         /// <summary>
         /// Searches for the specified item and returns the zero-based index of the last occurrence within the range of elements in the list
@@ -104,7 +104,7 @@ namespace Utilities.DotNet.Collections
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list,
         ///                                                      <paramref name="count"/> is less than 0, or <paramref name="index"/> and <paramref name="count"/>
         ///                                                      do not denote a valid range of elements in the list.</exception>
-        int LastIndexOf( object item, int index, int count );
+        int LastIndexOf( object? item, int index, int count );
 
         /// <summary>
         /// Creates a shallow copy of a range of elements in the source list.

@@ -9,6 +9,8 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 
+#pragma warning disable S1696
+
 namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
@@ -71,7 +73,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// </summary>
         public ObservableSet()
         {
-            m_set = new HashSet<T>();
+            m_set = new HashSetEx<T>();
         }
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// <param name="comparer"><see cref="IEqualityComparer{T}"/> implementation to use when comparing values in the set.</param>
         public ObservableSet( IEqualityComparer<T> comparer )
         {
-            m_set = new HashSet<T>( comparer );
+            m_set = new HashSetEx<T>( comparer );
         }
 
         /// <summary>
@@ -91,7 +93,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// <param name="items">Collection of initial items.</param>
         public ObservableSet( IEnumerable<T> items )
         {
-            m_set = new HashSet<T>( items );
+            m_set = new HashSetEx<T>( items );
         }
 
         /// <summary>
@@ -102,8 +104,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// <param name="comparer"><see cref="IEqualityComparer{T}"/> implementation to use when comparing values in the set.</param>
         public ObservableSet( IEnumerable<T> items, IEqualityComparer<T> comparer )
         {
-            m_set = new HashSet<T>( comparer );
-            AddRange( items );
+            m_set = new HashSetEx<T>( items, comparer );
         }
 
         //===========================================================================
@@ -138,28 +139,21 @@ namespace Utilities.DotNet.Collections.Observables
 
         void ICollection<T>.Add( T item )
         {
-            if( !Add( item ) )
-            {
-                throw new InvalidOperationException();
-            }
+            Add( item );
         }
 
-        bool ICollectionEx.Add( object item )
+        void ICollectionEx.Add( object? item )
         {
-            if( item is T obj )
+            if( ( (ISetEx) m_set ).Add( item ) )
             {
-                return Add( obj );
-            }
-            else
-            {
-                return false;
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item ) );
             }
         }
 
         /// <inheritdoc/>
-        public bool AddRange( IEnumerable<T> collection )
+        public void AddRange( IEnumerable<T> collection )
         {
-            bool result = true;
+#if BULK_NOTIFY_RANGE_ACTIONS
             var addedItems = new ListEx<T>();
 
             foreach( var item in collection )
@@ -168,44 +162,28 @@ namespace Utilities.DotNet.Collections.Observables
                 {
                     addedItems.Add( item );
                 }
-                else
-                {
-                    result = false;
-                }
             }
 
-#if BULK_NOTIFY_RANGE_ACTIONS
             if( addedItems.Count > 0 )
             {
                 NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, addedItems ) );
             }
 #else
-            foreach( var addedItem in addedItems )
+            foreach( var itemToAdd in collection )
             {
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, addedItem ) );
+                Add( itemToAdd );
             }
 #endif
-
-            return result;
         }
 
-        bool ICollectionEx.AddRange( IEnumerable collection )
+        void ICollectionEx.AddRange( IEnumerable collection )
         {
-            var itemsToAdd = new ListEx<T>();
+            // The casted collection is converted to array to enforce that exceptions
+            // are thrown immediately if the cast fails and therefore ensure that this
+            // object is not modified in case of an exception.
+            var castedCollection = collection.Cast<T>().ToArray();
 
-            foreach( var item in collection )
-            {
-                if( item is T obj )
-                {
-                    itemsToAdd.Add( obj );
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            return AddRange( itemsToAdd );
+            AddRange( castedCollection );
         }
 
         /// <inheritdoc/>
@@ -222,90 +200,11 @@ namespace Utilities.DotNet.Collections.Observables
             }
         }
 
-        bool ICollectionEx.Remove( object item )
+        bool ICollectionEx.Remove( object? item )
         {
-            if( item is T obj )
+            if( ( (ISetEx) m_set ).Remove( item ) )
             {
-                return Remove( obj );
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public bool RemoveRange( IEnumerable<T> collection )
-        {
-            bool result = true;
-            var removedItems = new ListEx<T>();
-
-            foreach( var item in collection )
-            {
-                if( m_set.Remove( item ) )
-                {
-                    removedItems.Add( item );
-                }
-                else
-                {
-                    result = false;
-                }
-            }
-
-#if BULK_NOTIFY_RANGE_ACTIONS
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems ) );
-#else
-            foreach( var removedItem in removedItems )
-            {
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItem ) );
-            }
-#endif
-
-            return result;
-        }
-
-        bool ICollectionEx.RemoveRange( IEnumerable collection )
-        {
-            bool partialResult = true;
-            var itemsToRemove = new ListEx<T>();
-
-            foreach( var item in collection )
-            {
-                if( item is T obj )
-                {
-                    itemsToRemove.Add( obj );
-                }
-                else
-                {
-                    partialResult = false;
-                }
-            }
-
-            return RemoveRange( itemsToRemove ) && partialResult;
-        }
-
-        /// <inheritdoc/>
-        public bool Replace( T oldItem, T newItem )
-        {
-            if( !m_set.Contains( oldItem ) ||
-                ( !m_set.Comparer.Equals( oldItem, newItem ) && m_set.Contains( newItem ) ) )
-            {
-                return false;
-            }
-
-            m_set.Remove( oldItem );
-            m_set.Add( newItem );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
-
-            return true;
-        }
-
-        bool ICollectionEx.Replace( object oldItem, object newItem )
-        {
-            if( ( oldItem is T oldObj ) && ( newItem is T newObj ) )
-            {
-                Replace( oldObj, newObj );
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item ) );
                 return true;
             }
             else
@@ -315,8 +214,100 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
+        public void RemoveRange( IEnumerable<T> collection )
+        {
+#if BULK_NOTIFY_RANGE_ACTIONS
+            var removedItems = new ListEx<T>();
+
+            foreach( var item in collection )
+            {
+                if( m_set.Remove( item ) )
+                {
+                    removedItems.Add( item );
+                }
+            }
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems ) );
+#else
+            foreach( var itemToRemove in collection )
+            {
+                Remove( itemToRemove );
+            }
+#endif
+        }
+
+        void ICollectionEx.RemoveRange( IEnumerable collection )
+        {
+            foreach( var itemToRemove in collection )
+            {
+                ( (ICollectionEx) this ).Remove( itemToRemove );
+            }
+        }
+
+        /// <inheritdoc/>
+        public bool Replace( T oldItem, T newItem )
+        {
+            if( !m_set.Contains( oldItem ) )
+            {
+                return false;
+            }
+
+            m_set.Remove( oldItem );
+            if( m_set.Add( newItem ) )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
+            }
+            else
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, oldItem ) );
+            }
+
+            return true;
+        }
+
+        bool ICollectionEx.Replace( object? oldItem, object? newItem )
+        {
+            if( !( (ISetEx) m_set ).Contains( oldItem ) )
+            {
+                return false;
+            }
+
+            try
+            {
+                T castedOldItem = (T) oldItem!;
+                T castedNewItem = (T) newItem!;
+
+                if( m_set.Comparer.Equals( castedOldItem, castedNewItem ) )
+                {
+                    return true;
+                }
+
+                m_set.Remove( castedOldItem );
+                if( m_set.Add( castedNewItem ) )
+                {
+                    NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
+                }
+                else
+                {
+                    NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, oldItem ) );
+                }
+
+                return true;
+            }
+            catch( InvalidCastException )
+            {
+                throw new ArgumentException( $"Incompatible item type", nameof( newItem ) );
+            }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( newItem ) );
+            }
+        }
+
+        /// <inheritdoc/>
         public void Clear()
         {
+#if BULK_NOTIFY_RANGE_ACTIONS
             if( m_set.Count == 0 )
             {
                 return;
@@ -326,12 +317,15 @@ namespace Utilities.DotNet.Collections.Observables
 
             m_set.Clear();
 
-#if BULK_NOTIFY_RANGE_ACTIONS
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems ) );
 #else
-            foreach( var removedItem in removedItems )
+            while( m_set.Count > 0 )
             {
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItem ) );
+                var itemToRemove = m_set.First();
+
+                m_set.Remove( itemToRemove );
+
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, itemToRemove ) );
             }
 #endif
         }
@@ -342,21 +336,14 @@ namespace Utilities.DotNet.Collections.Observables
             return m_set.Contains( item );
         }
 
-        bool ICollectionEx.Contains( object item )
+        bool ICollectionEx.Contains( object? item )
         {
-            if( item is T obj )
-            {
-                return Contains( obj );
-            }
-            else
-            {
-                return false;
-            }
+            return ( (ICollectionEx) m_set ).Contains( item );
         }
 
-        bool IReadOnlyCollectionEx<T>.Contains( object item )
+        bool IReadOnlyCollectionEx<T>.Contains( object? item )
         {
-            return ( (ICollectionEx) this ).Contains( item );
+            return ( (ICollectionEx) m_set ).Contains( item );
         }
 
         /// <inheritdoc/>
@@ -507,6 +494,6 @@ namespace Utilities.DotNet.Collections.Observables
         //                          PROTECTED ATTRIBUTES
         //===========================================================================
 
-        protected private readonly HashSet<T> m_set;
+        protected private readonly HashSetEx<T> m_set;
     }
 }

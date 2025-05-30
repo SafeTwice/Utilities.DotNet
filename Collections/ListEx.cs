@@ -1,10 +1,13 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
+#pragma warning disable S1696
 
 namespace Utilities.DotNet.Collections
 {
@@ -45,18 +48,70 @@ namespace Utilities.DotNet.Collections
         //                            PUBLIC METHODS
         //===========================================================================
 
-        /// <inheritdoc/>
-        public new bool Add( T item )
+        /// <inheritdoc cref="IListEx{T}.Add(T)"/>
+        public new int Add( T item )
         {
             base.Add( item );
-            return true;
+            return ( Count - 1 );
         }
 
-        bool ICollectionEx.Add( object item )
+        int IListEx.Add( object? item )
         {
-            if( item is T obj )
+            try
             {
-                Add( obj );
+                return ( (IList) this ).Add( item );
+            }
+            catch( ArgumentNullException )
+            {
+                throw new ArgumentNullException( nameof( item ) );
+            }
+            catch( ArgumentException ex )
+            {
+                throw new ArgumentException( ex.Message, nameof( item ), ex );
+            }
+        }
+
+        void ICollectionEx.Add( object? item )
+        {
+            try
+            {
+                ( (IList) this ).Add( item );
+            }
+            catch( ArgumentNullException )
+            {
+                throw new ArgumentNullException( nameof( item ) );
+            }
+            catch( ArgumentException ex )
+            {
+                throw new ArgumentException( ex.Message, nameof( item ), ex );
+            }
+        }
+
+        void ICollectionEx.AddRange( IEnumerable collection )
+        {
+            // The casted collection is converted to array to enforce that exceptions
+            // are thrown immediately if the cast fails and therefore ensure that this
+            // object is not modified in case of an exception.
+            var castedCollection = collection.Cast<T>().ToArray();
+
+            base.AddRange( castedCollection );
+        }
+
+        void IListEx.InsertRange( int index, IEnumerable collection )
+        {
+            // The casted collection is converted to array to enforce that exceptions
+            // are thrown immediately if the cast fails and therefore ensure that this
+            // object is not modified in case of an exception.
+            var castedCollection = collection.Cast<T>().ToArray();
+
+            base.InsertRange( index, castedCollection );
+        }
+
+        bool IListEx.Remove( object? item )
+        {
+            if( ( (IList) this ).IndexOf( item ) >= 0 )
+            {
+                ( (IList) this ).Remove( item );
                 return true;
             }
             else
@@ -65,100 +120,23 @@ namespace Utilities.DotNet.Collections
             }
         }
 
-        bool ICollectionEx<T>.AddRange( IEnumerable<T> collection )
-        {
-            base.AddRange( collection );
-            return true;
-        }
-
-        bool ICollectionEx.AddRange( IEnumerable collection )
-        {
-            var itemsToAdd = new ListEx<T>();
-
-            foreach( var item in collection )
-            {
-                if( item is T obj )
-                {
-                    itemsToAdd.Add( obj );
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            AddRange( itemsToAdd );
-
-            return true;
-        }
-
-        bool IListEx.InsertRange( int index, IEnumerable collection )
-        {
-            var itemsToInsert = new ListEx<T>();
-
-            foreach( var item in collection )
-            {
-                if( item is T obj )
-                {
-                    itemsToInsert.Add( obj );
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            InsertRange( index, itemsToInsert );
-
-            return true;
-        }
-
-        bool ICollectionEx.Remove( object item )
-        {
-            if( item is T obj )
-            {
-                return Remove( obj );
-            }
-            else
-            {
-                return false;
-            }
-        }
+        bool ICollectionEx.Remove( object? item ) => ( (IListEx) this ).Remove( item );
 
         /// <inheritdoc/>
-        public bool RemoveRange( IEnumerable<T> collection )
+        public void RemoveRange( IEnumerable<T> collection )
         {
-            var result = true;
-
             foreach( var item in collection )
             {
-                if( !Remove( item ) )
-                {
-                    result = false;
-                }
+                base.Remove( item );
             }
-
-            return result;
         }
 
-        bool ICollectionEx.RemoveRange( IEnumerable collection )
+        void ICollectionEx.RemoveRange( IEnumerable collection )
         {
-            bool partialResult = true;
-            var itemsToRemove = new ListEx<T>();
-
             foreach( var item in collection )
             {
-                if( item is T obj )
-                {
-                    itemsToRemove.Add( obj );
-                }
-                else
-                {
-                    partialResult = false;
-                }
+                ( (IList) this ).Remove( item );
             }
-
-            return RemoveRange( itemsToRemove ) && partialResult;
         }
 
         /// <inheritdoc/>
@@ -167,19 +145,8 @@ namespace Utilities.DotNet.Collections
             var index = IndexOf( oldItem );
             if( index >= 0 )
             {
-                return Replace( index, newItem );
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        bool ICollectionEx.Replace( object oldItem, object newItem )
-        {
-            if( ( oldItem is T oldObj ) && ( newItem is T newObj ) )
-            {
-                return Replace( oldObj, newObj );
+                Replace( index, newItem );
+                return true;
             }
             else
             {
@@ -188,27 +155,48 @@ namespace Utilities.DotNet.Collections
         }
 
         /// <inheritdoc/>
-        public bool Replace( int index, T newItem )
+        public void Replace( int index, T newItem )
         {
             if( ( index < 0 ) || ( index >= Count ) )
             {
                 throw new ArgumentOutOfRangeException( nameof( index ) );
             }
 
-            RemoveAt( index );
-            Insert( index, newItem );
-            return true;
+            base.RemoveAt( index );
+            base.Insert( index, newItem );
         }
 
-        bool IListEx.Replace( int index, object newItem )
+        bool ICollectionEx.Replace( object? oldItem, object? newItem )
         {
-            if( newItem is T obj )
+            var index = ( (IList) this ).IndexOf( oldItem );
+            if( index >= 0 )
             {
-                return Replace( index, obj );
+                if( oldItem != newItem )
+                {
+                    ( (IListEx) this ).Replace( index, newItem );
+                }
+
+                return true;
             }
             else
             {
                 return false;
+            }
+        }
+
+        void IListEx.Replace( int index, object? newItem )
+        {
+            try
+            {
+                Replace( index, (T) newItem! );
+            }
+            catch( InvalidCastException )
+            {
+                throw new ArgumentException( $"Incompatible item type", nameof( newItem ) );
+            }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( newItem ) );
             }
         }
 
@@ -218,7 +206,8 @@ namespace Utilities.DotNet.Collections
             var oldIndex = IndexOf( item );
             if( oldIndex >= 0 )
             {
-                return Move( oldIndex, newIndex );
+                Move( oldIndex, newIndex );
+                return true;
             }
             else
             {
@@ -227,7 +216,7 @@ namespace Utilities.DotNet.Collections
         }
 
         /// <inheritdoc/>
-        public bool Move( int oldIndex, int newIndex )
+        public void Move( int oldIndex, int newIndex )
         {
             if( ( oldIndex < 0 ) || ( oldIndex >= Count ) )
             {
@@ -246,26 +235,18 @@ namespace Utilities.DotNet.Collections
 
             if( oldIndex == newIndex )
             {
-                return true;
+                return;
             }
 
-            var item = this[ oldIndex ];
-            RemoveAt( oldIndex );
-            Insert( newIndex, item );
+            var movedItem = this[ oldIndex ];
 
-            return true;
+            base.RemoveAt( oldIndex );
+            base.Insert( newIndex, movedItem );
         }
 
-        bool IListEx.Move( object item, int newIndex )
+        bool IListEx.Move( object? item, int newIndex )
         {
-            if( item is T obj )
-            {
-                return Move( obj, newIndex );
-            }
-            else
-            {
-                return false;
-            }
+            return IsCompatible( item ) && Move( (T) item!, newIndex );
         }
 
         /// <inheritdoc/>
@@ -294,54 +275,71 @@ namespace Utilities.DotNet.Collections
 
         IListEx IListEx.Slice( int start, int length ) => GetRange( start, length );
 
-        bool ICollectionEx.Contains( object item )
+        bool IListEx.Contains( object? item ) => ( (IList) this ).Contains( item );
+
+        bool ICollectionEx.Contains( object? item ) => ( (IList) this ).Contains( item );
+
+        bool IReadOnlyCollectionEx<T>.Contains( object? item ) => ( (IList) this ).Contains( item );
+
+        int IReadOnlyListEx<T>.IndexOf( object? item ) => ( (IList) this ).IndexOf( item );
+
+        int IReadOnlyListEx<T>.IndexOf( object? item, int index )
         {
-            return ( item is T obj ) && Contains( obj );
+            return IsCompatible( item ) ? base.IndexOf( (T) item!, index ) : -1;
         }
 
-        bool IReadOnlyCollectionEx<T>.Contains( object item )
+        int IReadOnlyListEx<T>.IndexOf( object? item, int index, int count )
         {
-            return ( item is T obj ) && Contains( obj );
+            return IsCompatible( item ) ? base.IndexOf( (T) item!, index, count ) : -1;
         }
 
-        int IReadOnlyListEx<T>.IndexOf( object item )
+        int IListEx.IndexOf( object? item, int index )
         {
-            return ( item is T obj ) ? IndexOf( obj ) : -1;
+            return IsCompatible( item ) ? base.IndexOf( (T) item!, index ) : -1;
         }
 
-        int IReadOnlyListEx<T>.IndexOf( object item, int index )
+        int IListEx.IndexOf( object? item, int index, int count )
         {
-            return ( item is T obj ) ? IndexOf( obj, index ) : -1;
+            return IsCompatible( item ) ? base.IndexOf( (T) item!, index, count ) : -1;
         }
 
-        int IReadOnlyListEx<T>.IndexOf( object item, int index, int count )
+        int IReadOnlyListEx<T>.LastIndexOf( object? item )
         {
-            return ( item is T obj ) ? IndexOf( obj, index, count ) : -1;
+            return IsCompatible( item ) ? base.LastIndexOf( (T) item! ) : -1;
         }
 
-        int IReadOnlyListEx<T>.LastIndexOf( object item )
+        int IReadOnlyListEx<T>.LastIndexOf( object? item, int index )
         {
-            return ( item is T obj ) ? LastIndexOf( obj ) : -1;
+            return IsCompatible( item ) ? base.LastIndexOf( (T) item!, index ) : -1;
         }
 
-        int IReadOnlyListEx<T>.LastIndexOf( object item, int index )
+        int IReadOnlyListEx<T>.LastIndexOf( object? item, int index, int count )
         {
-            return ( item is T obj ) ? LastIndexOf( obj, index ) : -1;
+            return IsCompatible( item ) ? base.LastIndexOf( (T) item!, index, count ) : -1;
         }
 
-        int IReadOnlyListEx<T>.LastIndexOf( object item, int index, int count )
+        int IListEx.LastIndexOf( object? item )
         {
-            return ( item is T obj ) ? LastIndexOf( obj, index, count ) : -1;
+            return IsCompatible( item ) ? base.LastIndexOf( (T) item! ) : -1;
         }
 
-        int IListEx.IndexOf( object item, int index ) => ( (IReadOnlyListEx<T>) this ).IndexOf( item, index );
+        int IListEx.LastIndexOf( object? item, int index )
+        {
+            return IsCompatible( item ) ? base.LastIndexOf( (T) item!, index ) : -1;
+        }
 
-        int IListEx.IndexOf( object item, int index, int count ) => ( (IReadOnlyListEx<T>) this ).IndexOf( item, index, count );
+        int IListEx.LastIndexOf( object? item, int index, int count )
+        {
+            return IsCompatible( item ) ? base.LastIndexOf( (T) item!, index, count ) : -1;
+        }
 
-        int IListEx.LastIndexOf( object item ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item );
+        //===========================================================================
+        //                            PRIVATE METHODS
+        //===========================================================================
 
-        int IListEx.LastIndexOf( object item, int index ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item, index );
-
-        int IListEx.LastIndexOf( object item, int index, int count ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item, index, count );
+        internal static bool IsCompatible( object? value )
+        {
+            return ( value is T ) || ( ( value is null ) && ( default( T ) is null ) );
+        }
     }
 }

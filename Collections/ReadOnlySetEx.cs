@@ -1,8 +1,9 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Utilities.DotNet.Collections
 {
@@ -22,6 +23,7 @@ namespace Utilities.DotNet.Collections
         /// <param name="set">Set to wrap.</param>
         public ReadOnlySetEx( IReadOnlySetEx<T> set ) : base( set )
         {
+            Debug.Assert( ReferenceEquals( @set, Set ) );
         }
 
         //===========================================================================
@@ -29,27 +31,27 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <inheritdoc/>
-        public bool IsSubsetOf( IEnumerable<object> other ) => _Set.IsSubsetOf( other );
+        public bool IsSubsetOf( IEnumerable<object> other ) => Set.IsSubsetOf( other );
 
         /// <inheritdoc/>
-        public bool IsSupersetOf( IEnumerable<object> other ) => _Set.IsSupersetOf( other );
+        public bool IsSupersetOf( IEnumerable<object> other ) => Set.IsSupersetOf( other );
 
         /// <inheritdoc/>
-        public bool IsProperSubsetOf( IEnumerable<object> other ) => _Set.IsProperSubsetOf( other );
+        public bool IsProperSubsetOf( IEnumerable<object> other ) => Set.IsProperSubsetOf( other );
 
         /// <inheritdoc/>
-        public bool IsProperSupersetOf( IEnumerable<object> other ) => _Set.IsProperSupersetOf( other );
+        public bool IsProperSupersetOf( IEnumerable<object> other ) => Set.IsProperSupersetOf( other );
 
         /// <inheritdoc/>
-        public bool Overlaps( IEnumerable<object> other ) => _Set.Overlaps( other );
+        public bool Overlaps( IEnumerable<object> other ) => Set.Overlaps( other );
 
         /// <inheritdoc/>
-        public bool SetEquals( IEnumerable<object> other ) => _Set.SetEquals( other );
+        public bool SetEquals( IEnumerable<object> other ) => Set.SetEquals( other );
 
         //===========================================================================
         //                           PRIVATE PROPERTIES
         //===========================================================================
 
-        private IReadOnlySetEx<T> _Set => (IReadOnlySetEx<T>) m_collection;
+        private IReadOnlySetEx<T> Set => (IReadOnlySetEx<T>) m_collection;
     }
 }

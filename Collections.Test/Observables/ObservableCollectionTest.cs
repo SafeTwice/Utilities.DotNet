@@ -2,27 +2,42 @@
 /// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Utilities.DotNet.Collections.Test;
 using Xunit;
 
-#pragma warning disable xUnit2013 // Do not use equality check to check for collection size.
+#pragma warning disable IDE0079
+#pragma warning disable xUnit2013 // Assert.Equal(0, collection.Count) is used because we want to check the result of the Count property, not the collection itself.
+#pragma warning disable xUnit1045
+#pragma warning disable CA1825 // Using zero-length array initializers is intentionally to improve test maintainability.
+#pragma warning disable CA1859 // Using interface types is intentional to call the interface methods.
+#pragma warning disable CA1861 // Using constant arrays is intentionally to improve test maintainability.
+#pragma warning restore IDE0079
+
+#pragma warning disable S101 // TestData types are not strictly PascalCase
 
 namespace Utilities.DotNet.Collections.Observables.Test
 {
     public class ObservableCollectionTest
     {
+        private static readonly TestClass ITEM1 = new( "Item1", 10 );
+        private static readonly TestClass ITEM2 = new( "Item2", 5 );
+        private static readonly TestClass ITEM3 = new( "Item3", 20 );
+
         [Fact]
         public void Constructor_Default()
         {
-            // Arrange & Act
+            // Act
 
             var observableCollection = new ObservableCollection<TestClass>();
 
             // Assert
 
             Assert.Equal( 0, observableCollection.Count );
+            Assert.Equal( new TestClass[] { }, observableCollection );
 
             Assert.False( ( (ICollection<TestClass>) observableCollection ).IsReadOnly );
 
@@ -38,22 +53,19 @@ namespace Utilities.DotNet.Collections.Observables.Test
         [Fact]
         public void Constructor_InitializationList()
         {
-            // Arrange
-
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 5 );
-            var item3 = new TestClass( "Item3", 20 );
-
             // Act
 
-            var observableCollection = new ObservableCollection<TestClass>( new[] { item1, item2, item3 } );
+            var observableCollection = new ObservableCollection<TestClass>( new[] { ITEM1, ITEM2, ITEM3 } );
 
             // Assert
 
-            Assert.Equal( new[] { item1, item2, item3 }, observableCollection );
             Assert.Equal( 3, observableCollection.Count );
+            Assert.Equal( new[] { ITEM1, ITEM2, ITEM3 }, observableCollection );
 
             Assert.False( ( (IObservableCollection<TestClass>) observableCollection ).IsReadOnly );
+
+            Assert.NotNull( ( (ICollection) observableCollection ).SyncRoot );
+            Assert.False( ( (ICollection) observableCollection ).IsSynchronized );
         }
 
         [Fact]
@@ -83,935 +95,1838 @@ namespace Utilities.DotNet.Collections.Observables.Test
             Assert.Empty( events );
         }
 
-        [Fact]
-        public void Add()
+        public class Add_Class_NonNullable_TestData
+            : TheoryData<IEnumerable<TestClass>, TestClass, IEnumerable<TestClass>, IEnumerable<CollectionChangedEventData>>
         {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-            var item3 = new TestClass( "Item3", 20 );
-
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { item1 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
+            public Add_Class_NonNullable_TestData()
             {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            Assert.Equal( new[] { item1 }, observableCollection );
-
-            // Act
-
-            var result = observableCollection.Add( item2 );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { item1, item2 }, observableCollection );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { item2 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-
-            // Arrange
-
-            events.Clear();
-
-            // Act
-
-            result = observableCollection.Add( item3 );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { item1, item2, item3 }, observableCollection );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { item3 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 2, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
+                Add( new[] { ITEM1 },
+                     ITEM2,
+                     new[] { ITEM1, ITEM2 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 1, -1 ) } );
+                Add( new[] { ITEM1, ITEM2 },
+                     ITEM3,
+                     new[] { ITEM1, ITEM2, ITEM3 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM3 }, null, 2, -1 ) } );
+                Add( new[] { ITEM1, ITEM2 },
+                     ITEM1,
+                     new[] { ITEM1, ITEM2, ITEM1 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, 2, -1 ) } );
+            }
         }
 
-        [Fact]
-        public void ICollectionT_Add()
+        [Theory]
+        [ClassData( typeof( Add_Class_NonNullable_TestData ) )]
+        public void Add_Class_NonNullable( IEnumerable<TestClass> initialState, TestClass addedItem, IEnumerable<TestClass> expectedState,
+                                           IEnumerable<CollectionChangedEventData> expectedEvents )
         {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            var events = new List<CollectionChangedEventData>();
 
-            ObservableCollection<int> observableCollection = new();
+            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( initialState );
 
             observableCollection.CollectionChanged += ( obj, args ) =>
             {
                 Assert.Same( observableCollection, obj );
-                events.Add( args );
+                events.Add( new CollectionChangedEventData( args ) );
             };
 
             // Act
 
-            ( (ICollection<int>) observableCollection ).Add( 5 );
-
-            // Assert state & results
-
-            Assert.Equal( new[] { 5 }, observableCollection );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { 5 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 0, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-        }
-
-        [Fact]
-        public void ICollectionEx_Add()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            ObservableCollection<int> observableCollection = new( new[] { 13, 12 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = ( (ICollectionEx) observableCollection ).Add( 5 );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { 13, 12, 5 }, observableCollection );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { 5 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 2, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-        }
-
-        [Fact]
-        public void ICollectionEx_Add_InvalidObject()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            ObservableCollection<int> observableCollection = new( new[] { 8, 5 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = ( (ICollectionEx) observableCollection ).Add( 5.0 );
-
-            // Assert state & results
-
-            Assert.False( result );
-            Assert.Equal( new[] { 8, 5 }, observableCollection );
-
-            // Assert events
-
-            Assert.Empty( events );
-        }
-
-        [Fact]
-        public void AddRange()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-            var item3 = new TestClass( "Item3", 20 );
-
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { item2 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            Assert.Equal( new[] { item2 }, observableCollection );
-
-            // Act
-
-            var result = observableCollection.AddRange( new[] { item1, item3 } );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { item2, item1, item3 }, observableCollection );
-
-            // Assert events
-
-#if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { item1, item3 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-#else
-            Assert.Equal( 2, events.Count );
-
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { item1 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 1 ].Action );
-            Assert.Equal( new[] { item3 }, events[ 1 ].NewItems );
-            Assert.Null( events[ 1 ].OldItems );
-            Assert.Equal( 2, events[ 1 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
-#endif
-        }
-
-        [Fact]
-        public void ICollectionExT_AddRange()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            ObservableCollection<int> observableCollection = new();
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = ( (ICollectionEx<int>) observableCollection ).AddRange( new[] { 5, 8, 2 } );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { 5, 8, 2 }, observableCollection );
-
-            // Assert events
-
-#if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { 5, 8, 2 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 0, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-#else
-            Assert.Equal( 3, events.Count );
-
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { 5 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 0, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 1 ].Action );
-            Assert.Equal( new[] { 8 }, events[ 1 ].NewItems );
-            Assert.Null( events[ 1 ].OldItems );
-            Assert.Equal( 1, events[ 1 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
-
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 2 ].Action );
-            Assert.Equal( new[] { 2 }, events[ 2 ].NewItems );
-            Assert.Null( events[ 2 ].OldItems );
-            Assert.Equal( 2, events[ 2 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 2 ].OldStartingIndex );
-#endif
-        }
-
-        [Fact]
-        public void ICollectionEx_AddRange()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            ObservableCollection<int> observableCollection = new( new[] { 83 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            Assert.Equal( new[] { 83 }, observableCollection );
-
-            // Act
-
-            var result = ( (ICollectionEx) observableCollection ).AddRange( new[] { 5, 8, 2 } );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { 83, 5, 8, 2 }, observableCollection );
-
-            // Assert events
-
-#if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { 5, 8, 2 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-#else
-            Assert.Equal( 3, events.Count );
-
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { 5 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 1 ].Action );
-            Assert.Equal( new[] { 8 }, events[ 1 ].NewItems );
-            Assert.Null( events[ 1 ].OldItems );
-            Assert.Equal( 2, events[ 1 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
-
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 2 ].Action );
-            Assert.Equal( new[] { 2 }, events[ 2 ].NewItems );
-            Assert.Null( events[ 2 ].OldItems );
-            Assert.Equal( 3, events[ 2 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 2 ].OldStartingIndex );
-#endif
-        }
-
-        [Fact]
-        public void ICollectionEx_AddRange_InvalidObject()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            ObservableCollection<int> observableCollection = new( new[] { 33, 22 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = ( (ICollectionEx) observableCollection ).AddRange( new object[] { 5, 8.0, 2 } );
-
-            // Assert state & results
-
-            Assert.False( result );
-            Assert.Equal( new[] { 33, 22 }, observableCollection );
-
-            // Assert events
-
-            Assert.Empty( events );
-        }
-
-        [Fact]
-        public void Remove()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-            var item3 = new TestClass( "Item3", 20 );
-
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { item1, item2, item3 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            Assert.Equal( new[] { item1, item2, item3 }, observableCollection );
-
-            // Act
-
-            var result = observableCollection.Remove( item1 );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { item2, item3 }, observableCollection );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Equal( new[] { item1 }, events[ 0 ].OldItems );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( 0, events[ 0 ].OldStartingIndex );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-
-            // Arrange
-
-            events.Clear();
-
-            // Act
-
-            result = observableCollection.Remove( item1 );
-
-            // Assert state & results
-
-            Assert.False( result );
-            Assert.Equal( new[] { item2, item3 }, observableCollection );
-
-            // Assert events
-
-            Assert.Empty( events );
-        }
-
-        [Fact]
-        public void ICollectionEx_Remove()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            ObservableCollection<int> observableCollection = new( new[] { 5, 8, 2 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = ( (ICollectionEx) observableCollection ).Remove( 8 );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { 5, 2 }, observableCollection );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Equal( new[] { 8 }, events[ 0 ].OldItems );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( 1, events[ 0 ].OldStartingIndex );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-        }
-
-        [Fact]
-        public void ICollectionEx_Remove_InvalidObject()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            ObservableCollection<int> observableCollection = new( new[] { 5, 8, 2 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = ( (ICollectionEx) observableCollection ).Remove( 8.0 );
-
-            // Assert state & results
-
-            Assert.False( result );
-            Assert.Equal( new[] { 5, 8, 2 }, observableCollection );
-
-            // Assert events
-
-            Assert.Empty( events );
-        }
-
-        [Fact]
-        public void RemoveRange()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-            var item3 = new TestClass( "Item3", 20 );
-
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { item1, item2, item3 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            Assert.Equal( new[] { item1, item2, item3 }, observableCollection );
-
-            // Act
-
-            var result = observableCollection.RemoveRange( new[] { item2, item1 } );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { item3 }, observableCollection );
-
-            // Assert events
-
-#if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Equal( new[] { item2, item1 }, events[ 0 ].OldItems );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-#else
-            Assert.Equal( 2, events.Count );
-
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Equal( new[] { item2 }, events[ 0 ].OldItems );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 1 ].Action );
-            Assert.Equal( new[] { item1 }, events[ 1 ].OldItems );
-            Assert.Null( events[ 1 ].NewItems );
-            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
-            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
-#endif
-        }
-
-        [Fact]
-        public void ICollectionEx_RemoveRange()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            ObservableCollection<int> observableCollection = new( new[] { 5, 8, 2, 9 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = ( (ICollectionEx) observableCollection ).RemoveRange( new[] { 8, 2 } );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { 5, 9 }, observableCollection );
-
-            // Assert events
-
-#if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Equal( new[] { 8, 2 }, events[ 0 ].OldItems );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-#else
-            Assert.Equal( 2, events.Count );
-
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Equal( new[] { 8 }, events[ 0 ].OldItems );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 1 ].Action );
-            Assert.Equal( new[] { 2 }, events[ 1 ].OldItems );
-            Assert.Null( events[ 1 ].NewItems );
-            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
-            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
-#endif
-
-            // Arrange
-
-            events.Clear();
-
-            // Act
-
-            result = ( (ICollectionEx) observableCollection ).RemoveRange( new[] { 5, 12 } );
-
-            // Assert state & results
-
-            Assert.False( result );
-            Assert.Equal( new[] { 9 }, observableCollection );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Equal( new[] { 5 }, events[ 0 ].OldItems );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-        }
-
-        [Fact]
-        public void ICollectionEx_RemoveRange_InvalidObject()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            ObservableCollection<int> observableCollection = new( new[] { 5, 8, 2, 9 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = ( (ICollectionEx) observableCollection ).RemoveRange( new object[] { 8, 2.0 } );
-
-            // Assert state & results
-
-            Assert.False( result );
-            Assert.Equal( new[] { 5, 2, 9 }, observableCollection );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Equal( new[] { 8 }, events[ 0 ].OldItems );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-        }
-
-        [Fact]
-        public void Replace()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            IObservableCollection<double> observableCollection = new ObservableCollection<double>( new[] { 5.1, 8.0, 2.9 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = observableCollection.Replace( 8.0, 3.5 );
-
-            // Assert state & results
-
-            Assert.True( result );
-            Assert.Equal( new[] { 5.1, 3.5, 2.9 }, observableCollection );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Replace, events[ 0 ].Action );
-            Assert.Equal( new[] { 8.0 }, events[ 0 ].OldItems );
-            Assert.Equal( new[] { 3.5 }, events[ 0 ].NewItems );
-            Assert.Equal( 1, events[ 0 ].OldStartingIndex );
-            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
-        }
-
-        [Fact]
-        public void Replace_OldNotExisting()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            IObservableCollection<double> observableCollection = new ObservableCollection<double>( new[] { 5.1, 8.0, 2.9 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = observableCollection.Replace( 8.01, 3.5 );
-
-            // Assert state & results
-
-            Assert.False( result );
-            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, observableCollection );
-
-            // Assert events
-
-            Assert.Empty( events );
-        }
-
-        [Fact]
-        public void ICollectionEx_Replace()
-        {
-            // Arrange
-
-            var events = new List<NotifyCollectionChangedEventArgs>();
-
-            IObservableCollection<double> observableCollection = new ObservableCollection<double>( new[] { 5.1, 8.0, 2.9 } );
-
-            observableCollection.CollectionChanged += ( obj, args ) =>
-            {
-                Assert.Same( observableCollection, obj );
-                events.Add( args );
-            };
-
-            // Act
-
-            var result = ( (ICollectionEx) observableCollection ).Replace( 8.0, 3.5 );
+            observableCollection.Add( addedItem );
 
             // Assert
 
-            Assert.True( result );
-            Assert.Equal( new[] { 5.1, 3.5, 2.9 }, observableCollection );
-
-            // Assert events
-
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Replace, events[ 0 ].Action );
-            Assert.Equal( new[] { 8.0 }, events[ 0 ].OldItems );
-            Assert.Equal( new[] { 3.5 }, events[ 0 ].NewItems );
-            Assert.Equal( 1, events[ 0 ].OldStartingIndex );
-            Assert.Equal( 1, events[ 0 ].NewStartingIndex );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
         }
 
-        [Fact]
-        public void ICollectionEx_Replace_InvalidObject()
+        public class Add_Class_Nullable_TestData
+            : TheoryData<IEnumerable<TestClass?>, TestClass?, IEnumerable<TestClass?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public Add_Class_Nullable_TestData()
+            {
+                Add( new[] { ITEM1 },
+                     ITEM2,
+                     new[] { ITEM1, ITEM2 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 1, -1 ) } );
+                Add( new[] { ITEM1, ITEM2 },
+                     ITEM3,
+                     new[] { ITEM1, ITEM2, ITEM3 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM3 }, null, 2, -1 ) } );
+                Add( new[] { ITEM1, ITEM2 },
+                     null,
+                     new[] { ITEM1, ITEM2, null },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 2, -1 ) } );
+                Add( new[] { ITEM1, null },
+                     ITEM2,
+                     new[] { ITEM1, null, ITEM2 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 2, -1 ) } );
+                Add( new[] { ITEM1, null, ITEM3 },
+                     null,
+                     new[] { ITEM1, null, ITEM3, null },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 3, -1 ) } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( Add_Class_Nullable_TestData ) )]
+        public void Add_Class_Nullable( IEnumerable<TestClass?> initialState, TestClass? addedItem, IEnumerable<TestClass?> expectedState,
+                                        IEnumerable<CollectionChangedEventData> expectedEvents )
         {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            var events = new List<CollectionChangedEventData>();
 
-            IObservableCollection<double> observableCollection = new ObservableCollection<double>( new[] { 5.1, 8.0, 2.9 } );
+            IObservableCollection<TestClass?> observableCollection = new ObservableCollection<TestClass?>( initialState );
 
             observableCollection.CollectionChanged += ( obj, args ) =>
             {
                 Assert.Same( observableCollection, obj );
-                events.Add( args );
+                events.Add( new CollectionChangedEventData( args ) );
             };
 
             // Act
 
-            var result = ( (ICollectionEx) observableCollection ).Replace( 8.0, 3.5f );
+            observableCollection.Add( addedItem );
 
-            // Assert state & results
+            // Assert
 
-            Assert.False( result );
-            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, observableCollection );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class ICollectionEx_Add_Value_NonNullable_TestData
+            : TheoryData<IEnumerable<int>, int, IEnumerable<int>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ICollectionEx_Add_Value_NonNullable_TestData()
+            {
+                Add( new int[] { },
+                     5,
+                     new int[] { 5 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 5 }, null, 0, -1 ) } );
+                Add( new[] { 12, 2, 13 },
+                     4,
+                     new int[] { 12, 2, 13, 4 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 4 }, null, 3, -1 ) } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_Add_Value_NonNullable_TestData ) )]
+        public void ICollectionEx_Add_Value_NonNullable( IEnumerable<int> initialState, int addedItem, IEnumerable<int> expectedState,
+                                                         IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
 
             // Act
 
-            result = ( (ICollectionEx) observableCollection ).Replace( 8.0f, 3.5 );
+            testedCollection.Add( addedItem );
 
-            // Assert state & results
+            // Assert
 
-            Assert.False( result );
-            Assert.Equal( new[] { 5.1, 8.0, 2.9 }, observableCollection );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
 
-            // Assert events
+        [Fact]
+        public void ICollectionEx_Add_Value_NonNullable_NullValue()
+        {
+            // Arrange
 
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int>() { 33 };
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var exception = Assert.Throws<ArgumentNullException>( () => testedCollection.Add( null ) );
+
+            // Assert
+
+            Assert.Equal( "item", exception.ParamName );
+            Assert.Equal( new int[] { 33 }, observableCollection );
             Assert.Empty( events );
         }
 
         [Fact]
-        public void Clear()
+        public void ICollectionEx_Add_Value_NonNullable_InvalidType()
         {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            var events = new List<CollectionChangedEventData>();
 
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-            var item3 = new TestClass( "Item3", 20 );
-
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { item1, item2, item3 } );
+            var observableCollection = new ObservableCollection<int>() { 33 };
+            var testedCollection = (ICollectionEx) observableCollection;
 
             observableCollection.CollectionChanged += ( obj, args ) =>
             {
                 Assert.Same( observableCollection, obj );
-                events.Add( args );
+                events.Add( new CollectionChangedEventData( args ) );
             };
-
-            Assert.Equal( new[] { item1, item2, item3 }, observableCollection );
 
             // Act
 
-            observableCollection.Clear();
+            var exception = Assert.Throws<ArgumentException>( () => testedCollection.Add( 3.0 ) );
 
-            // Assert state & results
+            // Assert
 
-            Assert.Empty( observableCollection );
+            Assert.Equal( "item", exception.ParamName );
+            Assert.Equal( new int[] { 33 }, observableCollection );
+            Assert.Empty( events );
+        }
 
-            // Assert events
+        public class ICollectionEx_Add_Value_Nullable_TestData
+            : TheoryData<IEnumerable<int?>, int?, IEnumerable<int?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ICollectionEx_Add_Value_Nullable_TestData()
+            {
+                Add( new int?[] { },
+                     5,
+                     new int?[] { 5 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 5 }, null, 0, -1 ) } );
+                Add( new int?[] { 12, 2, null, 13 },
+                     4,
+                     new int?[] { 12, 2, null, 13, 4 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 4 }, null, 4, -1 ) } );
+                Add( new int?[] { 12, 2, null, 13 },
+                     null,
+                     new int?[] { 12, 2, null, 13, null },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 4, -1 ) } );
+            }
+        }
 
+        [Theory]
+        [ClassData( typeof( ICollectionEx_Add_Value_Nullable_TestData ) )]
+        public void ICollectionEx_Add_Value_Nullable( IEnumerable<int?> initialState, int? addedItem, IEnumerable<int?> expectedState,
+                                                      IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int?>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            testedCollection.Add( addedItem );
+
+            // Assert
+
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        [Fact]
+        public void ICollectionEx_Add_Value_Nullable_InvalidType()
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int?>() { 33, null };
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var exception = Assert.Throws<ArgumentException>( () => testedCollection.Add( 3.0 ) );
+
+            // Assert
+
+            Assert.Equal( "item", exception.ParamName );
+            Assert.Equal( new int?[] { 33, null }, observableCollection );
+            Assert.Empty( events );
+        }
+
+        public class AddRange_Class_NonNullable_TestData
+            : TheoryData<IEnumerable<TestClass>, IEnumerable<TestClass>, IEnumerable<TestClass>, IEnumerable<CollectionChangedEventData>>
+        {
+            public AddRange_Class_NonNullable_TestData()
+            {
+                Add( new[] { ITEM1 },
+                     new[] { ITEM3, ITEM2 },
+                     new[] { ITEM1, ITEM3, ITEM2 },
 #if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( new[] { item1, item2, item3 }, events[ 0 ].OldItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( 0, events[ 0 ].OldStartingIndex );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM3, ITEM2 }, null, 1, -1 ) } );
 #else
-            Assert.Equal( 3, events.Count );
-
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( new[] { item1 }, events[ 0 ].OldItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( 0, events[ 0 ].OldStartingIndex );
-
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 1 ].Action );
-            Assert.Null( events[ 1 ].NewItems );
-            Assert.Equal( new[] { item2 }, events[ 1 ].OldItems );
-            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
-            Assert.Equal( 0, events[ 1 ].OldStartingIndex );
-
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 2 ].Action );
-            Assert.Null( events[ 2 ].NewItems );
-            Assert.Equal( new[] { item3 }, events[ 2 ].OldItems );
-            Assert.Equal( -1, events[ 2 ].NewStartingIndex );
-            Assert.Equal( 0, events[ 2 ].OldStartingIndex );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM3 }, null, 1, -1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 2, -1 )
+                     } );
 #endif
+                Add( new[] { ITEM3, ITEM2 },
+                     new[] { ITEM1 },
+                     new[] { ITEM3, ITEM2, ITEM1 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, 2, -1 ) } );
+                Add( new[] { ITEM3, ITEM2 },
+                     new TestClass[] { },
+                     new[] { ITEM3, ITEM2 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
 
+        [Theory]
+        [ClassData( typeof( AddRange_Class_NonNullable_TestData ) )]
+        public void AddRange_Class_NonNullable( IEnumerable<TestClass> initialState, IEnumerable<TestClass> addedItems, IEnumerable<TestClass> expectedState,
+                                                IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
             // Arrange
 
-            events.Clear();
+            var events = new List<CollectionChangedEventData>();
+
+            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( initialState );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            observableCollection.AddRange( addedItems );
+
+            // Assert
+
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class AddRange_Class_Nullable_TestData
+            : TheoryData<IEnumerable<TestClass?>, IEnumerable<TestClass?>, IEnumerable<TestClass?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public AddRange_Class_Nullable_TestData()
+            {
+                Add( new[] { ITEM1 },
+                     new[] { ITEM3, ITEM2 },
+                     new[] { ITEM1, ITEM3, ITEM2 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object[] { ITEM3, ITEM2 }, null, 1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM3 }, null, 1, -1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 2, -1 )
+                     } );
+#endif
+                Add( new[] { ITEM3, null, ITEM2 },
+                     new[] { ITEM1 },
+                     new[] { ITEM3, null, ITEM2, ITEM1 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, 3, -1 ) } );
+                Add( new[] { ITEM3, ITEM1 },
+                     new[] { null, ITEM1, ITEM2 },
+                     new[] { ITEM3, ITEM1, null, ITEM1, ITEM2 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null, ITEM1, ITEM2 }, null, 2, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 2, -1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, 3, -1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 4, -1 )
+                     } );
+#endif
+                Add( new[] { ITEM3, ITEM2 },
+                     new TestClass[] { },
+                     new[] { ITEM3, ITEM2 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( AddRange_Class_Nullable_TestData ) )]
+        public void AddRange_Class_Nullable( IEnumerable<TestClass?> initialState, IEnumerable<TestClass?> addedItems, IEnumerable<TestClass?> expectedState,
+                                             IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            IObservableCollection<TestClass?> observableCollection = new ObservableCollection<TestClass?>( initialState );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            observableCollection.AddRange( addedItems );
+
+            // Assert
+
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class ICollectionEx_AddRange_Value_NonNullable_TestData
+            : TheoryData<IEnumerable<int>, IEnumerable<int>, IEnumerable<int>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ICollectionEx_AddRange_Value_NonNullable_TestData()
+            {
+                Add( new int[] { 5 },
+                     new int[] { 9, 56 },
+                     new int[] { 5, 9, 56 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9, 56 }, null, 1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9 }, null, 1, -1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 56 }, null, 2, -1 )
+                     } );
+#endif
+                Add( new int[] { 7, 45 },
+                     new int[] { 3 },
+                     new int[] { 7, 45, 3 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, 2, -1 ) } );
+                Add( new int[] { 5, 76 },
+                     new int[] { },
+                     new int[] { 5, 76 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_AddRange_Value_NonNullable_TestData ) )]
+        public void ICollectionEx_AddRange_Value_NonNullable( IEnumerable<int> initialState, IEnumerable<int> addedItems,
+                                                              IEnumerable<int> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            testedCollection.AddRange( addedItems );
+
+            // Assert
+
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        [Fact]
+        public void ICollectionEx_AddRange_Value_NonNullable_NullValue()
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int>() { 33 };
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            Assert.Throws<NullReferenceException>( () => testedCollection.AddRange( new object?[] { 2, null, 5 } ) );
+
+            // Assert
+
+            Assert.Equal( new int[] { 33 }, observableCollection );
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void ICollectionEx_AddRange_Value_NonNullable_InvalidType()
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int>() { 33 };
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            Assert.Throws<InvalidCastException>( () => testedCollection.AddRange( new object?[] { 2, 4.0, 5 } ) );
+
+            // Assert
+
+            Assert.Equal( new int[] { 33 }, observableCollection );
+            Assert.Empty( events );
+        }
+
+        public class ICollectionEx_AddRange_Value_Nullable_TestData
+            : TheoryData<IEnumerable<int?>, IEnumerable<int?>, IEnumerable<int?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ICollectionEx_AddRange_Value_Nullable_TestData()
+            {
+                Add( new int?[] { 5 },
+                     new int?[] { 9, 56 },
+                     new int?[] { 5, 9, 56 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9, 56 }, null, 1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9 }, null, 1, -1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 56 }, null, 2, -1 )
+                     } );
+#endif
+                Add( new int?[] { 7, null, 45 },
+                     new int?[] { 3 },
+                     new int?[] { 7, null, 45, 3 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, 3, -1 ) } );
+                Add( new int?[] { 5, null, 76 },
+                     new int?[] { },
+                     new int?[] { 5, null, 76 },
+                     new CollectionChangedEventData[] { } );
+                Add( new int?[] { 5, null, 76 },
+                     new int?[] { null },
+                     new int?[] { 5, null, 76, null },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 3, -1 ) } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_AddRange_Value_Nullable_TestData ) )]
+        public void ICollectionEx_AddRange_Value_Nullable( IEnumerable<int?> initialState, IEnumerable<int?> addedItems,
+                                                           IEnumerable<int?> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int?>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            testedCollection.AddRange( addedItems );
+
+            // Assert
+
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        [Fact]
+        public void ICollectionEx_AddRange_Value_Nullable_InvalidType()
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int?>() { null, 33 };
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            Assert.Throws<InvalidCastException>( () => testedCollection.AddRange( new object?[] { 2, 4.0, 5 } ) );
+
+            // Assert
+
+            Assert.Equal( new int?[] { null, 33 }, observableCollection );
+            Assert.Empty( events );
+        }
+
+        public class Remove_Class_NonNullable_TestData
+            : TheoryData<IEnumerable<TestClass>, TestClass, bool, IEnumerable<TestClass>, IEnumerable<CollectionChangedEventData>>
+        {
+            public Remove_Class_NonNullable_TestData()
+            {
+                Add( new TestClass[] { ITEM1, ITEM2, ITEM3 },
+                     ITEM2,
+                     true,
+                     new TestClass[] { ITEM1, ITEM3 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 1 ) } );
+                Add( new TestClass[] { ITEM1, ITEM2 },
+                     ITEM3,
+                     false,
+                     new TestClass[] { ITEM1, ITEM2 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( Remove_Class_NonNullable_TestData ) )]
+        public void Remove_Class_NonNullable( IEnumerable<TestClass> initialState, TestClass removedItem, bool expectedResult,
+                                              IEnumerable<TestClass> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( initialState );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = observableCollection.Remove( removedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class Remove_Class_Nullable_TestData
+            : TheoryData<IEnumerable<TestClass?>, TestClass?, bool, IEnumerable<TestClass?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public Remove_Class_Nullable_TestData()
+            {
+                Add( new TestClass?[] { ITEM1, ITEM2, ITEM3 },
+                     ITEM2,
+                     true,
+                     new TestClass?[] { ITEM1, ITEM3 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 1 ) } );
+                Add( new TestClass?[] { ITEM1, null, ITEM2, ITEM3 },
+                     ITEM2,
+                     true,
+                     new TestClass?[] { ITEM1, null, ITEM3 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 2 ) } );
+                Add( new TestClass?[] { ITEM1, null, ITEM2, ITEM3 },
+                     null,
+                     true,
+                     new TestClass?[] { ITEM1, ITEM2, ITEM3 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 1 ) } );
+                Add( new TestClass?[] { ITEM1, ITEM2 },
+                     ITEM3,
+                     false,
+                     new TestClass?[] { ITEM1, ITEM2 },
+                     new CollectionChangedEventData[] { } );
+                Add( new TestClass?[] { ITEM1, ITEM2, null },
+                     ITEM3,
+                     false,
+                     new TestClass?[] { ITEM1, ITEM2, null },
+                     new CollectionChangedEventData[] { } );
+                Add( new TestClass?[] { ITEM1, ITEM2 },
+                     null,
+                     false,
+                     new TestClass?[] { ITEM1, ITEM2 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( Remove_Class_Nullable_TestData ) )]
+        public void Remove_Class_Nullable( IEnumerable<TestClass?> initialState, TestClass? removedItem, bool expectedResult,
+                                           IEnumerable<TestClass?> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            IObservableCollection<TestClass?> observableCollection = new ObservableCollection<TestClass?>( initialState );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = observableCollection.Remove( removedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class ICollectionEx_Remove_Value_NonNullable_TestData
+            : TheoryData<IEnumerable<int>, object?, bool, IEnumerable<int>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ICollectionEx_Remove_Value_NonNullable_TestData()
+            {
+                Add( new int[] { 8, 3, 44, 5 },
+                     5,
+                     true,
+                     new int[] { 8, 3, 44 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 5 }, -1, 3 ) } );
+                Add( new int[] { 12, 2, 13 },
+                     4,
+                     false,
+                     new int[] { 12, 2, 13 },
+                     new CollectionChangedEventData[] { } );
+                Add( new int[] { },
+                     5,
+                     false,
+                     new int[] { },
+                     new CollectionChangedEventData[] { } );
+                Add( new int[] { 33 },
+                     null,
+                     false,
+                     new int[] { 33 },
+                     new CollectionChangedEventData[] { } );
+                Add( new int[] { 98 },
+                     3.0,
+                     false,
+                     new int[] { 98 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_Remove_Value_NonNullable_TestData ) )]
+        public void ICollectionEx_Remove_Value_NonNullable( IEnumerable<int> initialState, object? removedItem, bool expectedResult, IEnumerable<int> expectedState,
+                                                            IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Remove( removedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class ICollectionEx_Remove_Value_Nullable_TestData
+            : TheoryData<IEnumerable<int?>, object?, bool, IEnumerable<int?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ICollectionEx_Remove_Value_Nullable_TestData()
+            {
+                Add( new int?[] { 8, null, 44, 5 },
+                     5,
+                     true,
+                     new int?[] { 8, null, 44 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 5 }, -1, 3 ) } );
+                Add( new int?[] { 8, null, 44, 5 },
+                     null,
+                     true,
+                     new int?[] { 8, 44, 5 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 1 ) } );
+                Add( new int?[] { 12, 2, 13 },
+                     4,
+                     false,
+                     new int?[] { 12, 2, 13 },
+                     new CollectionChangedEventData[] { } );
+                Add( new int?[] { },
+                     5,
+                     false,
+                     new int?[] { },
+                     new CollectionChangedEventData[] { } );
+                Add( new int?[] { 33 },
+                     null,
+                     false,
+                     new int?[] { 33 },
+                     new CollectionChangedEventData[] { } );
+                Add( new int?[] { 98 },
+                     3.0,
+                     false,
+                     new int?[] { 98 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_Remove_Value_Nullable_TestData ) )]
+        public void ICollectionEx_Remove_Value_Nullable( IEnumerable<int?> initialState, object? removedItem, bool expectedResult, IEnumerable<int?> expectedState,
+                                                         IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int?>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Remove( removedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class RemoveRange_Class_NonNullable_TestData
+            : TheoryData<IEnumerable<TestClass>, IEnumerable<TestClass>, IEnumerable<TestClass>, IEnumerable<CollectionChangedEventData>>
+        {
+            public RemoveRange_Class_NonNullable_TestData()
+            {
+                Add( new[] { ITEM1, ITEM2, ITEM3 },
+                     new[] { ITEM3, ITEM2 },
+                     new[] { ITEM1 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3, ITEM2 }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3 }, -1, 2 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 1 )
+                     } );
+#endif
+                Add( new[] { ITEM1, ITEM2, ITEM3 },
+                     new[] { ITEM2, ITEM3 },
+                     new[] { ITEM1 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3, ITEM2 }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3 }, -1, 1 )
+                     } );
+#endif
+                Add( new[] { ITEM3, ITEM2 },
+                     new TestClass[] { },
+                     new[] { ITEM3, ITEM2 },
+                     new CollectionChangedEventData[] { } );
+                Add( new[] { ITEM3, ITEM2 },
+                     new[] { ITEM1 },
+                     new[] { ITEM3, ITEM2 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( RemoveRange_Class_NonNullable_TestData ) )]
+        public void RemoveRange_Class_NonNullable( IEnumerable<TestClass> initialState, IEnumerable<TestClass> removedItems,
+                                                   IEnumerable<TestClass> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( initialState );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            observableCollection.RemoveRange( removedItems );
+
+            // Assert
+
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class RemoveRange_Class_Nullable_TestData
+            : TheoryData<IEnumerable<TestClass?>, IEnumerable<TestClass?>, IEnumerable<TestClass?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public RemoveRange_Class_Nullable_TestData()
+            {
+                Add( new[] { ITEM1, ITEM2, null, ITEM3 },
+                     new[] { ITEM3, ITEM2 },
+                     new[] { ITEM1, null },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object[] { ITEM3, ITEM2 }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3 }, -1, 3 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 1 )
+                     } );
+#endif
+                Add( new[] { ITEM1, ITEM2, null, ITEM3 },
+                     new[] { ITEM2, ITEM3, null },
+                     new[] { ITEM1 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object[] { ITEM3, ITEM2, null }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3 }, -1, 2 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 1 )
+                     } );
+#endif
+                Add( new[] { null, ITEM3, ITEM2 },
+                     new TestClass[] { },
+                     new[] { null, ITEM3, ITEM2 },
+                     new CollectionChangedEventData[] { } );
+                Add( new[] { ITEM3, ITEM2, null },
+                     new[] { ITEM1 },
+                     new[] { ITEM3, ITEM2, null },
+                     new CollectionChangedEventData[] { } );
+                Add( new[] { ITEM3, ITEM2 },
+                     new[] { null, ITEM2 },
+                     new[] { ITEM3 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 1 )
+                     } );
+#endif
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( RemoveRange_Class_Nullable_TestData ) )]
+        public void RemoveRange_Class_Nullable( IEnumerable<TestClass?> initialState, IEnumerable<TestClass?> removedItems,
+                                                IEnumerable<TestClass?> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            IObservableCollection<TestClass?> observableCollection = new ObservableCollection<TestClass?>( initialState );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            observableCollection.RemoveRange( removedItems );
+
+            // Assert
+
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class ICollectionEx_RemoveRange_Value_NonNullable_TestData
+            : TheoryData<IEnumerable<int>, IEnumerable, IEnumerable<int>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ICollectionEx_RemoveRange_Value_NonNullable_TestData()
+            {
+                Add( new int[] { 8, 3, 44, 5 },
+                     new object?[] { 5, 3 },
+                     new int[] { 8, 44 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 5, 3 }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 5 }, -1, 3 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3 }, -1, 1 )
+                     } );
+#endif
+                Add( new int[] { 8, 3, 44, 5 },
+                     new object?[] { 3, 5 },
+                     new int[] { 8, 44 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3, 5 }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3 }, -1, 1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 5 }, -1, 2 )
+                     } );
+#endif
+                Add( new int[] { 8, 3, 44, 5 },
+                     new object?[] { 44, null, 8.0 },
+                     new int[] { 8, 3, 5 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44 }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44 }, -1, 2 )
+                     } );
+#endif
+                Add( new int[] { 12, 2, 13 },
+                     new object?[] { 4 },
+                     new int[] { 12, 2, 13 },
+                     new CollectionChangedEventData[] { } );
+                Add( new int[] { },
+                     new object?[] { 5 },
+                     new int[] { },
+                     new CollectionChangedEventData[] { } );
+                Add( new int[] { 33 },
+                     new object?[] { null },
+                     new int[] { 33 },
+                     new CollectionChangedEventData[] { } );
+                Add( new int[] { 98 },
+                     new object?[] { 3.0 },
+                     new int[] { 98 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_RemoveRange_Value_NonNullable_TestData ) )]
+        public void ICollectionEx_RemoveRange_Value_NonNullable( IEnumerable<int> initialState, IEnumerable removedItems,
+                                                                 IEnumerable<int> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            testedCollection.RemoveRange( removedItems );
+
+            // Assert
+
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class ICollectionEx_RemoveRange_Value_Nullable_TestData
+            : TheoryData<IEnumerable<int?>, IEnumerable, IEnumerable<int?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ICollectionEx_RemoveRange_Value_Nullable_TestData()
+            {
+                Add( new int?[] { 8, 3, 44, null },
+                     new object?[] { null, 3 },
+                     new int?[] { 8, 44 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object[] { null, 3 }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 3 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3 }, -1, 1 )
+                     } );
+#endif
+                Add( new int?[] { 8, 3, 44, null },
+                     new object?[] { 3, null },
+                     new int?[] { 8, 44 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3, null }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3 }, -1, 1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 2 )
+                     } );
+#endif
+                Add( new int?[] { 8, 3, 44, 5 },
+                     new object?[] { 44, null, 8.0 },
+                     new int?[] { 8, 3, 5 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44 }, -1, -1 ) } );
+#else
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44 }, -1, 2 )
+                     } );
+#endif
+                Add( new int?[] { 12, 2, null, 13 },
+                     new object?[] { 4 },
+                     new int?[] { 12, 2, null, 13 },
+                     new CollectionChangedEventData[] { } );
+                Add( new int?[] { },
+                     new object?[] { 5 },
+                     new int?[] { },
+                     new CollectionChangedEventData[] { } );
+                Add( new int?[] { 33 },
+                     new object?[] { null },
+                     new int?[] { 33 },
+                     new CollectionChangedEventData[] { } );
+                Add( new int?[] { 98 },
+                     new object?[] { 3.0 },
+                     new int?[] { 98 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_RemoveRange_Value_Nullable_TestData ) )]
+        public void ICollectionEx_RemoveRange_Value_Nullable( IEnumerable<int?> initialState, IEnumerable removedItems,
+                                                              IEnumerable<int?> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int?>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            testedCollection.RemoveRange( removedItems );
+
+            // Assert
+
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class Replace_Value_NonNullable_TestData
+            : TheoryData<IEnumerable<double>, double, double, bool, IEnumerable<double>, IEnumerable<CollectionChangedEventData>>
+        {
+            public Replace_Value_NonNullable_TestData()
+            {
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     3.2,
+                     34.0,
+                     true,
+                     new double[] { 8.0, 34.0, 44.5, 5.2 }, // Replaced item present and different from replacement item
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 34.0 }, new object?[] { 3.2 }, 1, 1 ) } );
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     5.2,
+                     5.2,
+                     true,
+                     new double[] { 8.0, 3.2, 44.5, 5.2 }, // Replaced item present and equal to replacement item
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 5.2 }, new object?[] { 5.2 }, 3, 3 ) } );
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     3.1,
+                     34.0,
+                     false,
+                     new double[] { 8.0, 3.2, 44.5, 5.2 }, // Replaced item not present
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( Replace_Value_NonNullable_TestData ) )]
+        public void Replace_Value_NonNullable( IEnumerable<double> initialState, double oldItem, double newItem, bool expectedResult,
+                                               IEnumerable<double> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            IObservableCollection<double> observableCollection = new ObservableCollection<double>( initialState );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = observableCollection.Replace( oldItem, newItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class Replace_Value_Nullable_TestData
+            : TheoryData<IEnumerable<double?>, double?, double?, bool, IEnumerable<double?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public Replace_Value_Nullable_TestData()
+            {
+                Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
+                     3.2,
+                     34.0,
+                     true,
+                     new double?[] { 8.0, 34.0, null, 44.5, 5.2 }, // Replaced item present and different from replacement item
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 34.0 }, new object?[] { 3.2 }, 1, 1 ) } );
+                Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
+                     5.2,
+                     null,
+                     true,
+                     new double?[] { 8.0, 3.2, null, 44.5, null }, // Replaced non-null item present and replaced with null
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { null }, new object?[] { 5.2 }, 4, 4 ) } );
+                Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
+                     null,
+                     98.7,
+                     true,
+                     new double?[] { 8.0, 3.2, 98.7, 44.5, 5.2 }, // Replaced null item present and replaced with non-null item
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 98.7 }, new object?[] { null }, 2, 2 ) } );
+                Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
+                     null,
+                     null,
+                     true,
+                     new double?[] { 8.0, 3.2, null, 44.5, 5.2 }, // Replaced null item present and replaced with null
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { null }, new object?[] { null }, 2, 2 ) } );
+                Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
+                     5.2,
+                     5.2,
+                     true,
+                     new double?[] { 8.0, 3.2, null, 44.5, 5.2 }, // Replaced item present and equal to replacement item
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 5.2 }, new object?[] { 5.2 }, 4, 4 ) } );
+                Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
+                     3.1,
+                     34.0,
+                     false,
+                     new double?[] { 8.0, 3.2, null, 44.5, 5.2 }, // Replaced non-null item not present, replacement item valid non-null
+                     new CollectionChangedEventData[] { } );
+                Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
+                     3.1,
+                     null,
+                     false,
+                     new double?[] { 8.0, 3.2, null, 44.5, 5.2 }, // Replaced non-null item not present, replacement item valid null
+                     new CollectionChangedEventData[] { } );
+                Add( new double?[] { 8.0, 3.2, 44.5, 5.2 },
+                     null,
+                     2.3,
+                     false,
+                     new double?[] { 8.0, 3.2, 44.5, 5.2 }, // Replaced null item not present, replacement item valid non-null
+                     new CollectionChangedEventData[] { } );
+                Add( new double?[] { 8.0, 3.2, 44.5, 5.2 },
+                     null,
+                     null,
+                     false,
+                     new double?[] { 8.0, 3.2, 44.5, 5.2 }, // Replaced null item not present, replacement item valid null
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( Replace_Value_Nullable_TestData ) )]
+        public void Replace_Value_Nullable( IEnumerable<double?> initialState, double? oldItem, double? newItem, bool expectedResult,
+                                            IEnumerable<double?> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            IObservableCollection<double?> observableCollection = new ObservableCollection<double?>( initialState );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = observableCollection.Replace( oldItem, newItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        public class ICollectionEx_Replace_Value_NonNullable_TestData
+            : TheoryData<IEnumerable<double>, object?, object?, bool, IEnumerable<double>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ICollectionEx_Replace_Value_NonNullable_TestData()
+            {
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     3.2,
+                     34.0,
+                     true,
+                     new double[] { 8.0, 34.0, 44.5, 5.2 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 34.0 }, new object?[] { 3.2 }, 1, 1 ) } );
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     3.1,
+                     34.0,
+                     false,
+                     new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     new CollectionChangedEventData[] { } );
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     null,
+                     34.0,
+                     false,
+                     new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     new CollectionChangedEventData[] { } );
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     "3",
+                     34.0,
+                     false,
+                     new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     new CollectionChangedEventData[] { } );
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     null,
+                     null,
+                     false,
+                     new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     new CollectionChangedEventData[] { } );
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     8.1,
+                     "foo",
+                     false,
+                     new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_Replace_Value_NonNullable_TestData ) )]
+        public void ICollectionEx_Replace_Value_NonNullable( IEnumerable<double> initialState, object? oldItem, object? newItem, bool expectedResult,
+                                                             IEnumerable<double> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<double>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Replace( oldItem, newItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        [Fact]
+        public void ICollectionEx_Replace_Value_NonNullable_NullValue()
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<double>() { 8.0, 3.2, 44.5, 5.2 };
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var exception = Assert.Throws<ArgumentNullException>( () => testedCollection.Replace( 3.2, null ) );
+
+            // Assert
+
+            Assert.Equal( "newItem", exception.ParamName );
+            Assert.Equal( new double[] { 8.0, 3.2, 44.5, 5.2 }, observableCollection );
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void ICollectionEx_Replace_Value_NonNullable_InvalidType()
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<double>() { 8.0, 3.2, 44.5, 5.2 };
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var exception = Assert.Throws<ArgumentException>( () => testedCollection.Replace( 3.2, "foo" ) );
+
+            // Assert
+
+            Assert.Equal( "newItem", exception.ParamName );
+            Assert.Equal( new double[] { 8.0, 3.2, 44.5, 5.2 }, observableCollection );
+            Assert.Empty( events );
+        }
+
+        public class ICollectionEx_Replace_Value_Nullable_TestData
+            : TheoryData<IEnumerable<double?>, object?, object?, bool, IEnumerable<double?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ICollectionEx_Replace_Value_Nullable_TestData()
+            {
+                Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
+                     3.2,
+                     34.0,
+                     true,
+                     new double?[] { 8.0, null, 34.0, 44.5, 5.2 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 34.0 }, new object?[] { 3.2 }, 2, 2 ) } );
+                Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
+                     null,
+                     34.0,
+                     true,
+                     new double?[] { 8.0, 34.0, 3.2, 44.5, 5.2 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 34.0 }, new object?[] { null }, 1, 1 ) } );
+                Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
+                     44.5,
+                     null,
+                     true,
+                     new double?[] { 8.0, null, 3.2, null, 5.2 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { null }, new object?[] { 44.5 }, 3, 3 ) } );
+                Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
+                     null,
+                     null,
+                     true,
+                     new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { null }, new object?[] { null }, 2, 2 ) } );
+                Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
+                     3.1,
+                     34.0,
+                     false,
+                     new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
+                     new CollectionChangedEventData[] { } );
+                Add( new double?[] { 8.0, 3.2, 44.5, 5.2 },
+                     "3",
+                     34.0,
+                     false,
+                     new double?[] { 8.0, 3.2, 44.5, 5.2 },
+                     new CollectionChangedEventData[] { } );
+                Add( new double?[] { 8.0, 3.2, 44.5, 5.2 },
+                     null,
+                     null,
+                     false,
+                     new double?[] { 8.0, 3.2, 44.5, 5.2 },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_Replace_Value_Nullable_TestData ) )]
+        public void ICollectionEx_Replace_Value_Nullable( IEnumerable<double?> initialState, object? oldItem, object? newItem, bool expectedResult,
+                                                          IEnumerable<double?> expectedState, IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<double?>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Replace( oldItem, newItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, observableCollection );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        [Fact]
+        public void ICollectionEx_Replace_Value_Nullable_InvalidType()
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<double?>() { 8.0, null, 3.2, 44.5, 5.2 };
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var exception = Assert.Throws<ArgumentException>( () => testedCollection.Replace( 3.2, "foo" ) );
+
+            // Assert
+
+            Assert.Equal( "newItem", exception.ParamName );
+            Assert.Equal( new double?[] { 8.0, null, 3.2, 44.5, 5.2 }, observableCollection );
+            Assert.Empty( events );
+        }
+
+        public class Clear_Class_NonNullable_TestData : TheoryData<IEnumerable<TestClass>, IEnumerable<CollectionChangedEventData>>
+        {
+            public Clear_Class_NonNullable_TestData()
+            {
+                Add( new TestClass[] { ITEM1 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM1 }, -1, 0 ) } );
+                Add( new TestClass[] { ITEM1, ITEM2 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM1, ITEM2 }, -1, 0 ) } );
+#else
+                     new[] {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM1 }, -1, 0 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 0 )
+                     } );
+#endif
+                Add( new TestClass[] { },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( Clear_Class_NonNullable_TestData ) )]
+        public void Clear_Class_NonNullable( IEnumerable<TestClass> initialState,
+                                             IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( initialState );
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
 
             // Act
 
             observableCollection.Clear();
 
-            // Assert events
+            // Assert
 
-            Assert.Empty( events );
+            Assert.Empty( observableCollection );
+            Assert.Equal( expectedEvents, events );
         }
 
-        [Fact]
-        public void Clear_Empty()
+        public class Clear_Class_Nullable_TestData : TheoryData<IEnumerable<TestClass?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public Clear_Class_Nullable_TestData()
+            {
+                Add( new TestClass?[] { ITEM1 },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM1 }, -1, 0 ) } );
+                Add( new TestClass?[] { null },
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ) } );
+                Add( new TestClass?[] { ITEM1, null, ITEM2 },
+#if BULK_NOTIFY_RANGE_ACTIONS
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM1, null, ITEM2 }, -1, 0 ) } );
+#else
+                     new[] {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM1 }, -1, 0 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 0 )
+                     } );
+#endif
+                Add( new TestClass?[] { },
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( Clear_Class_Nullable_TestData ) )]
+        public void Clear_Class_Nullable( IEnumerable<TestClass?> initialState,
+                                          IEnumerable<CollectionChangedEventData> expectedEvents )
         {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            var events = new List<CollectionChangedEventData>();
 
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>();
+            IObservableCollection<TestClass?> observableCollection = new ObservableCollection<TestClass?>( initialState );
 
             observableCollection.CollectionChanged += ( obj, args ) =>
             {
                 Assert.Same( observableCollection, obj );
-                events.Add( args );
+                events.Add( new CollectionChangedEventData( args ) );
             };
-
-            Assert.Empty( observableCollection );
 
             // Act
 
             observableCollection.Clear();
 
-            // Assert state & results
+            // Assert
 
             Assert.Empty( observableCollection );
-
-            // Assert events
-
-            Assert.Empty( events );
+            Assert.Equal( expectedEvents, events );
         }
 
-        [Fact]
-        public void Contains()
+        public class Contains_Class_NonNullable_TestData : TheoryData<IEnumerable<TestClass>, TestClass, bool>
+        {
+            public Contains_Class_NonNullable_TestData()
+            {
+                Add( new TestClass[] { ITEM1, ITEM2 }, ITEM1, true );
+                Add( new TestClass[] { ITEM1, ITEM2 }, ITEM2, true );
+                Add( new TestClass[] { ITEM1, ITEM3 }, ITEM2, false );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( Contains_Class_NonNullable_TestData ) )]
+        public void Contains_Class_NonNullable( IEnumerable<TestClass> initialState, TestClass searchedItem, bool expectedResult )
         {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            var events = new List<CollectionChangedEventData>();
 
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-            var item3 = new TestClass( "Item3", 20 );
-
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { item1, item3 } );
+            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( initialState );
 
             observableCollection.CollectionChanged += ( obj, args ) =>
             {
                 Assert.Same( observableCollection, obj );
-                events.Add( args );
+                events.Add( new CollectionChangedEventData( args ) );
             };
 
-            // Act & Assert results
+            // Act
 
-            Assert.True( observableCollection.Contains( item1 ) );
-            Assert.False( observableCollection.Contains( item2 ) );
+            var result = observableCollection.Contains( searchedItem );
 
-            // Assert events
+            // Assert
 
+            Assert.Equal( expectedResult, result );
             Assert.Empty( events );
         }
 
-        [Fact]
-        public void ICollectionEx_Contains()
+        public class Contains_Class_Nullable_TestData : TheoryData<IEnumerable<TestClass?>, TestClass?, bool>
+        {
+            public Contains_Class_Nullable_TestData()
+            {
+                Add( new TestClass?[] { ITEM1, ITEM2 }, ITEM1, true );
+                Add( new TestClass?[] { ITEM1, ITEM2 }, ITEM2, true );
+                Add( new TestClass?[] { ITEM1, ITEM2, null }, ITEM1, true );
+                Add( new TestClass?[] { ITEM1, ITEM2, null }, null, true );
+                Add( new TestClass?[] { ITEM1, ITEM3 }, ITEM2, false );
+                Add( new TestClass?[] { ITEM1, ITEM3 }, null, false );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( Contains_Class_Nullable_TestData ) )]
+        public void Contains_Class_Nullable( IEnumerable<TestClass> initialState, TestClass? searchedItem, bool expectedResult )
         {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            var events = new List<CollectionChangedEventData>();
 
-            ObservableCollection<int> observableCollection = new( new[] { 5, 8, 2 } );
+            IObservableCollection<TestClass?> observableCollection = new ObservableCollection<TestClass?>( initialState );
 
             observableCollection.CollectionChanged += ( obj, args ) =>
             {
                 Assert.Same( observableCollection, obj );
-                events.Add( args );
+                events.Add( new CollectionChangedEventData( args ) );
             };
 
-            // Act & Assert results
+            // Act
 
-            Assert.True( ( (ICollectionEx) observableCollection ).Contains( 8 ) );
-            Assert.False( ( (ICollectionEx) observableCollection ).Contains( 9 ) );
-            Assert.False( ( (ICollectionEx) observableCollection ).Contains( 5.0 ) );
+            var result = observableCollection.Contains( searchedItem );
 
-            // Assert events
+            // Assert
 
+            Assert.Equal( expectedResult, result );
+            Assert.Empty( events );
+        }
+
+        public class ICollectionEx_Contains_Value_NonNullable_TestData : TheoryData<IEnumerable<int>, object?, bool>
+        {
+            public ICollectionEx_Contains_Value_NonNullable_TestData()
+            {
+                Add( new int[] { 8, 9 }, 8, true );
+                Add( new int[] { 8, 9 }, 9, true );
+                Add( new int[] { 8, 9 }, 3, false );
+                Add( new int[] { 8, 9 }, null, false );
+                Add( new int[] { 8, 9 }, 8.0, false );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_Contains_Value_NonNullable_TestData ) )]
+        public void ICollectionEx_Contains_Value_NonNullable( IEnumerable<int> initialState, object? searchedItem, bool expectedResult )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Contains( searchedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Empty( events );
+        }
+
+        public class ICollectionEx_Contains_Value_Nullable_TestData : TheoryData<IEnumerable<int?>, object?, bool>
+        {
+            public ICollectionEx_Contains_Value_Nullable_TestData()
+            {
+                Add( new int?[] { 8, 9 }, 8, true );
+                Add( new int?[] { 8, 9, null }, 9, true );
+                Add( new int?[] { 8, 9, null }, null, true );
+                Add( new int?[] { 8, 9 }, 3, false );
+                Add( new int?[] { 8, 9 }, null, false );
+                Add( new int?[] { 8, 9, null }, "8", false );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_Contains_Value_Nullable_TestData ) )]
+        public void ICollectionEx_Contains_Value_Nullable( IEnumerable<int?> initialState, object? searchedItem, bool expectedResult )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int?>( initialState );
+            var testedCollection = (ICollectionEx) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Contains( searchedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Empty( events );
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_Contains_Value_NonNullable_TestData ) )]
+        public void IReadOnlyCollectionEx_Contains_Value_NonNullable( IEnumerable<int> initialState, object? searchedItem, bool expectedResult )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int>( initialState );
+            var testedCollection = (IReadOnlyCollectionEx<int>) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Contains( searchedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Empty( events );
+        }
+
+        [Theory]
+        [ClassData( typeof( ICollectionEx_Contains_Value_Nullable_TestData ) )]
+        public void IReadOnlyCollectionEx_Contains_Value_Nullable( IEnumerable<int?> initialState, object? searchedItem, bool expectedResult )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableCollection = new ObservableCollection<int?>( initialState );
+            var testedCollection = (IReadOnlyCollectionEx<int?>) observableCollection;
+
+            observableCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableCollection, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Contains( searchedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
             Assert.Empty( events );
         }
 
@@ -1020,32 +1935,29 @@ namespace Utilities.DotNet.Collections.Observables.Test
         {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            var events = new List<CollectionChangedEventData>();
 
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { item1, item2 } );
+            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { ITEM1, ITEM2 } );
 
             observableCollection.CollectionChanged += ( obj, args ) =>
             {
                 Assert.Same( observableCollection, obj );
-                events.Add( args );
+                events.Add( new CollectionChangedEventData( args ) );
             };
 
-            // Act & Assert
+            // Act
 
             var enumerator = observableCollection.GetEnumerator();
 
-            Assert.True( enumerator.MoveNext() );
-            Assert.Equal( item1, enumerator.Current );
+            // Assert
 
             Assert.True( enumerator.MoveNext() );
-            Assert.Equal( item2, enumerator.Current );
+            Assert.Equal( ITEM1, enumerator.Current );
+
+            Assert.True( enumerator.MoveNext() );
+            Assert.Equal( ITEM2, enumerator.Current );
 
             Assert.False( enumerator.MoveNext() );
-
-            // Assert events
 
             Assert.Empty( events );
         }
@@ -1055,32 +1967,30 @@ namespace Utilities.DotNet.Collections.Observables.Test
         {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            var events = new List<CollectionChangedEventData>();
 
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-
-            var observableCollection = new ObservableCollection<TestClass>( new[] { item1, item2 } );
+            var observableCollection = new ObservableCollection<TestClass>( new[] { ITEM1, ITEM2 } );
+            var testedCollection = (IEnumerable) observableCollection;
 
             observableCollection.CollectionChanged += ( obj, args ) =>
             {
                 Assert.Same( observableCollection, obj );
-                events.Add( args );
+                events.Add( new CollectionChangedEventData( args ) );
             };
 
-            // Act & Assert
+            // Act
 
-            var enumerator = ( (IEnumerable) observableCollection ).GetEnumerator();
+            var enumerator = testedCollection.GetEnumerator();
+
+            // Assert
 
             Assert.True( enumerator.MoveNext() );
-            Assert.Equal( item1, enumerator.Current );
+            Assert.Equal( ITEM1, enumerator.Current );
 
             Assert.True( enumerator.MoveNext() );
-            Assert.Equal( item2, enumerator.Current );
+            Assert.Equal( ITEM2, enumerator.Current );
 
             Assert.False( enumerator.MoveNext() );
-
-            // Assert events
 
             Assert.Empty( events );
         }
@@ -1090,18 +2000,14 @@ namespace Utilities.DotNet.Collections.Observables.Test
         {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            var events = new List<CollectionChangedEventData>();
 
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-            var item3 = new TestClass( "Item3", 20 );
-
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { item1, item2, item3 } );
+            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { ITEM1, ITEM2, ITEM3 } );
 
             observableCollection.CollectionChanged += ( obj, args ) =>
             {
                 Assert.Same( observableCollection, obj );
-                events.Add( args );
+                events.Add( new CollectionChangedEventData( args ) );
             };
 
             var array = new TestClass[ 3 ];
@@ -1110,12 +2016,9 @@ namespace Utilities.DotNet.Collections.Observables.Test
 
             observableCollection.CopyTo( array, 0 );
 
-            // Assert result
+            // Assert
 
-            Assert.Equal( new[] { item1, item2, item3 }, array );
-
-            // Assert events
-
+            Assert.Equal( new[] { ITEM1, ITEM2, ITEM3 }, array );
             Assert.Empty( events );
         }
 
@@ -1124,32 +2027,26 @@ namespace Utilities.DotNet.Collections.Observables.Test
         {
             // Arrange
 
-            var events = new List<NotifyCollectionChangedEventArgs>();
+            var events = new List<CollectionChangedEventData>();
 
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-            var item3 = new TestClass( "Item3", 20 );
-
-            var observableCollection = new ObservableCollection<TestClass>( new[] { item1, item2, item3 } );
+            var observableCollection = new ObservableCollection<TestClass>( new[] { ITEM1, ITEM2, ITEM3 } );
+            var testedCollection = (ICollection) observableCollection;
 
             observableCollection.CollectionChanged += ( obj, args ) =>
             {
                 Assert.Same( observableCollection, obj );
-                events.Add( args );
+                events.Add( new CollectionChangedEventData( args ) );
             };
 
             var array = new TestClass[ 3 ];
 
             // Act
 
-            ( (ICollection) observableCollection ).CopyTo( array, 0 );
+            testedCollection.CopyTo( array, 0 );
 
-            // Assert result
+            // Assert
 
-            Assert.Equal( new[] { item1, item2, item3 }, array );
-
-            // Assert events
-
+            Assert.Equal( new[] { ITEM1, ITEM2, ITEM3 }, array );
             Assert.Empty( events );
         }
 
@@ -1158,29 +2055,25 @@ namespace Utilities.DotNet.Collections.Observables.Test
         {
             // Arrange
 
-            var item1 = new TestClass( "Item1", 10 );
-            var item2 = new TestClass( "Item2", 1 );
-            var item3 = new TestClass( "Item3", 20 );
+            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { ITEM1, ITEM3 } );
 
-            IObservableCollection<TestClass> observableCollection = new ObservableCollection<TestClass>( new[] { item1 } );
-
-            Assert.Equal( new[] { item1 }, observableCollection );
+            Assert.Equal( new[] { ITEM1, ITEM3 }, observableCollection );
 
             // Act
 
-            observableCollection.Add( item2 );
+            observableCollection.Add( ITEM2 );
 
             // Assert
 
-            Assert.Equal( new[] { item1, item2 }, observableCollection );
+            Assert.Equal( new[] { ITEM1, ITEM3, ITEM2 }, observableCollection );
 
             // Act
 
-            observableCollection.Remove( item2 );
+            observableCollection.Remove( ITEM3 );
 
             // Assert
 
-            Assert.Equal( new[] { item1 }, observableCollection );
+            Assert.Equal( new[] { ITEM1, ITEM2 }, observableCollection );
         }
     }
 }

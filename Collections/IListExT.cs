@@ -1,7 +1,8 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
 using System.Collections.Generic;
 
 namespace Utilities.DotNet.Collections
@@ -24,12 +25,20 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <summary>
+        /// Adds the specified item to the list and returns the index at which it was added.
+        /// </summary>
+        /// <param name="item">Item to add to the list.</param>
+        /// <returns>Zero-based index of the newly added item in the list.</returns>
+        new int Add( T item );
+
+        /// <summary>
         /// Inserts the elements of a collection into the list at the specified index.
         /// </summary>
         /// <param name="index">Zero-based index at which the new elements should be inserted.</param>
         /// <param name="collection">Collection whose elements should be inserted into the list.</param>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is less than 0 or greater than
-        ///                                                      <see cref="ICollection{T}.Count">Count</see>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="index"/> is less than 0 or greater than <see cref="ICollection{T}.Count">Count</see>.
+        /// </exception>
         void InsertRange( int index, IEnumerable<T> collection );
 
         /// <summary>
@@ -37,9 +46,12 @@ namespace Utilities.DotNet.Collections
         /// </summary>
         /// <param name="index">Zero-based starting index of the range of elements to remove.</param>
         /// <param name="count">Number of elements to remove.</param>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> or <paramref name="count"/> are less than 0.</exception>
-        /// <exception cref="System.ArgumentException">Thrown when <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of
-        ///                                            elements in the list.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="index"/> or <paramref name="count"/> are less than 0.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the list.
+        /// </exception>
         void RemoveRange( int index, int count );
 
         /// <summary>
@@ -47,7 +59,11 @@ namespace Utilities.DotNet.Collections
         /// </summary>
         /// <param name="item">Item to move.</param>
         /// <param name="newIndex">New index for the item.</param>
-        /// <returns><c>true</c> if the item could be moved; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the item to be moved is present (the operation succeeded);
+        ///          <see langword="false"/> otherwise (the operation failed).</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="newIndex"/> is less than 0 or greater than <see cref="ICollection{T}.Count"/>.
+        /// </exception>
         bool Move( T item, int newIndex );
 
         /// <summary>
@@ -55,16 +71,21 @@ namespace Utilities.DotNet.Collections
         /// </summary>
         /// <param name="oldIndex">Index of the item to move.</param>
         /// <param name="newIndex">New index for the item.</param>
-        /// <returns><c>true</c> if the item could be moved; <c>false</c> otherwise.</returns>
-        bool Move( int oldIndex, int newIndex );
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="oldIndex"/> is less than 0 or equal or greater than <see cref="ICollection{T}.Count"/>;
+        /// or when <paramref name="newIndex"/> is less than 0 or greater than <see cref="ICollection{T}.Count"/>.
+        /// </exception>
+        void Move( int oldIndex, int newIndex );
 
         /// <summary>
         /// Replaces an item in the collection with another item.
         /// </summary>
         /// <param name="index">Index of the item to replace.</param>
         /// <param name="newItem">Replacing item.</param>
-        /// <returns><c>true</c> if the item could be replaced; <c>false</c> otherwise.</returns>
-        bool Replace( int index, T newItem );
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="index"/> is less than 0 or equal or greater than <see cref="ICollection{T}.Count"/>.
+        /// </exception>
+        void Replace( int index, T newItem );
 
         /// <summary>
         /// Creates a shallow copy of a range of elements in the source list.
@@ -72,9 +93,12 @@ namespace Utilities.DotNet.Collections
         /// <param name="index">The zero-based list index at which the range starts.</param>
         /// <param name="count">The number of elements in the range.</param>
         /// <returns>Shallow copy of a range of elements in the source list.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> or <paramref name="count"/> are less than 0.</exception>
-        /// <exception cref="System.ArgumentException">Thrown when <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of
-        ///                                            elements in the list.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="index"/> or <paramref name="count"/> are less than 0.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the list.
+        /// </exception>
         new IListEx<T> GetRange( int index, int count );
 
         /// <summary>
@@ -87,7 +111,9 @@ namespace Utilities.DotNet.Collections
         /// <param name="item">Object to locate in the list.</param>
         /// <param name="index">Zero-based starting index of the search. 0 (zero) is valid in an empty list.</param>
         /// <returns>Zero-based index of the first occurrence of item within the specified range of elements in the list, if found; otherwise, -1.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="index"/> is outside the range of valid indexes for the list.
+        /// </exception>
         int IndexOf( T item, int index );
 
         /// <summary>
@@ -102,9 +128,10 @@ namespace Utilities.DotNet.Collections
         /// <param name="index">Zero-based starting index of the search. 0 (zero) is valid in an empty list.</param>
         /// <param name="count">Number of elements in the section to search.</param>
         /// <returns>Zero-based index of the first occurrence of item within the specified range of elements in the list, if found; otherwise, -1.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list,
-        ///                                                      <paramref name="count"/> is less than 0, or <paramref name="index"/> and <paramref name="count"/>
-        ///                                                      do not denote a valid range of elements in the list.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="index"/> is outside the range of valid indexes for the list, <paramref name="count"/> is less than 0,
+        /// or <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the list.
+        /// </exception>
         int IndexOf( T item, int index, int count );
 
         /// <summary>
@@ -127,7 +154,9 @@ namespace Utilities.DotNet.Collections
         /// <param name="item">Object to locate in the list.</param>
         /// <param name="index">Zero-based starting index of the backward search.</param>
         /// <returns>Zero-based index of the last occurrence of item within the specified range of elements in the list, if found; otherwise, -1.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="index"/> is outside the range of valid indexes for the list.
+        /// </exception>
         int LastIndexOf( T item, int index );
 
         /// <summary>
@@ -142,9 +171,10 @@ namespace Utilities.DotNet.Collections
         /// <param name="index">Zero-based starting index of the backward search.</param>
         /// <param name="count">Number of elements in the section to search.</param>
         /// <returns>Zero-based index of the last occurrence of item within the specified range of elements in the list, if found; otherwise, -1.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the range of valid indexes for the list,
-        ///                                                      <paramref name="count"/> is less than 0, or <paramref name="index"/> and <paramref name="count"/>
-        ///                                                      do not denote a valid range of elements in the list.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="index"/> is outside the range of valid indexes for the list, <paramref name="count"/> is less than 0,
+        /// or <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the list.
+        /// </exception>
         int LastIndexOf( T item, int index, int count );
 
         /// <summary>
@@ -153,8 +183,9 @@ namespace Utilities.DotNet.Collections
         /// <param name="start">Zero-based list index at which the range starts.</param>
         /// <param name="length">Length of the range.</param>
         /// <returns>shallow copy of a range of elements in the source list.</returns>
-        /// <exception cref="System.ArgumentException">Thrown when <paramref name="start"/> and <paramref name="length"/> do not denote a valid range of
-        ///                                            elements in the list.</exception>
+        /// <exception cref="System.ArgumentException">
+        /// Thrown when <paramref name="start"/> and <paramref name="length"/> do not denote a valid range of elements in the list.
+        /// </exception>
         new IListEx<T> Slice( int start, int length );
     }
 }

@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System.Collections.Generic;
@@ -20,6 +20,6 @@ namespace Utilities.DotNet.Collections
         /// </summary>
         /// <param name="item">Object to locate in the collection.</param>
         /// <returns><c>true</c> if item is found in the collection; otherwise, <c>false</c>.</returns>
-        bool Contains( object item );
+        bool Contains( object? item );
     }
 }

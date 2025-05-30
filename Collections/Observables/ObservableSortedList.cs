@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2022-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2022-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -7,6 +7,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+
+#pragma warning disable S1696
 
 namespace Utilities.DotNet.Collections.Observables
 {
@@ -53,11 +55,8 @@ namespace Utilities.DotNet.Collections.Observables
         object? IList.this[ int index ]
         {
             get => this[ index ];
-            set => this[ index ] = ( value is T castValue ) ? castValue : throw new InvalidCastException();
+            set => ( (IListEx) this ).Replace( index, value );
         }
-
-        /// <inheritdoc/>
-        //bool IObservableList<T>.IsReadOnly => false;
 
         bool IList.IsReadOnly => false;
 
@@ -107,19 +106,47 @@ namespace Utilities.DotNet.Collections.Observables
         //                            PUBLIC METHODS
         //===========================================================================
 
+        /// <inheritdoc cref="IListEx{T}.Add(T)"/>
+        public new int Add( T item )
+        {
+            int index = AddItem( item );
+            if( index >= 0 )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+            }
+
+            return index;
+        }
+
+        int IListEx.Add( object? item )
+        {
+            try
+            {
+                return Add( (T) item! );
+            }
+            catch( InvalidCastException )
+            {
+                throw new ArgumentException( $"Incompatible item type", nameof( item ) );
+            }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( item ) );
+            }
+        }
+
         int IList.Add( object? value )
         {
-            if( value is T obj )
+            try
             {
-                int index = AddItem( obj );
-
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, obj, index ) );
-
-                return index;
+                return Add( (T) value! );
             }
-            else
+            catch( InvalidCastException )
             {
-                return -1;
+                throw new ArgumentException( $"Incompatible item type", nameof( value ) );
+            }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( value ) );
             }
         }
 
@@ -138,13 +165,17 @@ namespace Utilities.DotNet.Collections.Observables
         /// </remarks>
         void IList.Insert( int index, object? value )
         {
-            if( value is T obj )
+            try
             {
-                Add( obj );
+                Add( (T) value! );
             }
-            else
+            catch( InvalidCastException )
             {
-                throw new InvalidCastException();
+                throw new ArgumentException( $"Incompatible item type", nameof( value ) );
+            }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( value ) );
             }
         }
 
@@ -157,34 +188,14 @@ namespace Utilities.DotNet.Collections.Observables
             AddRange( collection );
         }
 
-        bool IListEx.InsertRange( int index, IEnumerable collection )
+        void IListEx.InsertRange( int index, IEnumerable collection )
         {
-            var itemsToInsert = new ListEx<T>();
-
-            foreach( var item in collection )
-            {
-                if( item is T obj )
-                {
-                    itemsToInsert.Add( obj );
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            AddRange( itemsToInsert );
-
-            return true;
+            ( (ICollectionEx) this ).AddRange( collection );
         }
 
-        void IList.Remove( object? value )
-        {
-            if( value is T obj )
-            {
-                Remove( obj );
-            }
-        }
+        bool IListEx.Remove( object? item ) => ( (ICollectionEx) this ).Remove( item );
+
+        void IList.Remove( object? value ) => ( (ICollectionEx) this ).Remove( value );
 
         /// <inheritdoc/>
         public void RemoveAt( int index )
@@ -194,14 +205,7 @@ namespace Utilities.DotNet.Collections.Observables
                 throw new ArgumentOutOfRangeException( nameof( index ) );
             }
 
-            var item = m_list[ index ];
-
-            if( item is INotifyPropertyChanged notifyPropertyChangedItem )
-            {
-                notifyPropertyChangedItem.PropertyChanged -= Item_PropertyChangedEvent;
-            }
-
-            m_list.RemoveAt( index );
+            var item = RemoveItemAt( index );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
         }
@@ -209,84 +213,83 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public void RemoveRange( int index, int count )
         {
+            if( index < 0 )
+            {
+                throw new ArgumentOutOfRangeException( nameof( index ) );
+            }
+            else if( count < 0 )
+            {
+                throw new ArgumentOutOfRangeException( nameof( count ) );
+            }
+            else if( ( ( index >= Count ) || ( ( index + count ) > Count ) ) )
+            {
+                throw new ArgumentException( "Index and count do not denote a valid range of items" );
+            }
+
+#if BULK_NOTIFY_RANGE_ACTIONS
             var removedItems = m_list.GetRange( index, count );
 
             m_list.RemoveRange( index, count );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, index ) );
+#else
+            for( int i = 0; i < count; i++ )
+            {
+                RemoveAt( index );
+            }
+#endif
         }
 
         /// <inheritdoc/>
-        public bool Replace( int index, T newItem )
+        public void Replace( int index, T newItem )
         {
             if( ( index < 0 ) || ( index >= Count ) )
             {
                 throw new ArgumentOutOfRangeException( nameof( index ) );
             }
 
-            return Replace( this[ index ], newItem );
+            var oldItem = RemoveItemAt( index );
+            AddItem( newItem );
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
         }
 
-        bool IListEx.Replace( int index, object newItem )
+        void IListEx.Replace( int index, object? newItem )
         {
-            if( newItem is T obj )
+            if( ( index < 0 ) || ( index >= Count ) )
             {
-                return Replace( index, obj );
+                throw new ArgumentOutOfRangeException( nameof( index ) );
             }
-            else
+
+            try
             {
-                return false;
+                Replace( index, (T) newItem! );
+            }
+            catch( InvalidCastException )
+            {
+                throw new ArgumentException( $"Incompatible item type", nameof( newItem ) );
+            }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( newItem ) );
             }
         }
 
         /// <inheritdoc/>
         public bool Move( T item, int newIndex )
         {
-            var oldIndex = IndexOf( item );
-            if( oldIndex < 0 )
-            {
-                return false;
-            }
-
-            return Move( oldIndex, newIndex );
+            return m_list.Contains( item );
         }
 
         /// <inheritdoc/>
-        public bool Move( int oldIndex, int newIndex )
+        public void Move( int oldIndex, int newIndex )
         {
-            if( ( oldIndex < 0 ) || ( oldIndex >= Count ) )
-            {
-                throw new ArgumentOutOfRangeException( nameof( oldIndex ) );
-            }
-
-            if( ( newIndex < 0 ) || ( newIndex > Count ) )
-            {
-                throw new ArgumentOutOfRangeException( nameof( newIndex ) );
-            }
-
-            if( oldIndex < newIndex )
-            {
-                newIndex--;
-            }
-
-            return ( oldIndex == newIndex );
+            // Ignored since the list is ordered.
         }
 
-        bool IListEx.Move( object item, int newIndex )
+        bool IListEx.Move( object? item, int newIndex )
         {
-            if( item is T obj )
-            {
-                return Move( obj, newIndex );
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        bool IList.Contains( object? value )
-        {
-            return ( value is T obj ) && Contains( obj );
+            return ( (IListEx) m_list ).Contains( item );
         }
 
         /// <inheritdoc/>
@@ -318,85 +321,50 @@ namespace Utilities.DotNet.Collections.Observables
 
         IListEx IListEx.Slice( int start, int length ) => GetRange( start, length );
 
-        /// <inheritdoc/>
-        public int IndexOf( T item )
-        {
-            return m_list.IndexOf( item );
-        }
+        bool IListEx.Contains( object? item ) => ( (IListEx) m_list ).Contains( item );
 
-        int IList.IndexOf( object? value )
-        {
-            return ( value is T obj ) ? IndexOf( obj ) : -1;
-        }
-
-        int IReadOnlyListEx<T>.IndexOf( object item )
-        {
-            return ( item is T obj ) ? IndexOf( obj ) : -1;
-        }
+        bool IList.Contains( object? value ) => ( (IList) m_list ).Contains( value );
 
         /// <inheritdoc/>
-        public int IndexOf( T item, int index )
-        {
-            return m_list.IndexOf( item, index );
-        }
-
-        int IReadOnlyListEx<T>.IndexOf( object item, int index )
-        {
-            return ( item is T obj ) ? IndexOf( obj, index ) : -1;
-        }
+        public int IndexOf( T item ) => m_list.IndexOf( item );
 
         /// <inheritdoc/>
-        public int IndexOf( T item, int index, int count )
-        {
-            return m_list.IndexOf( item, index, count );
-        }
-
-        int IReadOnlyListEx<T>.IndexOf( object item, int index, int count )
-        {
-            return ( item is T obj ) ? IndexOf( obj, index, count ) : -1;
-        }
+        public int IndexOf( T item, int index ) => m_list.IndexOf( item, index );
 
         /// <inheritdoc/>
-        public int LastIndexOf( T item )
-        {
-            return m_list.LastIndexOf( item );
-        }
+        public int IndexOf( T item, int index, int count ) => m_list.IndexOf( item, index, count );
 
-        int IReadOnlyListEx<T>.LastIndexOf( object item )
-        {
-            return ( item is T obj ) ? LastIndexOf( obj ) : -1;
-        }
+        int IReadOnlyListEx<T>.IndexOf( object? item ) => ( (IListEx) m_list ).IndexOf( item );
 
-        /// <inheritdoc/>
-        public int LastIndexOf( T item, int index )
-        {
-            return m_list.LastIndexOf( item, index );
-        }
+        int IReadOnlyListEx<T>.IndexOf( object? item, int index ) => ( (IListEx) m_list ).IndexOf( item, index );
 
-        int IReadOnlyListEx<T>.LastIndexOf( object item, int index )
-        {
-            return ( item is T obj ) ? LastIndexOf( obj, index ) : -1;
-        }
+        int IReadOnlyListEx<T>.IndexOf( object? item, int index, int count ) => ( (IListEx) m_list ).IndexOf( item, index, count );
+
+        int IList.IndexOf( object? value ) => ( (IListEx) m_list ).IndexOf( value );
+
+        int IListEx.IndexOf( object? item, int index ) => ( (IListEx) m_list ).IndexOf( item, index );
+
+        int IListEx.IndexOf( object? item, int index, int count ) => ( (IListEx) m_list ).IndexOf( item, index, count );
 
         /// <inheritdoc/>
-        public int LastIndexOf( T item, int index, int count )
-        {
-            return m_list.LastIndexOf( item, index, count );
-        }
+        public int LastIndexOf( T item ) => m_list.LastIndexOf( item );
 
-        int IReadOnlyListEx<T>.LastIndexOf( object item, int index, int count )
-        {
-            return ( item is T obj ) ? LastIndexOf( obj, index, count ) : -1;
-        }
+        /// <inheritdoc/>
+        public int LastIndexOf( T item, int index ) => m_list.LastIndexOf( item, index );
 
-        int IListEx.IndexOf( object item, int index ) => ( (IReadOnlyListEx<T>) this ).IndexOf( item, index );
+        /// <inheritdoc/>
+        public int LastIndexOf( T item, int index, int count ) => m_list.LastIndexOf( item, index, count );
 
-        int IListEx.IndexOf( object item, int index, int count ) => ( (IReadOnlyListEx<T>) this ).IndexOf( item, index, count );
+        int IReadOnlyListEx<T>.LastIndexOf( object? item ) => ( (IListEx) m_list ).LastIndexOf( item );
 
-        int IListEx.LastIndexOf( object item ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item );
+        int IReadOnlyListEx<T>.LastIndexOf( object? item, int index ) => ( (IListEx) m_list ).LastIndexOf( item, index );
 
-        int IListEx.LastIndexOf( object item, int index ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item, index );
+        int IReadOnlyListEx<T>.LastIndexOf( object? item, int index, int count ) => ( (IListEx) m_list ).LastIndexOf( item, index, count );
 
-        int IListEx.LastIndexOf( object item, int index, int count ) => ( (IReadOnlyListEx<T>) this ).LastIndexOf( item, index, count );
+        int IListEx.LastIndexOf( object? item ) => ( (IListEx) m_list ).LastIndexOf( item );
+
+        int IListEx.LastIndexOf( object? item, int index ) => ( (IListEx) m_list ).LastIndexOf( item, index );
+
+        int IListEx.LastIndexOf( object? item, int index, int count ) => ( (IListEx) m_list ).LastIndexOf( item, index, count );
     }
 }

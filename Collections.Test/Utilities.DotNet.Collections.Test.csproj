@@ -6,7 +6,7 @@
     <LangVersion>10</LangVersion>
     <IsPackable>false</IsPackable>
     <Configurations>Debug;Release</Configurations>
-    <NoWarn>NETSDK1138</NoWarn>
+    <NoWarn>NETSDK1138,IDE0130</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

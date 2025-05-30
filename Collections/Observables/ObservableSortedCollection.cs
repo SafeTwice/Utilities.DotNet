@@ -9,6 +9,9 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+
+#pragma warning disable S1696
 
 namespace Utilities.DotNet.Collections.Observables
 {
@@ -120,7 +123,7 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="ObservableSortedCollection{T}"/> class.
+        /// Finalizer.
         /// </summary>
         [ExcludeFromCodeCoverage]
         ~ObservableSortedCollection()
@@ -133,45 +136,35 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         /// <inheritdoc/>
-        public bool Add( T item )
+        public void Add( T item )
         {
             int index = AddItem( item );
-
             if( index >= 0 )
             {
                 NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
 
-        void ICollection<T>.Add( T item )
+        void ICollectionEx.Add( object? item )
         {
-            if( !Add( item ) )
+            try
             {
-                throw new InvalidOperationException();
+                Add( (T) item! );
             }
-        }
-
-        bool ICollectionEx.Add( object item )
-        {
-            if( item is T obj )
+            catch( InvalidCastException )
             {
-                return Add( obj );
+                throw new ArgumentException( $"Incompatible item type", nameof( item ) );
             }
-            else
+            catch( NullReferenceException )
             {
-                return false;
+                throw new ArgumentNullException( nameof( item ) );
             }
         }
 
         /// <inheritdoc/>
-        public bool AddRange( IEnumerable<T> collection )
+        public void AddRange( IEnumerable<T> collection )
         {
-            var result = true;
+#if BULK_NOTIFY_RANGE_ACTIONS
             var addedItems = new ListEx<T>();
 
             foreach( var item in collection )
@@ -180,143 +173,37 @@ namespace Utilities.DotNet.Collections.Observables
                 {
                     addedItems.Add( item );
                 }
-                else
-                {
-                    result = false;
-                }
             }
 
-#if BULK_NOTIFY_RANGE_ACTIONS
             if( addedItems.Count > 0 )
             {
                 NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, addedItems ) );
             }
 #else
-            foreach( var addedItem in addedItems )
+            foreach( var itemToAdd in collection )
             {
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, addedItem ) );
+                Add( itemToAdd );
             }
 #endif
-
-            return result;
         }
 
-        bool ICollectionEx.AddRange( IEnumerable collection )
+        void ICollectionEx.AddRange( IEnumerable collection )
         {
-            var itemsToAdd = new ListEx<T>();
+            // The casted collection is converted to array to enforce that exceptions
+            // are thrown immediately if the cast fails and therefore ensure that this
+            // object is not modified in case of an exception.
+            var castedCollection = collection.Cast<T>().ToArray();
 
-            foreach( var item in collection )
-            {
-                if( item is T obj )
-                {
-                    itemsToAdd.Add( obj );
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            return AddRange( itemsToAdd );
+            AddRange( castedCollection );
         }
 
         /// <inheritdoc/>
         public bool Remove( T item )
         {
             int index = RemoveItem( item );
-            if( index < 0 )
+            if( index >= 0 )
             {
-                return false;
-            }
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
-
-            return true;
-        }
-
-        bool ICollectionEx.Remove( object item )
-        {
-            if( item is T obj )
-            {
-                return Remove( obj );
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public bool RemoveRange( IEnumerable<T> collection )
-        {
-            bool result = true;
-            var removedItems = new ListEx<T>();
-
-            foreach( var item in collection )
-            {
-                if( RemoveItem( item ) >= 0 )
-                {
-                    removedItems.Add( item );
-                }
-                else
-                {
-                    result = false;
-                }
-            }
-
-#if BULK_NOTIFY_RANGE_ACTIONS
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems ) );
-#else
-            foreach( var removedItem in removedItems )
-            {
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItem ) );
-            }
-#endif
-
-            return result;
-        }
-
-        bool ICollectionEx.RemoveRange( IEnumerable collection )
-        {
-            bool partialResult = true;
-            var itemsToRemove = new ListEx<T>();
-
-            foreach( var item in collection )
-            {
-                if( item is T obj )
-                {
-                    itemsToRemove.Add( obj );
-                }
-                else
-                {
-                    partialResult = false;
-                }
-            }
-
-            return RemoveRange( itemsToRemove ) && partialResult;
-        }
-
-        /// <inheritdoc/>
-        public bool Replace( T oldItem, T newItem )
-        {
-            if( !CanReplaceItem( oldItem, newItem ) )
-            {
-                return false;
-            }
-
-            RemoveItem( oldItem );
-            AddItem( newItem );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
-
-            return true;
-        }
-
-        bool ICollectionEx.Replace( object oldItem, object newItem )
-        {
-            if( ( oldItem is T oldObj ) && ( newItem is T newObj ) )
-            {
-                Replace( oldObj, newObj );
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, item, index ) );
                 return true;
             }
             else
@@ -325,41 +212,146 @@ namespace Utilities.DotNet.Collections.Observables
             }
         }
 
+        bool ICollectionEx.Remove( object? item )
+        {
+            if( ( (IList) m_list ).IndexOf( item ) >= 0 )
+            {
+                return Remove( (T) item! );
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void RemoveRange( IEnumerable<T> collection )
+        {
+#if BULK_NOTIFY_RANGE_ACTIONS
+            var removedItems = new ListEx<T>();
+
+            foreach( var item in collection )
+            {
+                if( RemoveItem( item ) >= 0 )
+                {
+                    removedItems.Add( item );
+                }
+            }
+
+            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems ) );
+#else
+            foreach( var itemToRemove in collection )
+            {
+                Remove( itemToRemove );
+            }
+#endif
+        }
+
+        void ICollectionEx.RemoveRange( IEnumerable collection )
+        {
+            foreach( var itemToRemove in collection )
+            {
+                ( (ICollectionEx) this ).Remove( itemToRemove );
+            }
+        }
+
+        /// <inheritdoc/>
+        public bool Replace( T oldItem, T newItem )
+        {
+            var oldIndex = m_list.IndexOf( oldItem );
+            if( oldIndex < 0 )
+            {
+                return false;
+            }
+
+            RemoveItem( oldItem );
+            if( AddItem( newItem ) >= 0 )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
+            }
+            else
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, oldItem, oldIndex ) );
+            }
+
+            return true;
+        }
+
+        bool ICollectionEx.Replace( object? oldItem, object? newItem )
+        {
+            var oldIndex = ( (IList) m_list ).IndexOf( oldItem );
+            if( oldIndex < 0 )
+            {
+                return false;
+            }
+
+            try
+            {
+                T castedOldItem = (T) oldItem!;
+                T castedNewItem = (T) newItem!;
+
+                RemoveItem( castedOldItem );
+                if( AddItem( castedNewItem ) >= 0 )
+                {
+                    NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
+                }
+                else
+                {
+                    NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, oldItem, oldIndex ) );
+                }
+
+                return true;
+            }
+            catch( InvalidCastException )
+            {
+                throw new ArgumentException( $"Incompatible item type", nameof( newItem ) );
+            }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( newItem ) );
+            }
+        }
+
         /// <inheritdoc/>
         public void Clear()
         {
+#if BULK_NOTIFY_RANGE_ACTIONS
             if( m_list.Count == 0 )
             {
                 return;
             }
 
-            DetachItems();
-
-            var removedItems = new ListEx<T>( m_list );
+            var removedItems = new ListEx<T>( m_set );
 
             m_list.Clear();
 
-#if BULK_NOTIFY_RANGE_ACTIONS
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, 0 ) );
 #else
-            foreach( var removedItem in removedItems )
+            while( m_list.Count > 0 )
             {
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItem, 0 ) );
+                var itemToRemove = m_list[ 0 ];
+
+                m_list.RemoveAt( 0 );
+
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, itemToRemove, 0 ) );
             }
 #endif
         }
 
         /// <inheritdoc/>
-        public bool Contains( T item ) => ContainsItem( item );
-
-        bool ICollectionEx.Contains( object item )
+        public bool Contains( T item )
         {
-            return ( item is T obj ) && ContainsItem( obj );
+            return ContainsItem( item );
         }
 
-        bool IReadOnlyCollectionEx<T>.Contains( object item )
+        bool ICollectionEx.Contains( object? item )
         {
-            return ( item is T obj ) && ContainsItem( obj );
+            return ListEx<T>.IsCompatible( item ) && ContainsItem( (T) item! );
+        }
+
+        bool IReadOnlyCollectionEx<T>.Contains( object? item )
+        {
+            return ListEx<T>.IsCompatible( item ) && ContainsItem( (T) item! );
         }
 
         /// <inheritdoc/>
@@ -374,15 +366,9 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
-        public IEnumerator<T> GetEnumerator()
-        {
-            return m_list.GetEnumerator();
-        }
+        public IEnumerator<T> GetEnumerator() => m_list.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return m_list.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => m_list.GetEnumerator();
 
         /// <summary>
         /// Updates the sort order of the specified item if needed.
@@ -396,10 +382,9 @@ namespace Utilities.DotNet.Collections.Observables
         public void UpdateSortOrder( T item )
         {
             int oldIndex = m_list.IndexOf( item );
-
             if( oldIndex < 0 )
             {
-                throw new ArgumentException( nameof( item ) );
+                throw new ArgumentException( "Item not contained in the collection", nameof( item ) );
             }
 
             if( ( ( oldIndex > 0 ) && ( Comparer.Compare( item, m_list[ oldIndex - 1 ] ) < 0 ) ) ||
@@ -426,6 +411,15 @@ namespace Utilities.DotNet.Collections.Observables
         //                            PROTECTED METHODS
         //===========================================================================
 
+        /// <summary>
+        /// Adds the specified item to the collection and attaches the property changed event handler if possible.
+        /// </summary>
+        /// <remarks>
+        /// If the item implements <see cref="System.ComponentModel.INotifyPropertyChanged"/>,
+        /// the method attaches a handler to its <see cref="System.ComponentModel.INotifyPropertyChanged.PropertyChanged"/> event.
+        /// </remarks>
+        /// <param name="item">The item to add to the collection.</param>
+        /// <returns>The zero-based index at which the item was inserted, or -1 if the item could not be added.</returns>
         private protected int AddItem( T item )
         {
             if( !CanAddItem( item ) )
@@ -443,10 +437,19 @@ namespace Utilities.DotNet.Collections.Observables
             return insertionIndex;
         }
 
+        /// <summary>
+        /// Removes the specified item from the collection and detaches any associated event handlers.
+        /// </summary>
+        /// <remarks>
+        /// If the item implements <see cref="System.ComponentModel.INotifyPropertyChanged"/>,
+        /// its  <see cref="System.ComponentModel.INotifyPropertyChanged.PropertyChanged"/> event handler is detached
+        /// before removal.
+        /// </remarks>
+        /// <param name="item">The item to remove from the collection.</param>
+        /// <returns>The zero-based index of the removed item if it was found in the collection; otherwise, -1.</returns>
         private protected int RemoveItem( T item )
         {
             int index = m_list.IndexOf( item );
-
             if( index >= 0 )
             {
                 if( item is INotifyPropertyChanged notifyPropertyChangedItem )
@@ -460,29 +463,70 @@ namespace Utilities.DotNet.Collections.Observables
             return index;
         }
 
+        private protected T RemoveItemAt( int index )
+        {
+            T item = m_list[ index ];
+
+            if( item is INotifyPropertyChanged notifyPropertyChangedItem )
+            {
+                notifyPropertyChangedItem.PropertyChanged -= Item_PropertyChangedEvent;
+            }
+
+            m_list.RemoveAt( index );
+
+            return item;
+        }
+
+        /// <summary>
+        /// Handles the <see cref="INotifyPropertyChanged.PropertyChanged"/> event for an item in the collection.
+        /// </summary>
+        /// <remarks>
+        /// All items added to the collection that implement <see cref="INotifyPropertyChanged"/> must have their
+        /// <see cref="INotifyPropertyChanged.PropertyChanged"/> event attached to this method.
+        /// </remarks>
+        /// <param name="sender">The item that raised the event.</param>
+        /// <param name="e">The event data containing information about the property that changed.</param>
         private protected void Item_PropertyChangedEvent( object? sender, PropertyChangedEventArgs e )
         {
             UpdateSortOrder( (T) sender! );
         }
 
+        /// <summary>
+        /// Raises the <see cref="CollectionChanged"/> event to notify subscribers of changes to the collection.
+        /// </summary>
+        /// <param name="e">The event data containing information about the change to the collection.</param>
         private protected void NotifyCollectionChanged( NotifyCollectionChangedEventArgs e )
         {
             CollectionChanged?.Invoke( this, e );
         }
 
+        /// <summary>
+        /// Determines whether the specified item exists in the collection.
+        /// </summary>
+        /// <remarks>
+        /// Derived classes can override this method to provide custom logic for determining whether an item
+        /// is contained in the collection.
+        /// </remarks>
+        /// <param name="item">The item to locate in the collection.</param>
+        /// <returns><see langword="true"/> if the item is found in the collection;
+        ///           <see langword="false"/> otherwise.</returns>
         private protected virtual bool ContainsItem( T item )
         {
             return m_list.Contains( item );
         }
 
+        /// <summary>
+        /// Determines whether the specified item can be added to the collection.
+        /// </summary>
+        /// <remarks>Derived classes can override this method to provide custom logic for determining whether
+        /// an item is eligible for addition to the collection.
+        /// </remarks>
+        /// <param name="item">The item to evaluate for addition to the collection.</param>
+        /// <returns><see langword="true"/> if the item can be added to the collection;
+        ///           <see langword="false"/> otherwise.</returns>
         private protected virtual bool CanAddItem( T item )
         {
             return true;
-        }
-
-        private protected virtual bool CanReplaceItem( T oldItem, T newItem )
-        {
-            return ContainsItem( oldItem );
         }
 
         /// <summary>
@@ -538,6 +582,6 @@ namespace Utilities.DotNet.Collections.Observables
         //                           PROTECTED ATTRIBUTES
         //===========================================================================
 
-        protected private readonly List<T> m_list = new();
+        protected private readonly ListEx<T> m_list = new();
     }
 }

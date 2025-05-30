@@ -1,6 +1,8 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
+
+using System.Diagnostics;
 
 namespace Utilities.DotNet.Collections
 {
@@ -15,7 +17,7 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <inheritdoc/>
-        public T this[ int index ] => _List[ index ];
+        public T this[ int index ] => List[ index ];
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -27,6 +29,7 @@ namespace Utilities.DotNet.Collections
         /// <param name="list">List to wrap.</param>
         public ReadOnlyListEx( IReadOnlyListEx<T> list ) : base( list )
         {
+            Debug.Assert( ReferenceEquals( list, List ) );
         }
 
         //===========================================================================
@@ -34,33 +37,33 @@ namespace Utilities.DotNet.Collections
         //===========================================================================
 
         /// <inheritdoc/>
-        public IReadOnlyListEx<T> GetRange( int index, int count ) => _List.GetRange( index, count );
+        public IReadOnlyListEx<T> GetRange( int index, int count ) => List.GetRange( index, count );
 
         /// <inheritdoc/>
-        public IReadOnlyListEx<T> Slice( int start, int length ) => _List.Slice( start, length );
+        public IReadOnlyListEx<T> Slice( int start, int length ) => List.Slice( start, length );
 
         /// <inheritdoc/>
-        public int IndexOf( object item ) => _List.IndexOf( item );
+        public int IndexOf( object? item ) => List.IndexOf( item );
 
         /// <inheritdoc/>
-        public int IndexOf( object item, int index ) => _List.IndexOf( item, index );
+        public int IndexOf( object? item, int index ) => List.IndexOf( item, index );
 
         /// <inheritdoc/>
-        public int IndexOf( object item, int index, int count ) => _List.IndexOf( item, index, count );
+        public int IndexOf( object? item, int index, int count ) => List.IndexOf( item, index, count );
 
         /// <inheritdoc/>
-        public int LastIndexOf( object item ) => _List.LastIndexOf( item );
+        public int LastIndexOf( object? item ) => List.LastIndexOf( item );
 
         /// <inheritdoc/>
-        public int LastIndexOf( object item, int index ) => _List.LastIndexOf( item, index );
+        public int LastIndexOf( object? item, int index ) => List.LastIndexOf( item, index );
 
         /// <inheritdoc/>
-        public int LastIndexOf( object item, int index, int count ) => _List.LastIndexOf( item, index, count );
+        public int LastIndexOf( object? item, int index, int count ) => List.LastIndexOf( item, index, count );
 
         //===========================================================================
         //                           PRIVATE PROPERTIES
         //===========================================================================
 
-        private IReadOnlyListEx<T> _List => (IReadOnlyListEx<T>) m_collection;
+        private IReadOnlyListEx<T> List => (IReadOnlyListEx<T>) m_collection;
     }
 }

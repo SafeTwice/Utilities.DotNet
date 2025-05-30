@@ -1,9 +1,10 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2022-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2022-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
@@ -73,10 +74,20 @@ namespace Utilities.DotNet.Collections.Observables
         //                            PUBLIC METHODS
         //===========================================================================
 
-        /*bool IReadOnlyCollectionEx<T>.Contains( object item )
+        /// <inheritdoc cref="ISet{T}.Add(T)"/>
+        public new bool Add( T item )
         {
-            return ( (ICollectionEx) this ).Contains( item );
-        }*/
+            int index = AddItem( item );
+            if( index >= 0 )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         /// <inheritdoc/>
         public void UnionWith( IEnumerable<T> other )
@@ -149,7 +160,7 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         bool IReadOnlySetEx<T>.IsSubsetOf( IEnumerable<object> other ) => IsSubsetOf( other.OfType<T>() );
-        
+
         bool IReadOnlySetEx<T>.IsSupersetOf( IEnumerable<object> other )
         {
             try
@@ -200,23 +211,6 @@ namespace Utilities.DotNet.Collections.Observables
         private protected override bool CanAddItem( T item )
         {
             return !ContainsItem( item );
-        }
-
-        private protected override bool CanReplaceItem( T oldItem, T newItem )
-        {
-            if( !ContainsItem( oldItem ) )
-            {
-                return false;
-            }
-
-            if( Comparer.Compare( oldItem, newItem ) == 0 )
-            {
-                return true;
-            }
-            else
-            {
-                return !ContainsItem( newItem );
-            }
         }
     }
 }

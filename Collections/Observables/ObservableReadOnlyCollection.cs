@@ -66,7 +66,7 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         /// <inheritdoc/>
-        public bool Contains( object item ) => m_collection.Contains( item );
+        public bool Contains( object? item ) => m_collection.Contains( item );
 
         /// <inheritdoc/>
         public IEnumerator<T> GetEnumerator() => m_collection.GetEnumerator();

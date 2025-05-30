@@ -1,9 +1,13 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System.Linq;
 using Xunit;
+
+#pragma warning disable IDE0079
+#pragma warning disable CA1861 // Using constant arrays is intentionally to improve test maintainability.
+#pragma warning restore IDE0079
 
 namespace Utilities.DotNet.Collections.Observables.Test
 {

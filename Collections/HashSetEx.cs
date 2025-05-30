@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -7,12 +7,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+#pragma warning disable S1696
+
 namespace Utilities.DotNet.Collections
 {
     /// <summary>
-    /// Extension of <see cref="HashSet{T}"/> that implements <see cref="IReadOnlySetEx{T}"/>.
+    /// Extension of <see cref="HashSet{T}"/> that implements <see cref="ISetEx{T}"/>.
     /// </summary>
-    public class HashSetEx<T> : HashSet<T>, ISetEx<T>, IReadOnlySetEx<T>, ICollectionEx
+    public class HashSetEx<T> : HashSet<T>, ISetEx<T>, ISetEx
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -43,6 +45,15 @@ namespace Utilities.DotNet.Collections
         }
 
         /// <summary>
+        /// Initializes a new instance that is empty, has the default initial capacity,
+        /// and uses the specified equality comparer.
+        /// </summary>
+        /// <param name="comparer">The <see cref="IEqualityComparer{T}"/> implementation to use when comparing values in the set.</param>
+        public HashSetEx( IEqualityComparer<T> comparer ) : base( comparer )
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance that is empty and has the specified initial capacity.
         /// </summary>
         /// <param name="capacity">Number of elements that the new set can initially store.</param>
@@ -50,115 +61,100 @@ namespace Utilities.DotNet.Collections
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance that uses the specified equality comparer,
+        /// contains elements copied from the specified collection and
+        /// has sufficient capacity to accommodate the number of elements copied.
+        /// </summary>
+        /// <param name="collection">Collection whose elements are copied to the new set.</param>
+        /// <param name="comparer">The <see cref="IEqualityComparer{T}"/> implementation to use when comparing values in the set,
+        ///                        or <see langword="null"/> to use the default <see cref="EqualityComparer{T}"/> implementation for the set type.</param>
+        public HashSetEx( IEnumerable<T> collection, IEqualityComparer<T> comparer ) : base( collection, comparer )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance that uses the specified equality comparer, is empty and has the specified initial capacity.
+        /// </summary>
+        /// <param name="capacity">Number of elements that the new set can initially store.</param>
+        /// <param name="comparer">The <see cref="IEqualityComparer{T}"/> implementation to use when comparing values in the set.</param>
+        public HashSetEx( int capacity, IEqualityComparer<T> comparer ) : base( capacity, comparer )
+        {
+        }
+
         //===========================================================================
         //                            PUBLIC METHODS
         //===========================================================================
 
-        bool ICollectionEx.Add( object item )
+        bool ISetEx.Add( object? item )
         {
-            if( item is T obj )
+            try
             {
-                Add( obj );
-                return true;
+                return base.Add( (T) item! );
             }
-            else
+            catch( InvalidCastException )
             {
-                return false;
+                throw new ArgumentException( $"Incompatible item type", nameof( item ) );
             }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( item ) );
+            }
+        }
+
+        void ICollectionEx.Add( object? item ) => ( (ISetEx) this ).Add( item );
+
+        /// <inheritdoc/>
+        public void AddRange( IEnumerable<T> collection )
+        {
+            foreach( var item in collection )
+            {
+                base.Add( item );
+            }
+        }
+
+        void ICollectionEx.AddRange( IEnumerable collection )
+        {
+            // The casted collection is converted to array to enforce that exceptions
+            // are thrown immediately if the cast fails and therefore ensure that this
+            // object is not modified in case of an exception.
+            var castedCollection = collection.Cast<T>().ToArray();
+
+            AddRange( castedCollection );
+        }
+
+        bool ICollectionEx.Remove( object? item )
+        {
+            return IsCompatible( item ) && Remove( (T) item! );
         }
 
         /// <inheritdoc/>
-        public bool AddRange( IEnumerable<T> collection )
+        public void RemoveRange( IEnumerable<T> collection )
         {
-            bool result = true;
-
             foreach( var item in collection )
             {
-                if( !Add( item ) )
-                {
-                    result = false;
-                }
-            }
-
-            return result;
-        }
-
-        bool ICollectionEx.AddRange( IEnumerable collection )
-        {
-            var itemsToAdd = new ListEx<T>();
-
-            foreach( var item in collection )
-            {
-                if( item is T obj )
-                {
-                    itemsToAdd.Add( obj );
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            AddRange( itemsToAdd );
-
-            return true;
-        }
-
-        bool ICollectionEx.Remove( object item )
-        {
-            if( item is T obj )
-            {
-                return Remove( obj );
-            }
-            else
-            {
-                return false;
+                base.Remove( item );
             }
         }
 
-        /// <inheritdoc/>
-        public bool RemoveRange( IEnumerable<T> collection )
+        void ICollectionEx.RemoveRange( IEnumerable collection )
         {
-            var result = true;
-
             foreach( var item in collection )
             {
-                if( !Remove( item ) )
-                {
-                    result = false;
-                }
+                ( (ICollectionEx) this ).Remove( item );
             }
-
-            return result;
-        }
-
-        bool ICollectionEx.RemoveRange( IEnumerable collection )
-        {
-            bool partialResult = true;
-            var itemsToRemove = new ListEx<T>();
-
-            foreach( var item in collection )
-            {
-                if( item is T obj )
-                {
-                    itemsToRemove.Add( obj );
-                }
-                else
-                {
-                    partialResult = false;
-                }
-            }
-
-            return RemoveRange( itemsToRemove ) && partialResult;
         }
 
         /// <inheritdoc/>
         public bool Replace( T oldItem, T newItem )
         {
-            if( !Contains( oldItem ) ||
-                ( !Comparer.Equals( oldItem, newItem ) && Contains( newItem ) ) )
+            if( !Contains( oldItem ) )
             {
                 return false;
+            }
+            else if( Comparer.Equals( oldItem, newItem ) )
+            {
+                return true;
             }
 
             Remove( oldItem );
@@ -167,27 +163,35 @@ namespace Utilities.DotNet.Collections
             return true;
         }
 
-        bool ICollectionEx.Replace( object oldItem, object newItem )
+        bool ICollectionEx.Replace( object? oldItem, object? newItem )
         {
-            if( ( oldItem is T oldObj ) && ( newItem is T newObj ) )
-            {
-                Replace( oldObj, newObj );
-                return true;
-            }
-            else
+            if( !( (ICollectionEx) this ).Contains( oldItem ) )
             {
                 return false;
             }
+
+            try
+            {
+                return Replace( (T) oldItem!, (T) newItem! );
+            }
+            catch( InvalidCastException )
+            {
+                throw new ArgumentException( $"Incompatible item type", nameof( newItem ) );
+            }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( newItem ) );
+            }
         }
 
-        bool ICollectionEx.Contains( object item )
+        bool ICollectionEx.Contains( object? item )
         {
-            return ( item is T obj ) && Contains( obj );
+            return IsCompatible( item ) && base.Contains( (T) item! );
         }
 
-        bool IReadOnlyCollectionEx<T>.Contains( object item )
+        bool IReadOnlyCollectionEx<T>.Contains( object? item )
         {
-            return ( item is T obj ) && Contains( obj );
+            return IsCompatible( item ) && base.Contains( (T) item! );
         }
 
         void ICollection.CopyTo( Array array, int index )
@@ -235,6 +239,15 @@ namespace Utilities.DotNet.Collections
             {
                 return false;
             }
+        }
+
+        //===========================================================================
+        //                            PRIVATE METHODS
+        //===========================================================================
+
+        internal bool IsCompatible( object? value )
+        {
+            return ( value is T ) || ( ( value is null ) && ( default( T ) is null ) );
         }
     }
 }

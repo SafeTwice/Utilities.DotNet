@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2022-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2022-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 namespace Utilities.DotNet.Collections.Observables
@@ -15,7 +15,7 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         /// <inheritdoc/>
-        public T this[ int index ] => _List[ index ];
+        public T this[ int index ] => List[ index ];
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -35,37 +35,37 @@ namespace Utilities.DotNet.Collections.Observables
         //===========================================================================
 
         /// <inheritdoc/>
-        public IObservableReadOnlyList<T> GetRange( int index, int count ) => _List.GetRange( index, count );
+        public IObservableReadOnlyList<T> GetRange( int index, int count ) => List.GetRange( index, count );
 
-        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count ) => _List.GetRange( index, count );
-
-        /// <inheritdoc/>
-        public IObservableReadOnlyList<T> Slice( int start, int length ) => _List.Slice( start, length );
-
-        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length ) => _List.Slice( start, length );
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.GetRange( int index, int count ) => List.GetRange( index, count );
 
         /// <inheritdoc/>
-        public int IndexOf( object value ) => _List.IndexOf( value );
+        public IObservableReadOnlyList<T> Slice( int start, int length ) => List.Slice( start, length );
+
+        IReadOnlyListEx<T> IReadOnlyListEx<T>.Slice( int start, int length ) => List.Slice( start, length );
 
         /// <inheritdoc/>
-        public int IndexOf( object item, int index ) => _List.IndexOf( item, index );
+        public int IndexOf( object? item ) => List.IndexOf( item );
 
         /// <inheritdoc/>
-        public int IndexOf( object item, int index, int count ) => _List.IndexOf( item, index, count );
+        public int IndexOf( object? item, int index ) => List.IndexOf( item, index );
 
         /// <inheritdoc/>
-        public int LastIndexOf( object value ) => _List.LastIndexOf( value );
+        public int IndexOf( object? item, int index, int count ) => List.IndexOf( item, index, count );
 
         /// <inheritdoc/>
-        public int LastIndexOf( object item, int index ) => _List.LastIndexOf( item, index );
+        public int LastIndexOf( object? item ) => List.LastIndexOf( item );
 
         /// <inheritdoc/>
-        public int LastIndexOf( object item, int index, int count ) => _List.LastIndexOf( item, index, count );
+        public int LastIndexOf( object? item, int index ) => List.LastIndexOf( item, index );
+
+        /// <inheritdoc/>
+        public int LastIndexOf( object? item, int index, int count ) => List.LastIndexOf( item, index, count );
 
         //===========================================================================
         //                           PRIVATE PROPERTIES
         //===========================================================================
 
-        private IObservableReadOnlyList<T> _List => (IObservableReadOnlyList<T>) m_collection;
+        private IObservableReadOnlyList<T> List => (IObservableReadOnlyList<T>) m_collection;
     }
 }

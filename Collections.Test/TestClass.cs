@@ -1,13 +1,14 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
 using System.ComponentModel;
+using Xunit.Abstractions;
 
-namespace Utilities.DotNet.Collections.Observables.Test
+namespace Utilities.DotNet.Collections.Test
 {
-    public class TestClass : INotifyPropertyChanged, IComparable
+    public class TestClass : INotifyPropertyChanged, IComparable, IXunitSerializable
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -49,6 +50,12 @@ namespace Utilities.DotNet.Collections.Observables.Test
         //                          PUBLIC CONSTRUCTORS
         //===========================================================================
 
+        public TestClass()
+        {
+            m_name = string.Empty;
+            m_value = 0;
+        }
+
         public TestClass( string name, int value )
         {
             m_name = name;
@@ -58,6 +65,11 @@ namespace Utilities.DotNet.Collections.Observables.Test
         //===========================================================================
         //                            PUBLIC METHODS
         //===========================================================================
+
+        public override string ToString()
+        {
+            return $"<{m_name} / {m_value}>";
+        }
 
         public int CompareTo( object? obj )
         {
@@ -75,9 +87,23 @@ namespace Utilities.DotNet.Collections.Observables.Test
             }
         }
 
-        public override bool Equals( object? other ) => ( CompareTo( other ) == 0 );
+        public override bool Equals( object? obj ) => ( CompareTo( obj ) == 0 );
 
+#pragma warning disable S2328 // "GetHashCode" should not reference mutable fields
         public override int GetHashCode() => m_name.GetHashCode();
+#pragma warning restore S2328 // "GetHashCode" should not reference mutable fields
+
+        public void Serialize( IXunitSerializationInfo info )
+        {
+            info.AddValue( nameof( Name ), m_name );
+            info.AddValue( nameof( Value ), m_value );
+        }
+
+        public void Deserialize( IXunitSerializationInfo info )
+        {
+            m_name = info.GetValue<string>( nameof( Name ) );
+            m_value = info.GetValue<int>( nameof( Value ) );
+        }
 
         //===========================================================================
         //                            PRIVATE METHODS

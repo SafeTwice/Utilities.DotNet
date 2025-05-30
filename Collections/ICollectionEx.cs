@@ -1,7 +1,8 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
 using System.Collections;
 
 namespace Utilities.DotNet.Collections
@@ -19,37 +20,61 @@ namespace Utilities.DotNet.Collections
         /// Adds an item to the collection.
         /// </summary>
         /// <param name="item">Item to be added to the collection.</param>
-        /// <returns><c>true</c> if the item could be added; <c>false</c> otherwise.</returns>
-        bool Add( object item );
+        /// <exception cref="ArgumentException">
+        /// Thrown when the type of <paramref name="item"/> is not compatible with the collection.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the type of <paramref name="item"/> is not compatible with the list.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="item"/> is <see langword="null"/> but the collection does not accept <see langword="null"/> values.
+        /// </exception>
+        void Add( object? item );
 
         /// <summary>
         /// Adds the items of the specified collection to the collection.
         /// </summary>
         /// <param name="collection">Collection whose items will be added to the collection.</param>
-        /// <returns><c>true</c> if the items could be added; <c>false</c> otherwise.</returns>
-        bool AddRange( IEnumerable collection );
+        /// <exception cref="InvalidCastException">
+        /// Thrown when the type of any item of <paramref name="collection"/> is not compatible with the list.
+        /// </exception>
+        /// <exception cref="NullReferenceException">
+        /// Thrown when the type of any item of <paramref name="collection"/> is <see langword="null"/> but the collection
+        /// does not accept <see langword="null"/> values.
+        /// </exception>
+        void AddRange( IEnumerable collection );
 
         /// <summary>
         /// Removes the first occurrence of a specific item from the collection.
         /// </summary>
         /// <param name="item">Item to be removed.</param>
-        /// <returns><c>true</c> if the item was present and removed; <c>false</c> otherwise.</returns>
-        bool Remove( object item );
+        /// <returns><see langword="true"/> if the item was present (the operation succeeded);
+        ///          <see langword="false"/> otherwise (the operation failed).</returns>
+        bool Remove( object? item );
 
         /// <summary>
         /// Removes the items of the specified collection from the collection.
         /// </summary>
+        /// <remarks>
+        /// Items in the collection to be removed not present in the collection will be ignored.
+        /// </remarks>
         /// <param name="collection">Collection whose items will be removed from the collection.</param>
-        /// <returns><c>true</c> if all the items were present and removed; <c>false</c> otherwise.</returns>
-        bool RemoveRange( IEnumerable collection );
+        void RemoveRange( IEnumerable collection );
 
         /// <summary>
         /// Replaces an item in the collection with another item.
         /// </summary>
         /// <param name="oldItem">Item to replace.</param>
         /// <param name="newItem">Replacing item.</param>
-        /// <returns><c>true</c> if the item could be replaced; <c>false</c> otherwise.</returns>
-        bool Replace( object oldItem, object newItem );
+        /// <returns><see langword="true"/> if the item to be replaced is present (the operation succeeded);
+        ///          <see langword="false"/> otherwise (the operation failed).</returns>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the type of <paramref name="newItem"/> is not compatible with the list.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="newItem"/> is <see langword="null"/> but the collection does not accept <see langword="null"/> values.
+        /// </exception>
+        bool Replace( object? oldItem, object? newItem );
 
         /// <summary>
         /// Removes all items from the collection.
@@ -60,8 +85,8 @@ namespace Utilities.DotNet.Collections
         /// Determines whether the collection contains a specific item.
         /// </summary>
         /// <param name="item">The item to locate in the collection.</param>
-        /// <returns><c>true</c> if item is found; otherwise, <c>false</c>.</returns>
-        bool Contains( object item );
-
+        /// <returns><see langword="true"/> if item is found;
+        ///          <see langword="false"/> otherwise.</returns>
+        bool Contains( object? item );
     }
 }
