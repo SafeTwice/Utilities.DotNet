@@ -1,7 +1,8 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2022-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2022-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
 using System.Collections.Specialized;
 
 namespace Utilities.DotNet.Collections.Observables
@@ -15,7 +16,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// the collection can still be modified by other means.
     /// </remarks>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
-    public interface IObservableReadOnlyCollection<out T> : IReadOnlyCollectionEx<T>, INotifyCollectionChanged
+    public interface IObservableReadOnlyCollection<out T> : IReadOnlyCollectionEx<T>, INotifyCollectionChanged, IDisposable
     {
     }
 }

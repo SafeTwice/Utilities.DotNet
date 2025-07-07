@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -63,6 +63,33 @@ namespace Utilities.DotNet.Collections.Observables.Test
             Assert.False( ( (IList) observableList ).IsFixedSize );
             Assert.NotNull( ( (IList) observableList ).SyncRoot );
             Assert.False( ( (IList) observableList ).IsSynchronized );
+        }
+
+        [Fact]
+        public void Dispose()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var observableList = new ObservableList<int>( new[] { 1, 2, 3 } );
+
+            observableList.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableList, obj );
+                events.Add( args );
+            };
+
+            // Act
+
+            observableList.Dispose();
+
+            // Assert
+
+            Assert.Equal( new int[] { }, observableList );
+            Assert.Equal( 0, observableList.Count );
+
+            Assert.Empty( events );
         }
 
         [Fact]

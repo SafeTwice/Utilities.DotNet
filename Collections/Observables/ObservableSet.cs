@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2022-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2022-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -104,6 +104,18 @@ namespace Utilities.DotNet.Collections.Observables
         {
             m_set = new HashSet<T>( comparer );
             AddRange( items );
+        }
+
+        //===========================================================================
+        //                               FINALIZER
+        //===========================================================================
+
+        /// <summary>
+        /// Finalizer.
+        /// </summary>
+        ~ObservableSet()
+        {
+            Dispose( false );
         }
 
         //===========================================================================
@@ -325,9 +337,9 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
-        public bool Contains( T value )
+        public bool Contains( T item )
         {
-            return m_set.Contains( value );
+            return m_set.Contains( item );
         }
 
         bool ICollectionEx.Contains( object item )
@@ -348,9 +360,9 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
-        public void CopyTo( T[] array, int index )
+        public void CopyTo( T[] array, int arrayIndex )
         {
-            m_set.CopyTo( array, index );
+            m_set.CopyTo( array, arrayIndex );
         }
 
         void ICollection.CopyTo( Array array, int index )
@@ -457,6 +469,13 @@ namespace Utilities.DotNet.Collections.Observables
             }
         }
 
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose( true );
+            GC.SuppressFinalize( this );
+        }
+
         //===========================================================================
         //                            PROTECTED METHODS
         //===========================================================================
@@ -464,6 +483,24 @@ namespace Utilities.DotNet.Collections.Observables
         protected private void NotifyCollectionChanged( NotifyCollectionChangedEventArgs e )
         {
             CollectionChanged?.Invoke( this, e );
+        }
+
+        /// <summary>
+        /// Derived classes must override this method to release resources.
+        /// </summary>
+        /// <param name="disposing"><see langword="true"/> to release both managed and unmanaged resources;
+        ///                         <see langword="false"/> to release only unmanaged resources.</param>
+        /// <remarks>
+        /// <para>Overriding implementations must only dispose other objects when <paramref name="disposing"/> is <see langword="true"/>.</para>
+        /// <para>Overriding implementations must call its base class implementation for this method passing the
+        ///       <paramref name="disposing"/> parameter.</para>
+        /// </remarks>
+        protected virtual void Dispose( bool disposing )
+        {
+            if( disposing )
+            {
+                m_set.Clear();
+            }
         }
 
         //===========================================================================

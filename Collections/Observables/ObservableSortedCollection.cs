@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2022-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2022-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -125,7 +125,7 @@ namespace Utilities.DotNet.Collections.Observables
         [ExcludeFromCodeCoverage]
         ~ObservableSortedCollection()
         {
-            DetachItems();
+            Dispose( false );
         }
 
         //===========================================================================
@@ -305,7 +305,7 @@ namespace Utilities.DotNet.Collections.Observables
             }
 
             RemoveItem( oldItem );
-            var insertionIndex = AddItem( newItem );
+            AddItem( newItem );
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
 
@@ -350,7 +350,7 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
-        public bool Contains( T value ) => ContainsItem( value );
+        public bool Contains( T item ) => ContainsItem( item );
 
         bool ICollectionEx.Contains( object item )
         {
@@ -363,9 +363,9 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
-        public void CopyTo( T[] array, int index )
+        public void CopyTo( T[] array, int arrayIndex )
         {
-            m_list.CopyTo( array, index );
+            m_list.CopyTo( array, arrayIndex );
         }
 
         void ICollection.CopyTo( Array array, int index )
@@ -402,18 +402,8 @@ namespace Utilities.DotNet.Collections.Observables
                 throw new ArgumentException( nameof( item ) );
             }
 
-            bool needsReorder = false;
-
-            if( ( oldIndex > 0 ) && Comparer.Compare( item, m_list[ oldIndex - 1 ] ) < 0 )
-            {
-                needsReorder = true;
-            }
-            else if( ( oldIndex < m_list.Count - 1 ) && Comparer.Compare( item, m_list[ oldIndex + 1 ] ) > 0 )
-            {
-                needsReorder = true;
-            }
-
-            if( needsReorder )
+            if( ( ( oldIndex > 0 ) && ( Comparer.Compare( item, m_list[ oldIndex - 1 ] ) < 0 ) ) ||
+                ( ( oldIndex < m_list.Count - 1 ) && ( Comparer.Compare( item, m_list[ oldIndex + 1 ] ) > 0 ) ) )
             {
                 m_list.RemoveAt( oldIndex );
                 int newIndex = AddItemNoAttach( item );
@@ -423,6 +413,13 @@ namespace Utilities.DotNet.Collections.Observables
                     NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Move, item, newIndex, oldIndex ) );
                 }
             }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose( true );
+            GC.SuppressFinalize( this );
         }
 
         //===========================================================================
@@ -486,6 +483,26 @@ namespace Utilities.DotNet.Collections.Observables
         private protected virtual bool CanReplaceItem( T oldItem, T newItem )
         {
             return ContainsItem( oldItem );
+        }
+
+        /// <summary>
+        /// Derived classes must override this method to release resources.
+        /// </summary>
+        /// <param name="disposing"><see langword="true"/> to release both managed and unmanaged resources;
+        ///                         <see langword="false"/> to release only unmanaged resources.</param>
+        /// <remarks>
+        /// <para>Overriding implementations must only dispose other objects when <paramref name="disposing"/> is <see langword="true"/>.</para>
+        /// <para>Overriding implementations must call its base class implementation for this method passing the
+        ///       <paramref name="disposing"/> parameter.</para>
+        /// </remarks>
+        protected virtual void Dispose( bool disposing )
+        {
+            DetachItems();
+
+            if( disposing )
+            {
+                m_list.Clear();
+            }
         }
 
         //===========================================================================

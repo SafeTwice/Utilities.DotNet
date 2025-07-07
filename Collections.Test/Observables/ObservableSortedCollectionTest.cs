@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -83,6 +83,33 @@ namespace Utilities.DotNet.Collections.Observables.Test
             Assert.Same( customComparer, observableCollection.Comparer );
 
             Assert.False( ( (IObservableCollection<int>) observableCollection ).IsReadOnly );
+        }
+
+        [Fact]
+        public void Dispose()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var testedCollection = new ObservableSortedCollection<int>( new[] { 1, 2, 3 } );
+
+            testedCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( testedCollection, obj );
+                events.Add( args );
+            };
+
+            // Act
+
+            testedCollection.Dispose();
+
+            // Assert
+
+            Assert.Equal( new int[] { }, testedCollection );
+            Assert.Equal( 0, testedCollection.Count );
+
+            Assert.Empty( events );
         }
 
         [Fact]

@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System.Collections;
@@ -35,7 +35,35 @@ namespace Utilities.DotNet.Collections.Observables.Test
         }
 
         [Fact]
-        public void AddToObserverdList()
+        public void Dispose()
+        {
+            // Arrange
+
+            var events = new List<NotifyCollectionChangedEventArgs>();
+
+            var baseCollection = new ObservableCollection<int>( new[] { 1, 2, 3 } );
+
+            var testedCollection = new ObservableReadOnlyCollection<int>( baseCollection );
+
+            testedCollection.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( testedCollection, obj );
+                events.Add( args );
+            };
+
+            // Act
+
+            testedCollection.Dispose();
+
+            baseCollection.Add( 4 );
+
+            // Assert
+
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void AddToObservedList()
         {
             var events = new List<NotifyCollectionChangedEventArgs>();
 

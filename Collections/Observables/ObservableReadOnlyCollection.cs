@@ -1,7 +1,8 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2022-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2022-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -57,7 +58,7 @@ namespace Utilities.DotNet.Collections.Observables
         [ExcludeFromCodeCoverage]
         ~ObservableReadOnlyCollection()
         {
-            m_collection.CollectionChanged -= Collection_CollectionChangedEvent;
+            Dispose( false );
         }
 
         //===========================================================================
@@ -71,6 +72,32 @@ namespace Utilities.DotNet.Collections.Observables
         public IEnumerator<T> GetEnumerator() => m_collection.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => m_collection.GetEnumerator();
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose( true );
+            GC.SuppressFinalize( this );
+        }
+
+        //===========================================================================
+        //                            PROTECTED METHODS
+        //===========================================================================
+
+        /// <summary>
+        /// Derived classes must override this method to release resources.
+        /// </summary>
+        /// <param name="disposing"><see langword="true"/> to release both managed and unmanaged resources;
+        ///                         <see langword="false"/> to release only unmanaged resources.</param>
+        /// <remarks>
+        /// <para>Overriding implementations must only dispose other objects when <paramref name="disposing"/> is <see langword="true"/>.</para>
+        /// <para>Overriding implementations must call its base class implementation for this method passing the
+        ///       <paramref name="disposing"/> parameter.</para>
+        /// </remarks>
+        protected virtual void Dispose( bool disposing )
+        {
+            m_collection.CollectionChanged -= Collection_CollectionChangedEvent;
+        }
 
         //===========================================================================
         //                            PRIVATE METHODS
