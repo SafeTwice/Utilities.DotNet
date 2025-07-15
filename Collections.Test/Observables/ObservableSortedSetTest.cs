@@ -266,8 +266,8 @@ namespace Utilities.DotNet.Collections.Observables.Test
 
         [Theory]
         [ClassData( typeof( Add_Class_Nullable_TestData ) )]
-        public void ICollectionExT_Add( IEnumerable<TestClass?> initialState, TestClass? addedItem, bool _, IEnumerable<TestClass?> expectedState,
-                                        IEnumerable<CollectionChangedEventData> expectedEvents )
+        public void ICollectionExT_Add_Class_Nullable( IEnumerable<TestClass?> initialState, TestClass? addedItem, bool _, IEnumerable<TestClass?> expectedState,
+                                                       IEnumerable<CollectionChangedEventData> expectedEvents )
         {
             // Arrange
 
@@ -1388,10 +1388,32 @@ namespace Utilities.DotNet.Collections.Observables.Test
             {
                 Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
                      3.2,
+                     3.4,
+                     true,
+                     new double[] { 3.4, 5.2, 8.0, 44.5 }, // Replaced item present, replacement item not present, does not need reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 3.4 }, new object?[] { 3.2 }, 0, 0 ),
+                     } );
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     3.2,
                      34.0,
                      true,
-                     new double[] { 5.2, 8.0, 34.0, 44.5 }, // Replaced item present, replacement item not present
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 34.0 }, new object?[] { 3.2 }, -1, -1 ) } );
+                     new double[] { 5.2, 8.0, 34.0, 44.5 }, // Replaced item present, replacement item not present, needs reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3.2 }, -1, -0 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 34.0 }, null, 2, -1 ),
+                     } );
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     8.0,
+                     8.0,
+                     true,
+                     new double[] { 3.2, 5.2, 8.0, 44.5 }, // Same item
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 8.0 }, new object?[] { 8.0 }, 2, 2 ),
+                     } );
                 Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
                      3.1,
                      34.0,
@@ -1403,13 +1425,19 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      8.0,
                      true,
                      new double[] { 5.2, 8.0, 44.5 }, // Replaced item present, replacement item present
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3.2 }, -1, 0 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3.2 }, -1, 0 ),
+                     } );
                 Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
                      3.2,
                      3.2,
                      true,
                      new double[] { 3.2, 5.2, 8.0, 44.5 }, // Same item
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 3.2 }, new object?[] { 3.2 }, -1, -1 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 3.2 }, new object?[] { 3.2 }, 0, 0 ),
+                     } );
             }
         }
 
@@ -1448,52 +1476,88 @@ namespace Utilities.DotNet.Collections.Observables.Test
             {
                 Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
                      3.2,
+                     3.4,
+                     true,
+                     new double?[] { null, 3.4, 5.2, 8.0, 44.5 }, // Replaced item present, replacement item not present, does not need reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 3.4 }, new object?[] { 3.2 }, 1, 1 ),
+                     } );
+                Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
+                     3.2,
                      34.0,
                      true,
-                     new double?[] { null, 5.2, 8.0, 34.0, 44.5 }, // Replaced item present, replacement item not present
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 34.0 }, new object?[] { 3.2 }, -1, -1 ) } );
+                     new double?[] { null, 5.2, 8.0, 34.0, 44.5 }, // Replaced item present, replacement item not present, needs reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3.2 }, -1, 1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 34.0 }, null, 3, -1 ),
+                     } );
                 Add( new double?[] { 8.0, 3.2, 44.5, 5.2 },
                      5.2,
                      null,
                      true,
-                     new double?[] { null, 3.2, 8.0, 44.5 }, // Replaced item present, replacement item not present
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { null }, new object?[] { 5.2 }, -1, -1 ) } );
+                     new double?[] { null, 3.2, 8.0, 44.5 }, // Replaced item present, replacement item not present, needs reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 5.2 }, -1, 1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 0, -1 ),
+                     } );
                 Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
                      null,
                      98.7,
                      true,
                      new double?[] { 3.2, 5.2, 8.0, 44.5, 98.7 }, // Replaced item present, replacement item not present
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 98.7 }, new object?[] { null }, -1, -1 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 98.7 }, null, 4, -1 ),
+                     } );
                 Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
                      44.5,
                      44.5,
                      true,
                      new double?[] { null, 3.2, 5.2, 8.0, 44.5 }, // Same non-null item
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 44.5 }, new object?[] { 44.5 }, -1, -1 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 44.5 }, new object?[] { 44.5 }, 4, 4 ),
+                     } );
                 Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
                      null,
                      null,
                      true,
                      new double?[] { null, 3.2, 5.2, 8.0, 44.5 }, // Same null item
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { null }, new object?[] { null }, -1, -1 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { null }, new object?[] { null }, 0, 0 ),
+                     } );
                 Add( new double?[] { 8.0, 3.2, 44.5, 5.2 },
                      3.2,
                      8.0,
                      true,
                      new double?[] { 5.2, 8.0, 44.5 }, // Replaced item present, replacement item present
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3.2 }, -1, 0 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3.2 }, -1, 0 ),
+                     } );
                 Add( new double?[] { null, 8.0, 3.2, 44.5, 5.2 },
                      3.2,
                      null,
                      true,
                      new double?[] { null, 5.2, 8.0, 44.5 }, // Replaced item present, replacement item present
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3.2 }, -1, 1 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3.2 }, -1, 1 ),
+                     } );
                 Add( new double?[] { null, 8.0, 3.2, 44.5, 5.2 },
                      null,
                      3.2,
                      true,
                      new double?[] { 3.2, 5.2, 8.0, 44.5 }, // Replaced item present, replacement item present
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ),
+                     } );
                 Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
                      3.1,
                      34.0,
@@ -1550,10 +1614,23 @@ namespace Utilities.DotNet.Collections.Observables.Test
             {
                 Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
                      3.2,
+                     3.4,
+                     true,
+                     new double[] { 3.4, 5.2, 8.0, 44.5 }, // Replaced item present, replacement item not present, does not need reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 3.4 }, new object?[] { 3.2 }, 0, 0 ),
+                     } );
+                Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
+                     3.2,
                      34.0,
                      true,
-                     new double[] { 5.2, 8.0, 34.0, 44.5 }, // Replaced item present, replacement item not present
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 34.0 }, new object?[] { 3.2 }, -1, -1 ) } );
+                     new double[] { 5.2, 8.0, 34.0, 44.5 }, // Replaced item present, replacement item not present, needs reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3.2 }, -1, 0 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 34.0 }, null, 2, -1 ),
+                     } );
                 Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
                      3.2,
                      44.5,
@@ -1565,7 +1642,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      5.2,
                      true,
                      new double[] { 3.2, 5.2, 8.0, 44.5 }, // Same item
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 5.2 }, new object?[] { 5.2 }, -1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 5.2 }, new object?[] { 5.2 }, 1, 1 ) } );
                 Add( new double[] { 8.0, 3.2, 44.5, 5.2 },
                      3.1,
                      34.0,
@@ -1689,28 +1766,61 @@ namespace Utilities.DotNet.Collections.Observables.Test
             {
                 Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
                      3.2,
+                     3.4,
+                     true,
+                     new double?[] { null, 3.4, 5.2, 8.0, 44.5 }, // Replaced item present (non-null), replacement item not present (non-null), does not need reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 3.4 }, new object?[] { 3.2 }, 1, 1 ),
+                     } );
+                Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
+                     3.2,
                      34.0,
                      true,
-                     new double?[] { null, 5.2, 8.0, 34.0, 44.5 }, // Replaced item present (non-null), replacement item not present (non-null)
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 34.0 }, new object?[] { 3.2 }, -1, -1 ) } );
+                     new double?[] { null, 5.2, 8.0, 34.0, 44.5 }, // Replaced item present (non-null), replacement item not present (non-null), needs reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3.2 }, -1, 1 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 34.0 }, null, 3, -1 ),
+                     } );
+                Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
+                     null,
+                     2.0,
+                     true,
+                     new double?[] { 2.0, 3.2, 5.2, 8.0, 44.5 }, // Replaced item present (null), replacement item not present (non-null), does not need reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 2.0 }, new object?[] { null }, 0, 0 ),
+                     } );
                 Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
                      null,
                      34.0,
                      true,
-                     new double?[] { 3.2, 5.2, 8.0, 34.0, 44.5 }, // Replaced item present (null), replacement item not present (non-null)
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 34.0 }, new object?[] { null }, -1, -1 ) } );
+                     new double?[] { 3.2, 5.2, 8.0, 34.0, 44.5 }, // Replaced item present (null), replacement item not present (non-null), needs reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 34.0 }, null, 3, -1 ),
+                     } );
                 Add( new double?[] { 8.0, 3.2, 44.5, 5.2 },
                      44.5,
                      null,
                      true,
-                     new double?[] { null, 3.2, 5.2, 8.0 }, // Replaced item present (non-null), replacement item not present (null)
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { null }, new object?[] { 44.5 }, -1, -1 ) } );
+                     new double?[] { null, 3.2, 5.2, 8.0 }, // Replaced item present (non-null), replacement item not present (null), needs reordering
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44.5 }, -1, 3 ),
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 0, -1 ),
+                     } );
                 Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
                      null,
                      8.0,
                      true,
                      new double?[] { 3.2, 5.2, 8.0, 44.5 }, // Replaced item present (null), replacement item present (non-null)
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ),
+                     } );
                 Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
                      44.5,
                      null,
@@ -1722,13 +1832,19 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      3.2,
                      true,
                      new double?[] { null, 3.2, 5.2, 8.0, 44.5 }, // Same item (non-null)
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 3.2 }, new object?[] { 3.2 }, -1, -1 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { 3.2 }, new object?[] { 3.2 }, 1, 1 ),
+                     } );
                 Add( new double?[] { 8.0, 3.2, null, 44.5, 5.2 },
                      null,
                      null,
                      true,
                      new double?[] { null, 3.2, 5.2, 8.0, 44.5 }, // Same item (null)
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { null }, new object?[] { null }, -1, -1 ) } );
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Replace, new object?[] { null }, new object?[] { null }, 0, 0 ),
+                     } );
                 Add( new double?[] { 8.0, null, 3.2, 44.5, 5.2 },
                      3.1,
                      34.0,

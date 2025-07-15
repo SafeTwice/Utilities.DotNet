@@ -9,6 +9,8 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 
+#pragma warning disable S1696
+
 namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
@@ -81,31 +83,28 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public void Add( T item )
         {
-            var index = m_list.Count;
+            var index = AddItem( item );
 
-            m_list.Add( item );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+            if( index >= 0 )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
+            }
         }
 
         void ICollectionEx.Add( object? item )
         {
-            var index = m_list.Count;
-
             try
             {
-                ( (IList) m_list ).Add( item );
+                Add( (T) item! );
             }
-            catch( ArgumentNullException )
+            catch( InvalidCastException )
+            {
+                throw new ArgumentException( $"Incompatible item type", nameof( item ) );
+            }
+            catch( NullReferenceException )
             {
                 throw new ArgumentNullException( nameof( item ) );
             }
-            catch( ArgumentException ex )
-            {
-                throw new ArgumentException( ex.Message, nameof( item ), ex );
-            }
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, item, index ) );
         }
 
         /// <inheritdoc/>
@@ -228,7 +227,21 @@ namespace Utilities.DotNet.Collections.Observables
                 return false;
             }
 
-            m_list.Replace( index, newItem );
+            if( !oldItem?.Equals( newItem ) ?? ( newItem is not null ) )
+            {
+                if( CanAddItem( newItem ) )
+                {
+                    m_list.Replace( index, newItem );
+                }
+                else
+                {
+                    m_list.RemoveAt( index );
+
+                    NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, oldItem, index ) );
+
+                    return true;
+                }
+            }
 
             NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem, index ) );
 
@@ -237,14 +250,20 @@ namespace Utilities.DotNet.Collections.Observables
 
         bool ICollectionEx.Replace( object? oldItem, object? newItem )
         {
-            var index = ( (IList) m_list ).IndexOf( oldItem );
-            if( index >= 0 )
+            if( ( (IList) m_list ).Contains( oldItem ) )
             {
-                ( (IListEx) m_list ).Replace( index, newItem );
-
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem, index ) );
-
-                return true;
+                try
+                {
+                    return Replace( (T) oldItem!, (T) newItem! );
+                }
+                catch( InvalidCastException )
+                {
+                    throw new ArgumentException( $"Incompatible item type", nameof( newItem ) );
+                }
+                catch( NullReferenceException )
+                {
+                    throw new ArgumentNullException( nameof( newItem ) );
+                }
             }
             else
             {
@@ -321,9 +340,46 @@ namespace Utilities.DotNet.Collections.Observables
         //                            PROTECTED METHODS
         //===========================================================================
 
+        /// <summary>
+        /// Adds the specified item to the collection.
+        /// </summary>
+        /// <param name="item">The item to add to the collection.</param>
+        /// <returns>The zero-based index at which the item was inserted, or -1 if the item could not be added.</returns>
+        private protected int AddItem( T item )
+        {
+            if( !CanAddItem( item ) )
+            {
+                return -1;
+            }
+
+            var insertionIndex = Count;
+
+            m_list.Add( item );
+
+            return insertionIndex;
+        }
+
+        /// <summary>
+        /// Raises the <see cref="CollectionChanged"/> event to notify subscribers of changes to the collection.
+        /// </summary>
+        /// <param name="e">The event data containing information about the change to the collection.</param>
         protected private void NotifyCollectionChanged( NotifyCollectionChangedEventArgs e )
         {
             CollectionChanged?.Invoke( this, e );
+        }
+
+        /// <summary>
+        /// Determines whether the specified item can be added to the collection.
+        /// </summary>
+        /// <remarks>Derived classes can override this method to provide custom logic for determining whether
+        /// an item is eligible for addition to the collection.
+        /// </remarks>
+        /// <param name="item">The item to evaluate for addition to the collection.</param>
+        /// <returns><see langword="true"/> if the item can be added to the collection;
+        ///           <see langword="false"/> otherwise.</returns>
+        private protected virtual bool CanAddItem( T item )
+        {
+            return true;
         }
 
         /// <summary>

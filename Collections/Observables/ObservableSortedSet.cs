@@ -125,17 +125,17 @@ namespace Utilities.DotNet.Collections.Observables
         }
 
         /// <inheritdoc/>
-        public bool IsSupersetOf( IEnumerable<T> other )
-        {
-            var otherHash = other.ToHashSet();
-            return otherHash.IsSubsetOf( m_list );
-        }
-
-        /// <inheritdoc/>
         public bool IsProperSubsetOf( IEnumerable<T> other )
         {
             var otherHash = other.ToHashSet();
             return otherHash.IsProperSupersetOf( m_list );
+        }
+
+        /// <inheritdoc/>
+        public bool IsSupersetOf( IEnumerable<T> other )
+        {
+            var otherHash = other.ToHashSet();
+            return otherHash.IsSubsetOf( m_list );
         }
 
         /// <inheritdoc/>
@@ -148,8 +148,7 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public bool Overlaps( IEnumerable<T> other )
         {
-            var otherHash = other.ToHashSet();
-            return otherHash.Overlaps( m_list );
+            return m_list.Any( item => other.Contains( item ) );
         }
 
         /// <inheritdoc/>

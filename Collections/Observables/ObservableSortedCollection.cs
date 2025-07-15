@@ -285,14 +285,33 @@ namespace Utilities.DotNet.Collections.Observables
                 return false;
             }
 
-            RemoveItem( oldItem );
-            if( AddItem( newItem ) >= 0 )
+            int newIndex;
+            if( !oldItem?.Equals( newItem ) ?? ( newItem is not null ) )
             {
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
+                RemoveItem( oldItem );
+                newIndex = AddItem( newItem );
+            }
+            else
+            {
+                newIndex = oldIndex;
+            }
+
+            // NotifyCollectionChangedEventArgs constructors only allow Replace actions to have the same old and new indexes,
+            // therefore if the indexes are different, we have instead to notify a Remove action for the old item followed by
+            // an Add action for the new item.
+
+            if( oldIndex == newIndex )
+            {
+                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem, oldIndex ) );
             }
             else
             {
                 NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, oldItem, oldIndex ) );
+
+                if( newIndex >= 0 )
+                {
+                    NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, newItem, newIndex ) );
+                }
             }
 
             return true;
@@ -311,14 +330,33 @@ namespace Utilities.DotNet.Collections.Observables
                 T castedOldItem = (T) oldItem!;
                 T castedNewItem = (T) newItem!;
 
-                RemoveItem( castedOldItem );
-                if( AddItem( castedNewItem ) >= 0 )
+                int newIndex;
+                if( !oldItem?.Equals( newItem ) ?? ( newItem is not null ) )
                 {
-                    NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem ) );
+                    RemoveItem( castedOldItem );
+                    newIndex = AddItem( castedNewItem );
+                }
+                else
+                {
+                    newIndex = oldIndex;
+                }
+
+                // NotifyCollectionChangedEventArgs constructors only allow Replace actions to have the same old and new indexes,
+                // therefore if the indexes are different, we have instead to notify a Remove action for the old item followed by
+                // an Add action for the new item.
+
+                if( oldIndex == newIndex )
+                {
+                    NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Replace, newItem, oldItem, oldIndex ) );
                 }
                 else
                 {
                     NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, oldItem, oldIndex ) );
+
+                    if( newIndex >= 0 )
+                    {
+                        NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, newItem, newIndex ) );
+                    }
                 }
 
                 return true;
