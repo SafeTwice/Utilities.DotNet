@@ -949,7 +949,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new[] { ITEM2, ITEM3 },
                      new[] { ITEM1 },
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3, ITEM2 }, -1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2, ITEM3 }, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -1004,7 +1004,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new[] { ITEM3, ITEM2 },
                      new[] { ITEM1, null },
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object[] { ITEM3, ITEM2 }, -1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3, ITEM2 }, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -1016,7 +1016,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new[] { ITEM2, ITEM3, null },
                      new[] { ITEM1 },
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object[] { ITEM3, ITEM2, null }, -1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2, ITEM3, null }, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -1170,7 +1170,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new object?[] { null, 3 },
                      new int?[] { 8, 44 },
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object[] { null, 3 }, -1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null, 3 }, -1, -1 ) } );
 #else
                      new[]
                      {

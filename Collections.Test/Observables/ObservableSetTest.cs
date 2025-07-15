@@ -488,7 +488,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new[] { ITEM3, ITEM2 },
                      new[] { ITEM1, ITEM3, ITEM2 }, // All not present
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM3, ITEM2 }, null, 1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM3, ITEM2 }, null, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -547,7 +547,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new[] { ITEM3, ITEM2 },
                      new[] { ITEM1, ITEM3, ITEM2 }, // All not present
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object[] { ITEM3, ITEM2 }, null, 1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object[] { ITEM3, ITEM2 }, null, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -563,7 +563,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new[] { null, ITEM1, ITEM2 },
                      new[] { ITEM3, ITEM1, null, ITEM2 }, // Some present, some not present
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null, ITEM2 }, null, 2, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null, ITEM2 }, null, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -614,7 +614,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new int[] { 9, 56 },
                      new int[] { 5, 9, 56 }, // All not present
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9, 56 }, null, 1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9, 56 }, null, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -726,7 +726,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new int?[] { 9, null },
                      new int?[] { 5, 9, null }, // All not present
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9, null }, null, 1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9, null }, null, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -1065,7 +1065,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new[] { ITEM2, ITEM3 },
                      new[] { ITEM1 },
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3, ITEM2 }, -1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2, ITEM3 }, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -1120,7 +1120,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new[] { ITEM3, ITEM2 },
                      new[] { ITEM1, null },
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object[] { ITEM3, ITEM2 }, -1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3, ITEM2 }, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -1132,7 +1132,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new[] { ITEM2, ITEM3, null },
                      new[] { ITEM1 },
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object[] { ITEM3, ITEM2, null }, -1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2, ITEM3, null }, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -1286,7 +1286,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new object?[] { null, 3 },
                      new int?[] { 8, 44 },
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object[] { null, 3 }, -1, -1 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null, 3 }, -1, -1 ) } );
 #else
                      new[]
                      {
@@ -1852,7 +1852,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, -1 ) } );
                 Add( new TestClass?[] { ITEM1, null, ITEM2 },
 #if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM1, null, ITEM2 }, -1, 0 ) } );
+                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM1, null, ITEM2 }, -1, -1 ) } );
 #else
                      new[] {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM1 }, -1, -1 ),

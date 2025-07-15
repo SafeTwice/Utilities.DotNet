@@ -200,6 +200,11 @@ namespace Utilities.DotNet.Collections.Observables
             }
 
 #if BULK_NOTIFY_RANGE_ACTIONS
+            if( count == 0 )
+            {
+                return;
+            }
+
             var removedItems = m_list.GetRange( index, count );
 
             m_list.RemoveRange( index, count );
