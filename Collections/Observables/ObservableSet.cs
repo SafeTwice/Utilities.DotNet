@@ -17,7 +17,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// </summary>
     /// <typeparam name="T">Type of the items in the set.</typeparam>
     [DebuggerDisplay( "Count = {Count}" )]
-    public class ObservableSet<T> : ObservableCollection<T>, IObservableSet<T>, IObservableCollection
+    public class ObservableSet<T> : ObservableCollection<T>, IObservableSet<T>, IObservableSet
     {
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -69,6 +69,22 @@ namespace Utilities.DotNet.Collections.Observables
             else
             {
                 return false;
+            }
+        }
+
+        bool ISetEx.Add( object? item )
+        {
+            try
+            {
+                return Add( (T) item! );
+            }
+            catch( InvalidCastException )
+            {
+                throw new ArgumentException( $"Incompatible item type", nameof( item ) );
+            }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( item ) );
             }
         }
 

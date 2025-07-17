@@ -8,6 +8,8 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
+#pragma warning disable S1696
+
 namespace Utilities.DotNet.Collections.Observables
 {
     /// <summary>
@@ -28,7 +30,7 @@ namespace Utilities.DotNet.Collections.Observables
     /// </para>
     /// </remarks>
     /// <typeparam name="T">Type of the items in the set.</typeparam>
-    public class ObservableSortedSet<T> : ObservableSortedCollection<T>, IObservableSet<T>
+    public class ObservableSortedSet<T> : ObservableSortedCollection<T>, IObservableSet<T>, IObservableSet
     {
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -86,6 +88,22 @@ namespace Utilities.DotNet.Collections.Observables
             else
             {
                 return false;
+            }
+        }
+
+        bool ISetEx.Add( object? item )
+        {
+            try
+            {
+                return Add( (T) item! );
+            }
+            catch( InvalidCastException )
+            {
+                throw new ArgumentException( $"Incompatible item type", nameof( item ) );
+            }
+            catch( NullReferenceException )
+            {
+                throw new ArgumentNullException( nameof( item ) );
             }
         }
 

@@ -275,13 +275,14 @@ namespace Utilities.DotNet.Collections.Observables.Test
             Assert.Equal( expectedEvents, events );
         }
 
-        public class ICollectionEx_Add_Value_NonNullable_TestData
-            : TheoryData<IEnumerable<int>, int, IEnumerable<int>, IEnumerable<CollectionChangedEventData>>
+        public class ISetEx_Add_Value_NonNullable_TestData
+            : TheoryData<IEnumerable<int>, int, bool, IEnumerable<int>, IEnumerable<CollectionChangedEventData>>
         {
-            public ICollectionEx_Add_Value_NonNullable_TestData()
+            public ISetEx_Add_Value_NonNullable_TestData()
             {
                 Add( new int[] { },
                      5,
+                     true,
                      new int[] { 5 }, // Not present
                      new[]
                      {
@@ -289,6 +290,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      } );
                 Add( new[] { 12, 2, 13 },
                      4,
+                     true,
                      new int[] { 12, 2, 13, 4 }, // Not present
                      new[]
                      {
@@ -296,14 +298,196 @@ namespace Utilities.DotNet.Collections.Observables.Test
                      } );
                 Add( new int[] { 5, 23 },
                      5,
+                     false,
                      new int[] { 5, 23 }, // Already present
                      new CollectionChangedEventData[] { } );
             }
         }
 
         [Theory]
-        [ClassData( typeof( ICollectionEx_Add_Value_NonNullable_TestData ) )]
-        public void ICollectionEx_Add_Value_NonNullable( IEnumerable<int> initialState, int addedItem, IEnumerable<int> expectedState,
+        [ClassData( typeof( ISetEx_Add_Value_NonNullable_TestData ) )]
+        public void ISetEx_Add_Value_NonNullable( IEnumerable<int> initialState, int addedItem, bool expectedResult, IEnumerable<int> expectedState,
+                                                  IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableSet = new ObservableSet<int>( initialState );
+            var testedCollection = (ISetEx) observableSet;
+
+            observableSet.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableSet, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Add( addedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, (IEnumerable) observableSet );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        [Fact]
+        public void ISetEx_Add_Value_NonNullable_NullValue()
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableSet = new ObservableSet<int>() { 33 };
+            var testedCollection = (ISetEx) observableSet;
+
+            observableSet.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableSet, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var exception = Assert.Throws<ArgumentNullException>( () => testedCollection.Add( null ) );
+
+            // Assert
+
+            Assert.Equal( "item", exception.ParamName );
+            Assert.Equal( new int[] { 33 }, (IEnumerable) observableSet );
+            Assert.Empty( events );
+        }
+
+        [Fact]
+        public void ISetEx_Add_Value_NonNullable_InvalidType()
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableSet = new ObservableSet<int>() { 33 };
+            var testedCollection = (ISetEx) observableSet;
+
+            observableSet.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableSet, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var exception = Assert.Throws<ArgumentException>( () => testedCollection.Add( 3.0 ) );
+
+            // Assert
+
+            Assert.Equal( "item", exception.ParamName );
+            Assert.Equal( new int[] { 33 }, (IEnumerable) observableSet );
+            Assert.Empty( events );
+        }
+
+        public class ISetEx_Add_Value_Nullable_TestData
+            : TheoryData<IEnumerable<int?>, int?, bool, IEnumerable<int?>, IEnumerable<CollectionChangedEventData>>
+        {
+            public ISetEx_Add_Value_Nullable_TestData()
+            {
+                Add( new int?[] { },
+                     5,
+                     true,
+                     new int?[] { 5 }, // Not present
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 5 }, null, 0, -1 ),
+                     } );
+                Add( new int?[] { 12, 2, null, 13 },
+                     4,
+                     true,
+                     new int?[] { 12, 2, null, 13, 4 }, // Not present
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 4 }, null, 4, -1 ),
+                     } );
+                Add( new int?[] { 12, 2, 13 },
+                     null,
+                     true,
+                     new int?[] { 12, 2, 13, null }, // Not present
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 3, -1 ),
+                     } );
+                Add( new int?[] { 12, 2, null, 13 },
+                     2,
+                     false,
+                     new int?[] { 12, 2, null, 13 }, // Already present
+                     new CollectionChangedEventData[] { } );
+                Add( new int?[] { 12, 2, null, 13 },
+                     null,
+                     false,
+                     new int?[] { 12, 2, null, 13 }, // Already present
+                     new CollectionChangedEventData[] { } );
+            }
+        }
+
+        [Theory]
+        [ClassData( typeof( ISetEx_Add_Value_Nullable_TestData ) )]
+        public void ISetEx_Add_Value_Nullable( IEnumerable<int?> initialState, int? addedItem, bool expectedResult, IEnumerable<int?> expectedState,
+                                               IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableSet = new ObservableSet<int?>( initialState );
+            var testedCollection = (ISetEx) observableSet;
+
+            observableSet.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableSet, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Add( addedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, (IEnumerable) observableSet );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        [Fact]
+        public void ISetEx_Add_Value_Nullable_InvalidType()
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableSet = new ObservableSet<int?>() { 33, null };
+            var testedCollection = (ISetEx) observableSet;
+
+            observableSet.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( observableSet, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var exception = Assert.Throws<ArgumentException>( () => testedCollection.Add( 3.0 ) );
+
+            // Assert
+
+            Assert.Equal( "item", exception.ParamName );
+            Assert.Equal( new int?[] { 33, null }, (IEnumerable) observableSet );
+            Assert.Empty( events );
+        }
+
+        [Theory]
+        [ClassData( typeof( ISetEx_Add_Value_NonNullable_TestData ) )]
+        public void ICollectionEx_Add_Value_NonNullable( IEnumerable<int> initialState, int addedItem, bool _, IEnumerable<int> expectedState,
                                                          IEnumerable<CollectionChangedEventData> expectedEvents )
         {
             // Arrange
@@ -383,46 +567,9 @@ namespace Utilities.DotNet.Collections.Observables.Test
             Assert.Empty( events );
         }
 
-        public class ICollectionEx_Add_Value_Nullable_TestData
-            : TheoryData<IEnumerable<int?>, int?, IEnumerable<int?>, IEnumerable<CollectionChangedEventData>>
-        {
-            public ICollectionEx_Add_Value_Nullable_TestData()
-            {
-                Add( new int?[] { },
-                     5,
-                     new int?[] { 5 }, // Not present
-                     new[]
-                     {
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 5 }, null, 0, -1 ),
-                     } );
-                Add( new int?[] { 12, 2, null, 13 },
-                     4,
-                     new int?[] { 12, 2, null, 13, 4 }, // Not present
-                     new[]
-                     {
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 4 }, null, 4, -1 ),
-                     } );
-                Add( new int?[] { 12, 2, 13 },
-                     null,
-                     new int?[] { 12, 2, 13, null }, // Not present
-                     new[]
-                     {
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 3, -1 ),
-                     } );
-                Add( new int?[] { 12, 2, null, 13 },
-                     2,
-                     new int?[] { 12, 2, null, 13 }, // Already present
-                     new CollectionChangedEventData[] { } );
-                Add( new int?[] { 12, 2, null, 13 },
-                     null,
-                     new int?[] { 12, 2, null, 13 }, // Already present
-                     new CollectionChangedEventData[] { } );
-            }
-        }
-
         [Theory]
-        [ClassData( typeof( ICollectionEx_Add_Value_Nullable_TestData ) )]
-        public void ICollectionEx_Add_Value_Nullable( IEnumerable<int?> initialState, int? addedItem, IEnumerable<int?> expectedState,
+        [ClassData( typeof( ISetEx_Add_Value_Nullable_TestData ) )]
+        public void ICollectionEx_Add_Value_Nullable( IEnumerable<int?> initialState, int? addedItem, bool _, IEnumerable<int?> expectedState,
                                                       IEnumerable<CollectionChangedEventData> expectedEvents )
         {
             // Arrange

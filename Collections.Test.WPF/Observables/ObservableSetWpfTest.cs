@@ -81,8 +81,38 @@ namespace Utilities.DotNet.Collections.Observables.Test.WPF
         }
 
         [Theory]
-        [ClassData( typeof( ObservableSetTest.ICollectionEx_Add_Value_Nullable_TestData ) )]
-        public void ICollectionEx_Add_Value_Nullable( IEnumerable<int?> initialState, int? addedItem, IEnumerable<int?> expectedState,
+        [ClassData( typeof( ObservableSetTest.ISetEx_Add_Value_Nullable_TestData ) )]
+        public void ISetEx_Add_Value_Nullable( IEnumerable<int?> initialState, int? addedItem, bool expectedResult, IEnumerable<int?> expectedState,
+                                               IEnumerable<CollectionChangedEventData> expectedEvents )
+        {
+            // Arrange
+
+            var events = new List<CollectionChangedEventData>();
+
+            var observableSet = new ObservableSet<int?>( initialState );
+            var testedCollection = (ISetEx) observableSet;
+            var view = CollectionViewSource.GetDefaultView( observableSet );
+
+            view.CollectionChanged += ( obj, args ) =>
+            {
+                Assert.Same( view, obj );
+                events.Add( new CollectionChangedEventData( args ) );
+            };
+
+            // Act
+
+            var result = testedCollection.Add( addedItem );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedState, (IEnumerable) observableSet );
+            Assert.Equal( expectedEvents, events );
+        }
+
+        [Theory]
+        [ClassData( typeof( ObservableSetTest.ISetEx_Add_Value_Nullable_TestData ) )]
+        public void ICollectionEx_Add_Value_Nullable( IEnumerable<int?> initialState, int? addedItem, bool _, IEnumerable<int?> expectedState,
                                                       IEnumerable<CollectionChangedEventData> expectedEvents )
         {
             // Arrange
