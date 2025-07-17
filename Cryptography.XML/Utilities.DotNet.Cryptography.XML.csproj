@@ -22,8 +22,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.0-rc1</Version>
-    <AssemblyVersion>0.9.0.100</AssemblyVersion>
+    <Version>1.0-rc2</Version>
+    <AssemblyVersion>0.9.0.101</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -50,7 +50,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.4" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.7" />
   </ItemGroup>
 
 </Project>
