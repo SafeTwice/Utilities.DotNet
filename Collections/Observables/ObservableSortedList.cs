@@ -226,23 +226,10 @@ namespace Utilities.DotNet.Collections.Observables
                 throw new ArgumentException( "Index and count do not denote a valid range of items" );
             }
 
-#if BULK_NOTIFY_RANGE_ACTIONS
-            if( count == 0 )
-            {
-                return;
-            }
-
-            var removedItems = m_list.GetRange( index, count );
-
-            m_list.RemoveRange( index, count );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems ) );
-#else
             for( int i = 0; i < count; i++ )
             {
                 RemoveAt( index );
             }
-#endif
         }
 
         /// <inheritdoc/>

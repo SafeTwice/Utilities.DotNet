@@ -110,23 +110,10 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public void AddRange( IEnumerable<T> collection )
         {
-#if BULK_NOTIFY_RANGE_ACTIONS
-            if( !collection.Any() )
-            {
-                return;
-            }
-
-            var initialIndex = m_list.Count;
-
-            m_list.AddRange( collection );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), initialIndex ) );
-#else
             foreach( var itemToAdd in collection )
             {
                 Add( itemToAdd );
             }
-#endif
         }
 
         void ICollectionEx.AddRange( IEnumerable collection )
@@ -170,52 +157,18 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public void RemoveRange( IEnumerable<T> collection )
         {
-#if BULK_NOTIFY_RANGE_ACTIONS
-            var removedItems = new ListEx<T>();
-
-            foreach( var item in collection )
-            {
-                if( m_list.Remove( item ) )
-                {
-                    removedItems.Add( item );
-                }
-            }
-
-            if( removedItems.Count > 0 )
-            {
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems ) );
-            }
-#else
             foreach( var itemToRemove in collection )
             {
                 Remove( itemToRemove );
             }
-#endif
         }
 
         void ICollectionEx.RemoveRange( IEnumerable collection )
         {
-#if BULK_NOTIFY_RANGE_ACTIONS
-            var removedItems = new ListEx<object?>();
-
-            foreach( var item in collection )
-            {
-                if( ( (ICollectionEx) m_list ).Remove( item ) )
-                {
-                    removedItems.Add( item );
-                }
-            }
-
-            if( removedItems.Count > 0 )
-            {
-                NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems ) );
-            }
-#else
             foreach( var item in collection )
             {
                 ( (ICollectionEx) this ).Remove( item );
             }
-#endif
         }
 
         /// <inheritdoc/>
@@ -274,18 +227,6 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public void Clear()
         {
-#if BULK_NOTIFY_RANGE_ACTIONS
-            if( m_list.Count == 0 )
-            {
-                return;
-            }
-
-            var removedItems = new ListEx<T>( m_list );
-
-            m_list.Clear();
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, 0 ) );
-#else
             while( m_list.Count > 0 )
             {
                 var itemToRemove = m_list[ 0 ];
@@ -294,7 +235,6 @@ namespace Utilities.DotNet.Collections.Observables
 
                 NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, itemToRemove, 0 ) );
             }
-#endif
         }
 
         /// <inheritdoc/>

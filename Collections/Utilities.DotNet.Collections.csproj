@@ -24,7 +24,6 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <Version>1.5-rc1</Version>
     <AssemblyVersion>1.4.1.100</AssemblyVersion>
-    <!--<DefineConstants>$(DefineConstants);BULK_NOTIFY_RANGE_ACTIONS</DefineConstants>-->
   </PropertyGroup>
 
   <ItemGroup>

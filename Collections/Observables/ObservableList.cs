@@ -135,11 +135,6 @@ namespace Utilities.DotNet.Collections.Observables
         /// <inheritdoc/>
         public void InsertRange( int index, IEnumerable<T> collection )
         {
-#if BULK_NOTIFY_RANGE_ACTIONS
-            m_list.InsertRange( index, collection );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Add, collection.ToList(), index ) );
-#else
             if( ( index < 0 ) || ( index > Count ) )
             {
                 throw new ArgumentOutOfRangeException( nameof( index ) );
@@ -151,7 +146,6 @@ namespace Utilities.DotNet.Collections.Observables
                 Insert( index + i, item );
                 i++;
             }
-#endif
         }
 
         void IListEx.InsertRange( int index, IEnumerable collection )
@@ -199,23 +193,10 @@ namespace Utilities.DotNet.Collections.Observables
                 throw new ArgumentException( "Index and count do not denote a valid range of items" );
             }
 
-#if BULK_NOTIFY_RANGE_ACTIONS
-            if( count == 0 )
-            {
-                return;
-            }
-
-            var removedItems = m_list.GetRange( index, count );
-
-            m_list.RemoveRange( index, count );
-
-            NotifyCollectionChanged( new NotifyCollectionChangedEventArgs( NotifyCollectionChangedAction.Remove, removedItems, index ) );
-#else
             for( int i = 0; i < count; i++ )
             {
                 RemoveAt( index );
             }
-#endif
         }
 
         /// <inheritdoc/>

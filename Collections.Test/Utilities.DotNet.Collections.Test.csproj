@@ -7,7 +7,6 @@
     <IsPackable>false</IsPackable>
     <Configurations>Debug;Release</Configurations>
     <NoWarn>NETSDK1138,IDE0130</NoWarn>
-    <!--<DefineConstants>$(DefineConstants);BULK_NOTIFY_RANGE_ACTIONS</DefineConstants>-->
   </PropertyGroup>
 
   <ItemGroup>

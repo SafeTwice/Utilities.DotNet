@@ -177,14 +177,6 @@ namespace Utilities.DotNet.Collections.Observables.Test
 
             Assert.Empty( testedCollection );
 
-#if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( new[] { item2, item1, item3 }, events[ 0 ].OldItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( 0, events[ 0 ].OldStartingIndex );
-#else
             Assert.Equal( 3, events.Count );
 
             Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
@@ -204,7 +196,6 @@ namespace Utilities.DotNet.Collections.Observables.Test
             Assert.Equal( new[] { item3 }, events[ 2 ].OldItems );
             Assert.Equal( -1, events[ 2 ].NewStartingIndex );
             Assert.Equal( 0, events[ 2 ].OldStartingIndex );
-#endif
 
             events.Clear();
 

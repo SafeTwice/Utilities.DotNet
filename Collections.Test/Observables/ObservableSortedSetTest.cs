@@ -485,23 +485,18 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new[] { ITEM1 },
                      new[] { ITEM3, ITEM2 },
                      new[] { ITEM1, ITEM2, ITEM3 }, // All not present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM3, ITEM2 }, null, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM3 }, null, 1, -1 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 1, -1 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 1, -1 ),
                      } );
-#endif
                 Add( new[] { ITEM3, ITEM2 },
                      new[] { ITEM1 },
                      new[] { ITEM1, ITEM2, ITEM3 }, // Single not present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, -1, -1 ) } );
-#else
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, 0, -1 ) } );
-#endif
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, 0, -1 ),
+                     } );
                 Add( new[] { ITEM3, ITEM2 },
                      new TestClass[] { },
                      new[] { ITEM2, ITEM3 },// No items added
@@ -509,11 +504,10 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new[] { ITEM3, ITEM2 },
                      new[] { ITEM1, ITEM2 },
                      new[] { ITEM1, ITEM2, ITEM3 }, // Some present, some not present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, -1, -1 ) } );
-#else
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, 0, -1 ) } );
-#endif
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, 0, -1 ),
+                     } );
             }
         }
 
@@ -552,35 +546,26 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new[] { ITEM1 },
                      new[] { ITEM3, ITEM2 },
                      new[] { ITEM1, ITEM2, ITEM3 }, // All not present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object[] { ITEM3, ITEM2 }, null, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM3 }, null, 1, -1 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 1, -1 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 1, -1 ),
                      } );
-#endif
                 Add( new[] { ITEM3, null, ITEM2 },
                      new[] { ITEM1 },
                      new[] { null, ITEM1, ITEM2, ITEM3 }, // Single not present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, -1, -1 ) } );
-#else
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, 1, -1 ) } );
-#endif
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM1 }, null, 1, -1 ),
+                     } );
                 Add( new[] { ITEM3, ITEM1 },
                      new[] { null, ITEM1, ITEM2 },
                      new[] { null, ITEM1, ITEM2, ITEM3 }, // Some present, some not present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null, ITEM2 }, null, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 0, -1 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 2, -1 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { ITEM2 }, null, 2, -1 ),
                      } );
-#endif
                 Add( new[] { ITEM3, ITEM2 },
                      new TestClass[] { },
                      new[] { ITEM2, ITEM3 }, // No items added
@@ -623,23 +608,18 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new int[] { 5 },
                      new int[] { 9, 56 },
                      new int[] { 5, 9, 56 }, // All not present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9, 56 }, null, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9 }, null, 1, -1 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 56 }, null, 2, -1 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 56 }, null, 2, -1 ),
                      } );
-#endif
                 Add( new int[] { 7, 45 },
                      new int[] { 3 },
                      new int[] { 3, 7, 45 }, // Single not present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, -1, -1 ) } );
-#else
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, 0, -1 ) } );
-#endif
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, 0, -1 ),
+                     } );
                 Add( new int[] { 5, 76 },
                      new int[] { },
                      new int[] { 5, 76 }, // No items added
@@ -647,11 +627,10 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new int[] { 7, 45 },
                      new int[] { 45, 3 },
                      new int[] { 3, 7, 45 }, // Some already present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, -1, -1 ) } );
-#else
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, 0, -1 ) } );
-#endif
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, 0, -1 ),
+                     } );
             }
         }
 
@@ -743,23 +722,18 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new int?[] { 5 },
                      new int?[] { 9, null },
                      new int?[] { null, 5, 9 }, // All not present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9, null }, null, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 9 }, null, 1, -1 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 0, -1 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { null }, null, 0, -1 ),
                      } );
-#endif
                 Add( new int?[] { 7, null, 45 },
                      new int?[] { 3 },
                      new int?[] { null, 3, 7, 45 }, // Single not present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, -1, -1 ) } );
-#else
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, 1, -1 ) } );
-#endif
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 3 }, null, 1, -1 ),
+                     } );
                 Add( new int?[] { 5, null, 76 },
                      new int?[] { },
                      new int?[] { null, 5, 76 }, // No items added
@@ -767,11 +741,10 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new int?[] { 5, null, 76 },
                      new int?[] { null, 45 },
                      new int?[] { null, 5, 45, 76 }, // Some already present
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 45 }, null, -1, -1 ) } );
-#else
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 45 }, null, 2, -1 ) } );
-#endif
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Add, new object?[] { 45 }, null, 2, -1 ),
+                     } );
             }
         }
 
@@ -1078,27 +1051,19 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new[] { ITEM1, ITEM2, ITEM3 },
                      new[] { ITEM3, ITEM2 },
                      new[] { ITEM1 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3, ITEM2 }, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3 }, -1, 2 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 1 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 1 ),
                      } );
-#endif
                 Add( new[] { ITEM1, ITEM2, ITEM3 },
                      new[] { ITEM2, ITEM3 },
                      new[] { ITEM1 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2, ITEM3 }, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 1 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3 }, -1, 1 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3 }, -1, 1 ),
                      } );
-#endif
                 Add( new[] { ITEM3, ITEM2 },
                      new TestClass[] { },
                      new[] { ITEM2, ITEM3 },
@@ -1145,28 +1110,20 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new[] { ITEM1, ITEM2, null, ITEM3 },
                      new[] { ITEM3, ITEM2 },
                      new[] { null, ITEM1 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3, ITEM2 }, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3 }, -1, 3 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 2 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 2 ),
                      } );
-#endif
                 Add( new[] { ITEM1, ITEM2, null, ITEM3 },
                      new[] { ITEM2, ITEM3, null },
                      new[] { ITEM1 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2, ITEM3, null }, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 2 ),
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM3 }, -1, 2 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ),
                      } );
-#endif
                 Add( new[] { null, ITEM3, ITEM2 },
                      new TestClass[] { },
                      new[] { null, ITEM2, ITEM3 },
@@ -1178,11 +1135,10 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new[] { ITEM3, ITEM2 },
                      new[] { null, ITEM2 },
                      new[] { ITEM3 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, -1 ) } );
-#else
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 0 ) } );
-#endif
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { ITEM2 }, -1, 0 ),
+                     } );
             }
         }
 
@@ -1221,35 +1177,26 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new int[] { 8, 3, 44, 5 },
                      new object?[] { 5, 3 },
                      new int[] { 8, 44 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 5, 3 }, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 5 }, -1, 1 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3 }, -1, 0 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3 }, -1, 0 ),
                      } );
-#endif
                 Add( new int[] { 8, 3, 44, 5 },
                      new object?[] { 3, 5 },
                      new int[] { 8, 44 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3, 5 }, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3 }, -1, 0 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 5 }, -1, 0 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 5 }, -1, 0 ),
                      } );
-#endif
                 Add( new int[] { 8, 3, 44, 5 },
                      new object?[] { 44, null, 8.0 },
                      new int[] { 3, 5, 8 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44 }, -1, -1 ) } );
-#else
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44 }, -1, 3 ) } );
-#endif
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44 }, -1, 3 ),
+                     } );
                 Add( new int[] { 12, 2, 13 },
                      new object?[] { 4 },
                      new int[] { 2, 12, 13 },
@@ -1305,35 +1252,26 @@ namespace Utilities.DotNet.Collections.Observables.Test
                 Add( new int?[] { 8, 3, 44, null },
                      new object?[] { null, 3 },
                      new int?[] { 8, 44 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null, 3 }, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3 }, -1, 0 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3 }, -1, 0 ),
                      } );
-#endif
                 Add( new int?[] { 8, 3, 44, null },
                      new object?[] { 3, null },
                      new int?[] { 8, 44 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3, null }, -1, -1 ) } );
-#else
                      new[]
                      {
                          new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 3 }, -1, 1 ),
-                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 )
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { null }, -1, 0 ),
                      } );
-#endif
                 Add( new int?[] { 8, 3, 44, 5 },
                      new object?[] { 44, null, 8.0 },
                      new int?[] { 3, 5, 8 },
-#if BULK_NOTIFY_RANGE_ACTIONS
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44 }, -1, -1 ) } );
-#else
-                     new[] { new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44 }, -1, 3 ) } );
-#endif
+                     new[]
+                     {
+                         new CollectionChangedEventData( NotifyCollectionChangedAction.Remove, null, new object?[] { 44 }, -1, 3 ),
+                     } );
                 Add( new int?[] { 12, 2, null, 13 },
                      new object?[] { 4 },
                      new int?[] { null, 2, 12, 13 },
@@ -2287,14 +2225,6 @@ namespace Utilities.DotNet.Collections.Observables.Test
 
             // Assert events
 
-#if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( 1, events.Count );
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
-            Assert.Equal( new[] { 1, 9 }, events[ 0 ].NewItems );
-            Assert.Null( events[ 0 ].OldItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-#else
             Assert.Equal( 2, events.Count );
 
             Assert.Equal( NotifyCollectionChangedAction.Add, events[ 0 ].Action );
@@ -2308,7 +2238,6 @@ namespace Utilities.DotNet.Collections.Observables.Test
             Assert.Null( events[ 1 ].OldItems );
             Assert.Equal( 3, events[ 1 ].NewStartingIndex );
             Assert.Equal( -1, events[ 1 ].OldStartingIndex );
-#endif
         }
 
         [Fact]
@@ -2343,11 +2272,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
             Assert.Equal( new[] { 2 }, events[ 0 ].OldItems );
             Assert.Null( events[ 0 ].NewItems );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-#if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-#else
             Assert.Equal( 0, events[ 0 ].OldStartingIndex );
-#endif
         }
 
         [Fact]
@@ -2382,11 +2307,7 @@ namespace Utilities.DotNet.Collections.Observables.Test
             Assert.Equal( new[] { 23 }, events[ 0 ].OldItems );
             Assert.Null( events[ 0 ].NewItems );
             Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-#if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-#else
             Assert.Equal( 2, events[ 0 ].OldStartingIndex );
-#endif
         }
 
         [Fact]
@@ -2416,21 +2337,6 @@ namespace Utilities.DotNet.Collections.Observables.Test
 
             // Assert events
 
-#if BULK_NOTIFY_RANGE_ACTIONS
-            Assert.Equal( 2, events.Count );
-
-            Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
-            Assert.Equal( new[] { 23 }, events[ 0 ].OldItems );
-            Assert.Null( events[ 0 ].NewItems );
-            Assert.Equal( -1, events[ 0 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 0 ].OldStartingIndex );
-
-            Assert.Equal( NotifyCollectionChangedAction.Add, events[ 1 ].Action );
-            Assert.Equal( new[] { 1, 9 }, events[ 1 ].NewItems );
-            Assert.Null( events[ 1 ].OldItems );
-            Assert.Equal( -1, events[ 1 ].NewStartingIndex );
-            Assert.Equal( -1, events[ 1 ].OldStartingIndex );
-#else
             Assert.Equal( 3, events.Count );
 
             Assert.Equal( NotifyCollectionChangedAction.Remove, events[ 0 ].Action );
@@ -2450,7 +2356,6 @@ namespace Utilities.DotNet.Collections.Observables.Test
             Assert.Null( events[ 2 ].OldItems );
             Assert.Equal( 3, events[ 2 ].NewStartingIndex );
             Assert.Equal( -1, events[ 2 ].OldStartingIndex );
-#endif
         }
 
         [Fact]
