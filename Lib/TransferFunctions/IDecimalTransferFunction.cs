@@ -1,0 +1,31 @@
+﻿/// @file
+/// @copyright  Copyright (c) 2025 SafeTwice S.L. All rights reserved.
+/// @license    See LICENSE.txt
+
+namespace Utilities.DotNet.TransferFunctions
+{
+    /// <summary>
+    /// Transfer function for decimal numbers.
+    /// </summary>
+    public interface IDecimalTransferFunction
+    {
+        //===========================================================================
+        //                                  METHODS
+        //===========================================================================
+
+        /// <summary>
+        /// Calculates the output value for the given input <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">Input value.</param>
+        /// <returns>The output value.</returns>
+        decimal Calculate( decimal value );
+
+        /// <summary>
+        /// Calculates the input value for the given output <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">Output value.</param>
+        /// <returns>The input value if the transfer function is invertible.</returns>
+        /// <exception cref="System.NotSupportedException">Thrown if the transfer function is not invertible.</exception>
+        decimal CalculateInverse( decimal value );
+    }
+}

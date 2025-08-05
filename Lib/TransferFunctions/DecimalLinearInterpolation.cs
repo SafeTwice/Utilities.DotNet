@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2020-2025 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 namespace Utilities.DotNet.TransferFunctions
@@ -7,7 +7,7 @@ namespace Utilities.DotNet.TransferFunctions
     /// <summary>
     /// Transfer function for a linear interpolation defined using 2 points.
     /// </summary>
-    public class DoubleLinearInterpolation : IDoubleTransferFunction
+    public class DecimalLinearInterpolation : IDecimalTransferFunction
     {
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -20,7 +20,7 @@ namespace Utilities.DotNet.TransferFunctions
         /// <param name="x1">X coordinate for the second point.</param>
         /// <param name="y0">Y coordinate for the first point.</param>
         /// <param name="y1">Y coordinate for the second point.</param>
-        public DoubleLinearInterpolation( double x0, double x1, double y0, double y1 )
+        public DecimalLinearInterpolation( decimal x0, decimal x1, decimal y0, decimal y1 )
         {
             m_xBase = x0;
             m_xOffset = x1 - x0;
@@ -33,13 +33,13 @@ namespace Utilities.DotNet.TransferFunctions
         //===========================================================================
 
         /// <inheritdoc/>
-        public double Calculate( double value )
+        public decimal Calculate( decimal value )
         {
             return m_yBase + ( value - m_xBase ) * m_yOffset / m_xOffset;
         }
 
         /// <inheritdoc/>
-        public double CalculateInverse( double value )
+        public decimal CalculateInverse( decimal value )
         {
             return m_xBase + ( value - m_yBase ) * m_xOffset / m_yOffset;
         }
@@ -48,9 +48,9 @@ namespace Utilities.DotNet.TransferFunctions
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private readonly double m_xBase;
-        private readonly double m_xOffset;
-        private readonly double m_yBase;
-        private readonly double m_yOffset;
+        private readonly decimal m_xBase;
+        private readonly decimal m_xOffset;
+        private readonly decimal m_yBase;
+        private readonly decimal m_yOffset;
     }
 }

@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2020-2025 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 namespace Utilities.DotNet.TransferFunctions
@@ -7,7 +7,7 @@ namespace Utilities.DotNet.TransferFunctions
     /// <summary>
     /// Linear transfer function based on gain and offset.
     /// </summary>
-    public class DoubleLinear : IDoubleTransferFunction
+    public class DecimalLinear : IDecimalTransferFunction
     {
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
@@ -18,7 +18,7 @@ namespace Utilities.DotNet.TransferFunctions
         /// </summary>
         /// <param name="gain">Gain.</param>
         /// <param name="offset">Offset.</param>
-        public DoubleLinear( double gain, double offset )
+        public DecimalLinear( decimal gain, decimal offset )
         {
             m_gain = gain;
             m_offset = offset;
@@ -29,13 +29,13 @@ namespace Utilities.DotNet.TransferFunctions
         //===========================================================================
 
         /// <inheritdoc/>
-        public double Calculate( double value )
+        public decimal Calculate( decimal value )
         {
             return value * m_gain + m_offset;
         }
 
         /// <inheritdoc/>
-        public double CalculateInverse( double value )
+        public decimal CalculateInverse( decimal value )
         {
             return ( value - m_offset ) / m_gain;
         }
@@ -44,7 +44,7 @@ namespace Utilities.DotNet.TransferFunctions
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private readonly double m_gain;
-        private readonly double m_offset;
+        private readonly decimal m_gain;
+        private readonly decimal m_offset;
     }
 }
