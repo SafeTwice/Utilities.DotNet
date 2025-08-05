@@ -38,6 +38,7 @@ namespace Utilities.DotNet.XML.Test
                 "<Guid value='089e1f22-b2d0-41a8-ab19-65eac650e589' invalid='foo'/>",
                 "<DateTime invariant='12/06/2028' fr='11/08/2025' ja='2027/09/07' local='2029-02-15T12:25:36.0000000-07:00' " +
                           "utc='2039-11-30T23:45:22.1900000Z' invalid='foo'/>",
+                "<Decimal value='45.3' empty='' invalid='bar'/>",
                 "</Root>",
             };
 
@@ -238,6 +239,43 @@ namespace Utilities.DotNet.XML.Test
             Assert.Equal( $"XML element 'Double' attribute 'invalid' has an invalid value 'bar' (expected real number value)", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 5, exception.Line );
+        }
+
+        [Fact]
+        public void MandatoryAttributeDecimal_Existing()
+        {
+            // Arrange
+
+            var element = GetElement( "Decimal" );
+
+            // Act
+
+            var value = element.MandatoryAttributeDecimal( "value" );
+
+            // Assert
+
+            Assert.Equal( 45.3m, value );
+        }
+
+        [Fact]
+        public void MandatoryAttributeDecimal_Invalid()
+        {
+            // Arrange
+
+            var element = GetElement( "Decimal" );
+
+            // Act
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
+            {
+                element.MandatoryAttributeDecimal( "invalid" );
+            } );
+
+            // Assert
+
+            Assert.Equal( $"XML element 'Decimal' attribute 'invalid' has an invalid value 'bar' (expected decimal number value)", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 14, exception.Line );
         }
 
         [Fact]
@@ -719,6 +757,59 @@ namespace Utilities.DotNet.XML.Test
             Assert.Equal( $"XML element 'Double' attribute 'invalid' has an invalid value 'bar' (expected real number value)", exception.ShortMessage );
             Assert.Equal( m_fileuri.ToString(), exception.Filename );
             Assert.Equal( 5, exception.Line );
+        }
+
+        [Fact]
+        public void OptionalAttributeDecimal_Existing()
+        {
+            // Arrange
+
+            var element = GetElement( "Decimal" );
+
+            // Act
+
+            var value = element.OptionalAttributeDecimal( "value", 456.3m );
+
+            // Assert
+
+            Assert.Equal( 45.3m, value );
+        }
+
+        [Fact]
+        public void OptionalAttributeDecimal_NotExisting()
+        {
+            // Arrange
+
+            var element = GetElement( "Decimal" );
+
+            // Act
+
+            var value = element.OptionalAttributeDecimal( "bar", 77434.2432m );
+
+            // Assert
+
+            Assert.Equal( 77434.2432m, value );
+        }
+
+        [Fact]
+        public void OptionalAttributeDecimal_Invalid()
+        {
+            // Arrange
+
+            var element = GetElement( "Decimal" );
+
+            // Act
+
+            var exception = Assert.Throws<XmlFileProcessingException>( () =>
+            {
+                element.OptionalAttributeDecimal( "invalid" );
+            } );
+
+            // Assert
+
+            Assert.Equal( $"XML element 'Decimal' attribute 'invalid' has an invalid value 'bar' (expected decimal number value)", exception.ShortMessage );
+            Assert.Equal( m_fileuri.ToString(), exception.Filename );
+            Assert.Equal( 14, exception.Line );
         }
 
         [Fact]

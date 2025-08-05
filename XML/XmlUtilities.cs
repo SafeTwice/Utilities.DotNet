@@ -27,7 +27,7 @@ namespace Utilities.DotNet.XML
         //===========================================================================
 
         /// <summary>
-        /// Gets a mandatory attribute value as a <c>string</c>.
+        /// Gets a mandatory attribute value as a <see cref="string"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -51,7 +51,7 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets a mandatory attribute value as an <c>int</c>.
+        /// Gets a mandatory attribute value as an <see cref="int"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -71,7 +71,7 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets a mandatory attribute value as an <c>uint</c>.
+        /// Gets a mandatory attribute value as an <see cref="uint"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -91,7 +91,7 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets a mandatory attribute value as a <c>double</c>.
+        /// Gets a mandatory attribute value as a <see cref="double"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -111,7 +111,27 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets a mandatory attribute value as a <c>bool</c>.
+        /// Gets a mandatory attribute value as a <see cref="decimal"/>.
+        /// </summary>
+        /// <param name="element">This element.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <returns>The value of the attribute.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
+        public static decimal MandatoryAttributeDecimal( this XElement element, string attributeName )
+        {
+            string attrStr = element.MandatoryAttribute( attributeName );
+
+            if( !decimal.TryParse( attrStr, NumberStyles.Number, CultureInfo.InvariantCulture, out var attrValue ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected decimal number value)" ),
+                                                      element );
+            }
+
+            return attrValue;
+        }
+
+        /// <summary>
+        /// Gets a mandatory attribute value as a <see cref="bool"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -228,7 +248,7 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets an optional attribute value as a <c>string</c>.
+        /// Gets an optional attribute value as a <see cref="string"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -243,7 +263,7 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets an optional attribute value as an <c>int</c>.
+        /// Gets an optional attribute value as an <see cref="int"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -277,7 +297,7 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets an optional attribute value as an <c>uint</c>.
+        /// Gets an optional attribute value as an <see cref="uint"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -311,7 +331,7 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets an optional attribute value as a <c>double</c>.
+        /// Gets an optional attribute value as a <see cref="double"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -345,7 +365,41 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets an optional attribute value as a <c>bool</c>.
+        /// Gets an optional attribute value as a <see cref="decimal"/>.
+        /// </summary>
+        /// <param name="element">This element.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="defaultValue">Value returned when the attribute is not present.</param>
+        /// <returns>The value of the attribute.</returns>
+        /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
+#if !NETFRAMEWORK
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
+        public static decimal? OptionalAttributeDecimal( this XElement element, string attributeName, decimal? defaultValue )
+        {
+            var attrStr = element.OptionalAttribute( attributeName );
+            if( attrStr is null )
+            {
+                return defaultValue;
+            }
+
+            if( !decimal.TryParse( attrStr, NumberStyles.Number, CultureInfo.InvariantCulture, out var attrValue ) )
+            {
+                throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected decimal number value)" ),
+                                                      element );
+            }
+
+            return attrValue;
+        }
+
+        /// <inheritdoc cref="OptionalAttributeDecimal(XElement, string, decimal?)"/>/>
+        public static decimal OptionalAttributeDecimal( this XElement element, string attributeName, decimal defaultValue = 0m )
+        {
+            return element.OptionalAttributeDecimal( attributeName, null ) ?? defaultValue;
+        }
+
+        /// <summary>
+        /// Gets an optional attribute value as a <see cref="bool"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -500,7 +554,7 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets a mandatory attribute value from a set of attributes as a <c>string</c>.
+        /// Gets a mandatory attribute value from a set of attributes as a <see cref="string"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeNames">Names of the attributes to search (in search order).</param>
@@ -543,7 +597,7 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets the contents of a mandatory element (that must be unique) as a <c>string</c>.
+        /// Gets the contents of a mandatory element (that must be unique) as a <see cref="string"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="elementName">Name of the element.</param>
@@ -597,7 +651,7 @@ namespace Utilities.DotNet.XML
         }
 
         /// <summary>
-        /// Gets the contents of an optional element (that must be unique) as a <c>string</c>.
+        /// Gets the contents of an optional element (that must be unique) as a <see cref="string"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="elementName">Name of the element.</param>
