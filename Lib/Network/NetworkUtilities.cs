@@ -1,12 +1,12 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2018-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2018-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Utilities.Net.Network
+namespace Utilities.DotNet.Network
 {
     /// <summary>
     /// Utility class for network-related operations.
@@ -32,7 +32,7 @@ namespace Utilities.Net.Network
             {
                 var hostEntry = Dns.GetHostEntry( hostname );
 
-                return hostEntry.AddressList.Where( ipAddress => ( ipAddress.AddressFamily == AddressFamily.InterNetwork ) ).FirstOrDefault();
+                return hostEntry.AddressList.FirstOrDefault( ipAddress => ( ipAddress.AddressFamily == AddressFamily.InterNetwork ) );
             }
         }
     }
