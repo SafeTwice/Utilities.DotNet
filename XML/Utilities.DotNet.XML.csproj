@@ -26,8 +26,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.5-rc3</Version>
-    <AssemblyVersion>1.4.1.102</AssemblyVersion>
+    <Version>1.5-rc4</Version>
+    <AssemblyVersion>1.5.0.4</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration.EndsWith(`No-I18N`))' == 'false'">
