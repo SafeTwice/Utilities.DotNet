@@ -15,14 +15,18 @@
     <PackageTags>.net;dotnet;utilities;util;service;services</PackageTags>
     <Company>www.safetwice.com</Company>
     <Description>Services utilities library for .NET</Description>
-    <Copyright>Copyright © 2024-2025 SafeTwice S.L.</Copyright>
+    <Copyright>Copyright © 2025 SafeTwice S.L.</Copyright>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
-    <Version>1.5-rc1</Version>
-    <AssemblyVersion>1.4.1.100</AssemblyVersion>
+    <Version>1.5-rc2</Version>
+    <AssemblyVersion>1.5.0.2</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,10 +35,6 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-
-  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)'=='release'">
-    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">

@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Condition="'$(Configuration.EndsWith(`No-I18N`))' == 'true'">
+  <PropertyGroup Condition="'$(Configuration.EndsWith(`NoI18N`))' == 'true'">
     <AssemblyName>$(AssemblyName)-NoI18N</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup>
     <TargetFrameworks>net472;net48;net6.0;net7.0;net8.0</TargetFrameworks>
-    <Configurations>Debug;Release;Debug No-I18N;Release No-I18N</Configurations>
+    <Configurations>Debug;Release;Profile;Debug-NoI18N;Release-NoI18N;Profile-NoI18N</Configurations>
     <DebugType>embedded</DebugType>
     <NoWarn>NETSDK1138;CS1587</NoWarn>
     <EnablePackageValidation>true</EnablePackageValidation>
@@ -19,22 +19,31 @@
     <PackageTags>.net;dotnet;utilities</PackageTags>
     <Company>www.safetwice.com</Company>
     <Description>Utilities library for .NET</Description>
-    <Copyright>Copyright © 2022-2025 SafeTwice S.L.</Copyright>
+    <Copyright>Copyright © 2025 SafeTwice S.L.</Copyright>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Nullable>enable</Nullable>
     <LangVersion>11</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.5-rc3</Version>
-    <AssemblyVersion>1.5.0.3</AssemblyVersion>
+    <Version>1.5-rc4</Version>
+    <AssemblyVersion>1.5.0.4</AssemblyVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)'=='release'">
+  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Configuration.EndsWith(`No-I18N`))' == 'false'">
+  <PropertyGroup Condition="'$(Configuration.StartsWith(`Profile`))' == 'true'">
+    <DefineConstants>$(DefineConstants);PROFILE</DefineConstants>
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration.Contains(`NoI18N`))' == 'false'">
+    <DefineConstants>$(DefineConstants);USE_I18N_LIB</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration.Contains(`NoI18N`))' == 'false'">
     <EmbeddedResource Include="Resources\I18N.xml" />
   </ItemGroup>
 
@@ -59,6 +68,20 @@
   <ItemGroup>
     <ProjectReference Include="..\Exceptions\Utilities.DotNet.Exceptions.csproj" />
     <ProjectReference Include="..\Types\Utilities.DotNet.Types.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration.Contains(`Debug`))' == 'false'">
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <OutDir>bin/$(TargetFramework)/$(Configuration)</OutDir>
+    <PackageOutputPath Condition="'$(PackageOutputPath)' == ''">bin\</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration.Contains(`Debug`))' == 'false'">
+    <Content Include="bin/*/Release/Utilities.DotNet.dll" Pack="true" PackagePath="lib" Visible="false"/>
+    <Content Include="bin/*/Profile/Utilities.DotNet.dll" Pack="true" PackagePath="lib" Visible="false"/>
+    <Content Include="bin/*/Release/Utilities.DotNet.xml" Pack="true" PackagePath="lib" Visible="false"/>
+    <Content Include="bin/*/Profile/Utilities.DotNet.xml" Pack="true" PackagePath="lib" Visible="false"/>
+    <Content Include="buildTransitive/**/*" Pack="true" PackagePath="buildTransitive"/>
   </ItemGroup>
 
 </Project>

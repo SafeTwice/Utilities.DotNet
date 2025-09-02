@@ -23,7 +23,11 @@
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <Version>1.5-rc2</Version>
-    <AssemblyVersion>1.4.1.101</AssemblyVersion>
+    <AssemblyVersion>1.5.0.2</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,10 +36,6 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-
-  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)'=='release'">
-    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">

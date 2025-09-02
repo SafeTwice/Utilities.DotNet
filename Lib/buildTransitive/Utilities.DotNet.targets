@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <Choose>
+    <When Condition="'$(UtilitiesDotNetConfiguration)' == 'Release'" />
+    <When Condition="'$(UtilitiesDotNetConfiguration)' == 'Profile'" />
+    <When Condition="$(Configuration.Contains('Release'))">
+      <PropertyGroup>
+        <UtilitiesDotNetConfiguration>Release</UtilitiesDotNetConfiguration>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <UtilitiesDotNetConfiguration>Profile</UtilitiesDotNetConfiguration>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <ItemGroup>
+    <Reference Include="Utilities.DotNet">
+      <HintPath>$(MSBuildThisFileDirectory)..\lib\$(TargetFramework.Replace("-windows",""))\$(UtilitiesDotNetConfiguration)\Utilities.DotNet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

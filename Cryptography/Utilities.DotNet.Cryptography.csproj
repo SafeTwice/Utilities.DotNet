@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Condition="'$(Configuration.EndsWith(`No-I18N`))' == 'true'">
+  <PropertyGroup Condition="'$(Configuration.EndsWith(`NoI18N`))' == 'true'">
     <AssemblyName>$(AssemblyName)-NoI18N</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup>
     <TargetFrameworks>net472;net48;net6.0;net7.0;net8.0</TargetFrameworks>
-    <Configurations>Debug;Release;Debug No-I18N;Release No-I18N</Configurations>
+    <Configurations>Debug;Release;Debug-NoI18N;Release-NoI18N</Configurations>
     <DebugType>embedded</DebugType>
     <NoWarn>NETSDK1138;CS1587</NoWarn>
     <EnablePackageValidation>true</EnablePackageValidation>
@@ -19,24 +19,27 @@
     <PackageTags>.net;dotnet;utilities;util;cryptography;crypto</PackageTags>
     <Company>www.safetwice.com</Company>
     <Description>Cryptography utilities library for .NET</Description>
-    <Copyright>Copyright © 2024 SafeTwice S.L.</Copyright>
+    <Copyright>Copyright © 2025 SafeTwice S.L.</Copyright>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.0-rc2</Version>
-    <AssemblyVersion>0.9.0.101</AssemblyVersion>
+    <Version>1.0-rc3</Version>
+    <AssemblyVersion>1.0.0.3</AssemblyVersion>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Configuration.EndsWith(`No-I18N`))' == 'false'">
-    <EmbeddedResource Include="Resources\I18N.xml" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Exceptions\Utilities.DotNet.Exceptions.csproj" />
-    <ProjectReference Include="..\Lib\Utilities.DotNet.csproj" />
+  <PropertyGroup Condition="'$(Configuration.Contains(`NoI18N`))' == 'false'">
+    <DefineConstants>$(DefineConstants);USE_I18N_LIB</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration.Contains(`NoI18N`))' == 'false'">
+    <EmbeddedResource Include="Resources\I18N.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,10 +48,6 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-
-  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)'=='release'">
-    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
@@ -60,6 +59,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Memory" Version="4.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Exceptions\Utilities.DotNet.Exceptions.csproj" />
+    <ProjectReference Include="..\Lib\Utilities.DotNet.csproj" />
   </ItemGroup>
 
 </Project>

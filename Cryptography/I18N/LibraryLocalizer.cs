@@ -1,9 +1,8 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-#if DEBUG || RELEASE
-#define USE_I18N_LIB
+#if USE_I18N_LIB
 using I18N.DotNet;
 using System;
 #endif

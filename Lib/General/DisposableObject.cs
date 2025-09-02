@@ -1,10 +1,15 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
 using System.Diagnostics;
+
+#if DEBUG || PROFILE
 using Utilities.DotNet.Types;
+#endif
+
+#pragma warning disable S6670
 
 namespace Utilities.DotNet
 {
@@ -13,6 +18,7 @@ namespace Utilities.DotNet
     /// <summary>
     /// Base class for objects that implement the <see cref="IDisposable"/> interface."/>
     /// </summary>
+    [DebuggerDisplay( "TraceInfo = {TraceInfo}" )]
     public abstract class DisposableObject : IDisposable
     {
         //===========================================================================
@@ -24,7 +30,9 @@ namespace Utilities.DotNet
         /// </summary>
         ~DisposableObject()
         {
-            Debug.Print( $"Finalizing {GetType().GetPrettyName()} [{TraceInfo}]" );
+#if DEBUG || PROFILE
+            Trace.WriteLine( $"Finalizing {GetType().GetPrettyName()} [{TraceInfo}]" );
+#endif
 
             Dispose( false );
         }
@@ -36,7 +44,9 @@ namespace Utilities.DotNet
         /// <inheritdoc/>
         public void Dispose()
         {
-            Debug.Print( $"Disposing {GetType().GetPrettyName()} [{TraceInfo}]" );
+#if DEBUG || PROFILE
+            Trace.WriteLine( $"Disposing {GetType().GetPrettyName()} [{TraceInfo}]" );
+#endif
 
             Dispose( true );
             GC.SuppressFinalize( this );

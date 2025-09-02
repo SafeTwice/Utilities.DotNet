@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Condition="'$(Configuration.EndsWith(`No-I18N`))' == 'true'">
+  <PropertyGroup Condition="'$(Configuration.EndsWith(`NoI18N`))' == 'true'">
     <AssemblyName>$(AssemblyName)-NoI18N</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup>
     <TargetFrameworks>net472;net48;net6.0;net7.0;net8.0</TargetFrameworks>
-    <Configurations>Debug;Release;Debug No-I18N;Release No-I18N</Configurations>
+    <Configurations>Debug;Release;Debug-NoI18N;Release-NoI18N</Configurations>
     <DebugType>embedded</DebugType>
     <NoWarn>NETSDK1138;CS1587</NoWarn>
     <EnablePackageValidation>true</EnablePackageValidation>
@@ -26,15 +26,19 @@
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.5-rc1</Version>
-    <AssemblyVersion>1.4.1.100</AssemblyVersion>
+    <Version>1.5-rc2</Version>
+    <AssemblyVersion>1.5.0.2</AssemblyVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)'=='release'">
+  <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Configuration.EndsWith(`No-I18N`))' == 'false'">
+  <PropertyGroup Condition="'$(Configuration.Contains(`NoI18N`))' == 'false'">
+    <DefineConstants>$(DefineConstants);USE_I18N_LIB</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration.Contains(`NoI18N`))' == 'false'">
     <PackageReference Include="I18N.DotNet" Version="1.3.1" />
     <EmbeddedResource Include="Resources\I18N.xml" />
   </ItemGroup>
