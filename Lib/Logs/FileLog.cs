@@ -15,7 +15,7 @@ namespace Utilities.DotNet.Logs
     /// The type parameter <typeparamref name="TLogEntryType"/> must be a bit-field enum (i.e., declared using the <see cref="System.FlagsAttribute">Flags</see> attribute).
     /// </remarks>
     /// <typeparam name="TLogEntryType">Type of log entries.</typeparam>
-    public class FileLog<TLogEntryType> : ILog<TLogEntryType>, IDisposable where TLogEntryType : struct, Enum
+    public sealed class FileLog<TLogEntryType> : ILog<TLogEntryType>, IDisposable where TLogEntryType : struct, Enum
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -65,7 +65,7 @@ namespace Utilities.DotNet.Logs
         /// </summary>
         ~FileLog()
         {
-            Dispose();
+            Dispose( false );
         }
 
         //===========================================================================
@@ -100,29 +100,18 @@ namespace Utilities.DotNet.Logs
         /// </summary>
         public void Close()
         {
-            lock( m_fileLock )
-            {
-                m_fileWriter?.Close();
-                m_fileStream?.Close();
-
-                m_fileWriter?.Dispose();
-                m_fileStream?.Dispose();
-
-                m_fileWriter = null;
-                m_fileStream = null;
-                m_filename = null;
-            }
+            Dispose( true );
         }
 
         /// <inheritdoc/>
-        public void AddLogEntry( TLogEntryType entryType, string category, string? message = null )
+        public void AddLogEntry( TLogEntryType entryType, string category, string message )
         {
             if( !IsWriteEntryEnabled( entryType ) )
             {
                 return;
             }
 
-            WriteLogEntry( entryType, category, message ?? string.Empty );
+            WriteLogEntry( entryType, category, message );
         }
 
         /// <inheritdoc/>
@@ -136,13 +125,13 @@ namespace Utilities.DotNet.Logs
             string message = messageGenerator();
 
             WriteLogEntry( entryType, category, message );
-
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            Close();
+            Dispose( true );
+            GC.SuppressFinalize( this );
         }
 
         //===========================================================================
@@ -178,7 +167,7 @@ namespace Utilities.DotNet.Logs
             }
         }
 
-        private string EscapeMessage( string message )
+        private static string EscapeMessage( string message )
         {
             if( message.Contains( "," ) )
             {
@@ -210,13 +199,33 @@ namespace Utilities.DotNet.Logs
             }
         }
 
+        private void Dispose( bool disposing )
+        {
+            lock( m_fileLock )
+            {
+                m_fileWriter?.Close();
+                m_fileStream?.Close();
+
+                if( disposing )
+                {
+                    m_fileWriter?.Dispose();
+                    m_fileStream?.Dispose();
+                }
+
+                m_fileWriter = null;
+                m_fileStream = null;
+                m_filename = null;
+            }
+        }
+
         //===========================================================================
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
+        private readonly object m_fileLock = new();
+
         private FileStream? m_fileStream;
         private StreamWriter? m_fileWriter;
-        private object m_fileLock = new();
 
         private string? m_filename;
         private TLogEntryType m_enabledEntryTypes = default;

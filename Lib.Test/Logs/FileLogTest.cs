@@ -219,38 +219,6 @@ namespace Utilities.DotNet.Logs.Test
         }
 
         [Fact]
-        public void AddLogEntry_NoMessage()
-        {
-            // Prepare
-
-            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.ONE );
-
-            // Execute
-
-            var currentTime = DateTime.Now;
-            fileLog.AddLogEntry( ELogEntryType.ONE, "Category X" );
-
-            // Check
-
-            Assert.True( File.Exists( m_filename ) );
-
-            var fileContents = ReadFileContents( m_filename );
-
-            var matches = Regex.Match( fileContents, "^TIME,TYPE,CATEGORY,MESSAGE" + Environment.NewLine +
-                            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}),ONE,Category X," + Environment.NewLine + "$" );
-
-            Assert.True( matches.Success );
-
-            var loggedTime = DateTime.ParseExact( matches.Groups[ 1 ].Value, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture );
-
-            Assert.True( ( loggedTime - currentTime ).TotalMilliseconds < 1000 );
-
-            // Cleanup
-
-            fileLog.Close();
-        }
-
-        [Fact]
         public void AddLogEntry_ActionMessage_EntryTypeEnabled()
         {
             // Prepare
