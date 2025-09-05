@@ -67,7 +67,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Exceptions\Utilities.DotNet.Exceptions.csproj" />
-    <ProjectReference Include="..\Types\Utilities.DotNet.Types.csproj" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration.Contains(`Debug`))' == 'false'">
@@ -77,11 +76,11 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration.Contains(`Debug`))' == 'false'">
-    <Content Include="bin/*/Release/Utilities.DotNet.dll" Pack="true" PackagePath="lib" Visible="false"/>
-    <Content Include="bin/*/Profile/Utilities.DotNet.dll" Pack="true" PackagePath="lib" Visible="false"/>
-    <Content Include="bin/*/Release/Utilities.DotNet.xml" Pack="true" PackagePath="lib" Visible="false"/>
-    <Content Include="bin/*/Profile/Utilities.DotNet.xml" Pack="true" PackagePath="lib" Visible="false"/>
-    <Content Include="buildTransitive/**/*" Pack="true" PackagePath="buildTransitive"/>
+    <Content Include="bin/*/Release/Utilities.DotNet.dll" Pack="true" PackagePath="lib" Visible="false" />
+    <Content Include="bin/*/Profile/Utilities.DotNet.dll" Pack="true" PackagePath="lib" Visible="false" />
+    <Content Include="bin/*/Release/Utilities.DotNet.xml" Pack="true" PackagePath="lib" Visible="false" />
+    <Content Include="bin/*/Profile/Utilities.DotNet.xml" Pack="true" PackagePath="lib" Visible="false" />
+    <Content Include="buildTransitive/**/*" Pack="true" PackagePath="buildTransitive" />
   </ItemGroup>
 
 </Project>

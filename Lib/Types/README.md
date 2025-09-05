@@ -2,7 +2,7 @@
 
 ## About
 
-The _Utilities.DotNet.Types_ package provides utilities to work with [Type](https://learn.microsoft.com/es-es/dotnet/api/system.type)s.
+The _Utilities.DotNet.Types_ subpackage contains utilities to work with [Type](https://learn.microsoft.com/es-es/dotnet/api/system.type)s.
 
 ## Usage
 

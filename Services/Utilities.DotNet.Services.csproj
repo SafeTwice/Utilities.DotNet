@@ -49,7 +49,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lib\Utilities.DotNet.csproj" />
-    <ProjectReference Include="..\Types\Utilities.DotNet.Types.csproj" />
   </ItemGroup>
 
 </Project>
