@@ -55,13 +55,14 @@ namespace Utilities.DotNet.XML
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="parseOptions">Options for parsing the value.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
-        public static int MandatoryAttributeInt( this XElement element, string attributeName )
+        public static int MandatoryAttributeInt( this XElement element, string attributeName, EIntParseOptions parseOptions = EIntParseOptions.Default )
         {
             string attrStr = element.MandatoryAttribute( attributeName );
 
-            if( !int.TryParse( attrStr, out var attrValue ) )
+            if( !attrStr.TryParseInvariantInt( parseOptions, out var attrValue ) )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected integer value)" ),
                                                       element );
@@ -75,13 +76,14 @@ namespace Utilities.DotNet.XML
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="parseOptions">Options for parsing the value.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute is not present or its value is invalid.</exception>
-        public static uint MandatoryAttributeUInt( this XElement element, string attributeName )
+        public static uint MandatoryAttributeUInt( this XElement element, string attributeName, EUIntParseOptions parseOptions = EUIntParseOptions.Default )
         {
             string attrStr = element.MandatoryAttribute( attributeName );
 
-            if( !uint.TryParse( attrStr, out var attrValue ) )
+            if( !attrStr.TryParseInvariantUInt( parseOptions, out var attrValue ) )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected unsigned integer value)" ),
                                                       element );
@@ -262,18 +264,28 @@ namespace Utilities.DotNet.XML
             return element.Attribute( attributeName )?.Value ?? defaultValue;
         }
 
+        /// <inheritdoc cref="OptionalAttributeInt(XElement, string, EIntParseOptions, int?)"/>/>
+#if !NETFRAMEWORK
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
+        public static int? OptionalAttributeInt( this XElement element, string attributeName, int? defaultValue )
+        {
+            return element.OptionalAttributeInt( attributeName, EIntParseOptions.Default, defaultValue );
+        }
+
         /// <summary>
         /// Gets an optional attribute value as an <see cref="int"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="parseOptions">Options for parsing the value.</param>
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
 #if !NETFRAMEWORK
         [return: NotNullIfNotNull( nameof( defaultValue ) )]
 #endif
-        public static int? OptionalAttributeInt( this XElement element, string attributeName, int? defaultValue )
+        public static int? OptionalAttributeInt( this XElement element, string attributeName, EIntParseOptions parseOptions, int? defaultValue )
         {
             var attrStr = element.OptionalAttribute( attributeName );
             if( attrStr is null )
@@ -281,7 +293,7 @@ namespace Utilities.DotNet.XML
                 return defaultValue;
             }
 
-            if( !int.TryParse( attrStr, out var attrValue ) )
+            if( !attrStr.TryParseInvariantInt( parseOptions, out var attrValue ) )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected integer value)" ),
                                                       element );
@@ -296,18 +308,34 @@ namespace Utilities.DotNet.XML
             return element.OptionalAttributeInt( attributeName, null ) ?? defaultValue;
         }
 
+        /// <inheritdoc cref="OptionalAttributeInt(XElement, string, EIntParseOptions, int?)"/>/>
+        public static int OptionalAttributeInt( this XElement element, string attributeName, EIntParseOptions parseOptions, int defaultValue = 0 )
+        {
+            return element.OptionalAttributeInt( attributeName, parseOptions, null ) ?? defaultValue;
+        }
+
+        /// <inheritdoc cref="OptionalAttributeUInt(XElement, string, EUIntParseOptions, uint?)"/>/>
+#if !NETFRAMEWORK
+        [return: NotNullIfNotNull( nameof( defaultValue ) )]
+#endif
+        public static uint? OptionalAttributeUInt( this XElement element, string attributeName, uint? defaultValue )
+        {
+            return element.OptionalAttributeUInt( attributeName, EUIntParseOptions.Default, defaultValue );
+        }
+
         /// <summary>
         /// Gets an optional attribute value as an <see cref="uint"/>.
         /// </summary>
         /// <param name="element">This element.</param>
         /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="parseOptions">Options for parsing the value.</param>
         /// <param name="defaultValue">Value returned when the attribute is not present.</param>
         /// <returns>The value of the attribute.</returns>
         /// <exception cref="XmlFileProcessingException">Thrown when the attribute value is invalid.</exception>
 #if !NETFRAMEWORK
         [return: NotNullIfNotNull( nameof( defaultValue ) )]
 #endif
-        public static uint? OptionalAttributeUInt( this XElement element, string attributeName, uint? defaultValue )
+        public static uint? OptionalAttributeUInt( this XElement element, string attributeName, EUIntParseOptions parseOptions, uint? defaultValue )
         {
             var attrStr = element.OptionalAttribute( attributeName );
             if( attrStr is null )
@@ -315,7 +343,7 @@ namespace Utilities.DotNet.XML
                 return defaultValue;
             }
 
-            if( !uint.TryParse( attrStr, out var attrValue ) )
+            if( !attrStr.TryParseInvariantUInt( parseOptions, out var attrValue ) )
             {
                 throw new XmlFileProcessingException( Localize( $"XML element '{element.Name}' attribute '{attributeName}' has an invalid value '{attrStr}' (expected unsigned integer value)" ),
                                                       element );
@@ -328,6 +356,12 @@ namespace Utilities.DotNet.XML
         public static uint OptionalAttributeUInt( this XElement element, string attributeName, uint defaultValue = 0U )
         {
             return element.OptionalAttributeUInt( attributeName, null ) ?? defaultValue;
+        }
+
+        /// <inheritdoc cref="OptionalAttributeUInt(XElement, string, EUIntParseOptions, uint?)"/>/>
+        public static uint OptionalAttributeUInt( this XElement element, string attributeName, EUIntParseOptions parseOptions, uint defaultValue = 0u )
+        {
+            return element.OptionalAttributeUInt( attributeName, parseOptions, null ) ?? defaultValue;
         }
 
         /// <summary>

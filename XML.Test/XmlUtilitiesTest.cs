@@ -26,8 +26,8 @@ namespace Utilities.DotNet.XML.Test
             {
                 "<Root>",
                 "<String value='foo' empty=''/>",
-                "<Int value='-45' empty='' invalid='bar'/>",
-                "<UInt value='435' empty='' invalid='bar'/>",
+                "<Int value='-45' empty='' invalid='bar' hex='0xCAFE'/>",
+                "<UInt value='435' empty='' invalid='bar' hex='0xBEEF'/>",
                 "<Double value='23.645' empty='' invalid='bar'/>",
                 "<Bool true='true' false='false' empty='' invalid='bar'/>",
                 "<Enum value1='Option1' value2=' Option2 ' value3='option1' value4='OPTiON2' empty='' invalid='bar'/>",
@@ -600,8 +600,10 @@ namespace Utilities.DotNet.XML.Test
             Assert.Equal( "fizz", value );
         }
 
-        [Fact]
-        public void OptionalAttributeInt_Existing()
+        [Theory]
+        [InlineData( "value", EIntParseOptions.Default, -45 )]
+        [InlineData( "hex", EIntParseOptions.AnyNumber, 0xCAFE )]
+        public void OptionalAttributeInt_Existing( string attributeName, EIntParseOptions parseOptions, int expectedValue )
         {
             // Arrange
 
@@ -609,11 +611,11 @@ namespace Utilities.DotNet.XML.Test
 
             // Act
 
-            var value = element.OptionalAttributeInt( "value", 76645 );
+            var value = element.OptionalAttributeInt( attributeName, parseOptions, 76645 );
 
             // Assert
 
-            Assert.Equal( -45, value );
+            Assert.Equal( expectedValue, value );
         }
 
         [Fact]
@@ -653,8 +655,10 @@ namespace Utilities.DotNet.XML.Test
             Assert.Equal( 3, exception.Line );
         }
 
-        [Fact]
-        public void OptionalAttributeUInt_Existing()
+        [Theory]
+        [InlineData( "value", EUIntParseOptions.Default, 435u )]
+        [InlineData( "hex", EUIntParseOptions.AnyNumber, 0xBEEF )]
+        public void OptionalAttributeUInt_Existing( string attributeName, EUIntParseOptions parseOptions, uint expectedValue )
         {
             // Arrange
 
@@ -662,11 +666,11 @@ namespace Utilities.DotNet.XML.Test
 
             // Act
 
-            var value = element.OptionalAttributeUInt( "value", 5454U );
+            var value = element.OptionalAttributeUInt( attributeName, parseOptions, 5454u );
 
             // Assert
 
-            Assert.Equal( 435U, value );
+            Assert.Equal( expectedValue, value );
         }
 
         [Fact]

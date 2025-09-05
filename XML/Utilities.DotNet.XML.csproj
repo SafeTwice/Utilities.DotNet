@@ -61,7 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Exceptions\Utilities.DotNet.Exceptions.csproj" />
+    <ProjectReference Include="..\Lib\Utilities.DotNet.csproj" />
   </ItemGroup>
 
 </Project>
