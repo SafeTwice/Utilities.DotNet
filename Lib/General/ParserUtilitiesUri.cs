@@ -12,9 +12,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace Utilities.DotNet
 {
     /// <summary>
-    /// <see cref="Uri"/> utilities.
+    /// Utilities .
     /// </summary>
-    public static partial class UriUtilities
+    public static partial class ParserUtilities
     {
         //===========================================================================
         //                            PUBLIC METHODS
@@ -23,18 +23,18 @@ namespace Utilities.DotNet
         /// <summary>
         /// Parses a URI string.
         /// </summary>
-        /// <param name="uriString">URI string to be parsed.</param>
-        /// <param name="defaultScheme">Scheme to use if <paramref name="uriString"/> does not define one
+        /// <param name="input">URI string to be parsed.</param>
+        /// <param name="defaultScheme">Scheme to use if <paramref name="input"/> does not define one
         ///                             ('https' when <see langword="null"/>).</param>
-        /// <param name="defaultPort">Port to use if <paramref name="uriString"/> does not define one
+        /// <param name="defaultPort">Port to use if <paramref name="input"/> does not define one
         ///                             (will use the default port for the scheme when set to -1).</param>
         /// <returns>The parsed URI.</returns>
-        /// <exception cref="ArgumentException">Thrown when <paramref name="uriString"/> is not a valid URI.</exception>
-        public static Uri ParseUri( this string uriString, string? defaultScheme = null, int defaultPort = -1 )
+        /// <exception cref="ArgumentException">Thrown when <paramref name="input"/> is not a valid URI.</exception>
+        public static Uri ParseUri( this string input, string? defaultScheme = null, int defaultPort = -1 )
         {
-            if( !TryParseUri( uriString, out var result, defaultScheme, defaultPort ) )
+            if( !TryParseUri( input, out var result, defaultScheme, defaultPort ) )
             {
-                throw new ArgumentException( "Invalid URI", nameof( uriString ) );
+                throw new ArgumentException( "Invalid URI", nameof( input ) );
             }
 
             return result!;
@@ -43,21 +43,21 @@ namespace Utilities.DotNet
         /// <summary>
         /// Tries to parse a URI string.
         /// </summary>
-        /// <param name="uriString">URI string to be parsed.</param>
+        /// <param name="input">URI string to be parsed.</param>
         /// <param name="result">The parsed URI (or <see langword="null"/> if the URI could not be parsed).</param>
-        /// <param name="defaultScheme">Scheme to use if <paramref name="uriString"/> does not define one
+        /// <param name="defaultScheme">Scheme to use if <paramref name="input"/> does not define one
         ///                             ('https' when <see langword="null"/>).</param>
-        /// <param name="defaultPort">Port to use if <paramref name="uriString"/> does not define one
+        /// <param name="defaultPort">Port to use if <paramref name="input"/> does not define one
         ///                             (will use the default port for the scheme when set to -1).</param>
         /// <returns><see langword="true"/> if the URI was parsed successfully; <see langword="false"/> otherwise.</returns>
-        public static bool TryParseUri( this string uriString,
+        public static bool TryParseUri( this string input,
 #if NET6_0_OR_GREATER
             [NotNullWhen( true )]
 #endif
             out Uri? result,
             string? defaultScheme = null, int defaultPort = -1 )
         {
-            var match = UrlRegex().Match( uriString );
+            var match = UrlRegex().Match( input );
             if( !match.Success )
             {
                 result = null;
