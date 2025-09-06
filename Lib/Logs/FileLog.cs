@@ -1,8 +1,9 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Utilities.DotNet.Files;
 
@@ -63,6 +64,7 @@ namespace Utilities.DotNet.Logs
         /// <summary>
         /// Finalizer.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         ~FileLog()
         {
             Dispose( false );
@@ -125,6 +127,19 @@ namespace Utilities.DotNet.Logs
             string message = messageGenerator();
 
             WriteLogEntry( entryType, category, message );
+        }
+
+        /// <inheritdoc/>
+        public void AddLogEntry( TLogEntryType entryType, Func<(string category, string message)> infoGenerator )
+        {
+            if( !IsWriteEntryEnabled( entryType ) )
+            {
+                return;
+            }
+
+            var entryInfo = infoGenerator();
+
+            WriteLogEntry( entryType, entryInfo.category, entryInfo.message );
         }
 
         /// <inheritdoc/>

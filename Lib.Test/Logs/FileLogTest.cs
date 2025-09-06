@@ -10,17 +10,17 @@ using Xunit;
 
 namespace Utilities.DotNet.Logs.Test
 {
-    public class FileLogTest : IDisposable
+    public sealed class FileLogTest : IDisposable
     {
         [Flags]
         public enum ELogEntryType
         {
-            NONE = 0,
-            ONE = 0x01,
-            TWO = 0x02,
+            None = 0,
+            One = 0x01,
+            Two = 0x02,
         }
 
-        private string m_filename = Path.GetTempPath() + $"/{typeof( FileLogTest ).FullName}-{DateTime.Now:yyyy-MM-dd-HH-mm-ss-fff}";
+        private readonly string m_filename = Path.GetTempPath() + $"/{typeof( FileLogTest ).FullName}-{DateTime.Now:yyyy-MM-dd-HH-mm-ss-fff}";
 
         public void Dispose()
         {
@@ -30,7 +30,7 @@ namespace Utilities.DotNet.Logs.Test
             }
         }
 
-        private string ReadFileContents( string filename )
+        private static string ReadFileContents( string filename )
         {
             using var fileStream = new FileStream( filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite );
             using var reader = new StreamReader( fileStream );
@@ -39,10 +39,10 @@ namespace Utilities.DotNet.Logs.Test
         }
 
         [Theory]
-        [InlineData( ELogEntryType.NONE, false, false )]
-        [InlineData( ELogEntryType.ONE, true, false )]
-        [InlineData( ELogEntryType.TWO, false, true )]
-        [InlineData( ELogEntryType.ONE | ELogEntryType.TWO, true, true )]
+        [InlineData( ELogEntryType.None, false, false )]
+        [InlineData( ELogEntryType.One, true, false )]
+        [InlineData( ELogEntryType.Two, false, true )]
+        [InlineData( ELogEntryType.One | ELogEntryType.Two, true, true )]
         public void EntryTypesEnabling( ELogEntryType enabledEntryTypes, bool oneValue, bool twoValue )
         {
             // Prepare
@@ -56,8 +56,8 @@ namespace Utilities.DotNet.Logs.Test
             // CHeck
 
             Assert.Equal( enabledEntryTypes, fileLog.EnabledEntryTypes );
-            Assert.Equal( oneValue, fileLog.IsEntryTypeEnabled( ELogEntryType.ONE ) );
-            Assert.Equal( twoValue, fileLog.IsEntryTypeEnabled( ELogEntryType.TWO ) );
+            Assert.Equal( oneValue, fileLog.IsEntryTypeEnabled( ELogEntryType.One ) );
+            Assert.Equal( twoValue, fileLog.IsEntryTypeEnabled( ELogEntryType.Two ) );
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace Utilities.DotNet.Logs.Test
         {
             // Execute
 
-            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.TWO );
+            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.Two );
 
             // Check
 
@@ -102,7 +102,7 @@ namespace Utilities.DotNet.Logs.Test
             // Prepare
 
             using var fileLog = new FileLog<ELogEntryType>();
-            fileLog.EnabledEntryTypes = ELogEntryType.TWO;
+            fileLog.EnabledEntryTypes = ELogEntryType.Two;
 
             // Execute
 
@@ -142,16 +142,16 @@ namespace Utilities.DotNet.Logs.Test
         }
 
         [Fact]
-        public void AddLogEntry_StringMessage_EntryTypeEnabled()
+        public void AddLogEntry_MessageString_EntryTypeEnabled()
         {
             // Prepare
 
-            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.ONE );
+            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.One );
 
             // Execute
 
             var currentTime = DateTime.Now;
-            fileLog.AddLogEntry( ELogEntryType.ONE, "Category X", "Message Y" );
+            fileLog.AddLogEntry( ELogEntryType.One, "Category X", "Message Y" );
 
             // Check
 
@@ -160,7 +160,7 @@ namespace Utilities.DotNet.Logs.Test
             var fileContents = ReadFileContents( m_filename );
 
             var matches = Regex.Match( fileContents, "^TIME,TYPE,CATEGORY,MESSAGE" + Environment.NewLine +
-                            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}),ONE,Category X,Message Y" + Environment.NewLine + "$" );
+                            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}),One,Category X,Message Y" + Environment.NewLine + "$" );
 
             Assert.True( matches.Success );
 
@@ -174,15 +174,15 @@ namespace Utilities.DotNet.Logs.Test
         }
 
         [Fact]
-        public void AddLogEntry_StringMessage_EntryTypeDisabled()
+        public void AddLogEntry_MessageString_EntryTypeDisabled()
         {
             // Prepare
 
-            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.ONE );
+            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.One );
 
             // Execute
 
-            fileLog.AddLogEntry( ELogEntryType.TWO, "Category X", "Message Y" );
+            fileLog.AddLogEntry( ELogEntryType.Two, "Category X", "Message Y" );
 
             // Check
 
@@ -198,16 +198,16 @@ namespace Utilities.DotNet.Logs.Test
         }
 
         [Fact]
-        public void AddLogEntry_StringMessage_FileClosed()
+        public void AddLogEntry_MessageString_FileClosed()
         {
             // Prepare
 
             using var fileLog = new FileLog<ELogEntryType>();
-            fileLog.EnabledEntryTypes = ELogEntryType.ONE;
+            fileLog.EnabledEntryTypes = ELogEntryType.One;
 
             // Execute
 
-            fileLog.AddLogEntry( ELogEntryType.ONE, "Category X", "Message Y" );
+            fileLog.AddLogEntry( ELogEntryType.One, "Category X", "Message Y" );
 
             // Check
 
@@ -219,18 +219,18 @@ namespace Utilities.DotNet.Logs.Test
         }
 
         [Fact]
-        public void AddLogEntry_ActionMessage_EntryTypeEnabled()
+        public void AddLogEntry_MessageGenerator_EntryTypeEnabled()
         {
             // Prepare
 
-            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.ONE );
+            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.One );
 
             int i = 33;
 
             // Execute
 
             var currentTime = DateTime.Now;
-            fileLog.AddLogEntry( ELogEntryType.ONE, "Category X", () => $"Message {i++}" );
+            fileLog.AddLogEntry( ELogEntryType.One, "Category X", () => $"Message {i++}" );
 
             // Check
 
@@ -239,7 +239,7 @@ namespace Utilities.DotNet.Logs.Test
             var fileContents = ReadFileContents( m_filename );
 
             var matches = Regex.Match( fileContents, "^TIME,TYPE,CATEGORY,MESSAGE" + Environment.NewLine +
-                            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}),ONE,Category X,Message 33" + Environment.NewLine + "$" );
+                            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}),One,Category X,Message 33" + Environment.NewLine + "$" );
 
             Assert.True( matches.Success );
 
@@ -255,17 +255,17 @@ namespace Utilities.DotNet.Logs.Test
         }
 
         [Fact]
-        public void AddLogEntry_ActionMessage_EntryTypeDisabled()
+        public void AddLogEntry_MessageGenerator_EntryTypeDisabled()
         {
             // Prepare
 
-            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.ONE );
+            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.One );
 
             int i = 33;
 
             // Execute
 
-            fileLog.AddLogEntry( ELogEntryType.TWO, "Category X", () => $"Message {i++}" );
+            fileLog.AddLogEntry( ELogEntryType.Two, "Category X", () => $"Message {i++}" );
 
             // Check
 
@@ -283,24 +283,151 @@ namespace Utilities.DotNet.Logs.Test
         }
 
         [Fact]
-        public void AddLogEntry_ActionMessage_FileClosed()
+        public void AddLogEntry_MessageGenerator_FileClosed()
         {
             // Prepare
 
             using var fileLog = new FileLog<ELogEntryType>();
-            fileLog.EnabledEntryTypes = ELogEntryType.ONE;
+            fileLog.EnabledEntryTypes = ELogEntryType.One;
 
             int i = 33;
 
             // Execute
 
-            fileLog.AddLogEntry( ELogEntryType.ONE, "Category X", () => $"Message {i++}" );
+            fileLog.AddLogEntry( ELogEntryType.One, "Category X", () => $"Message {i++}" );
 
             // Check
 
             Assert.False( File.Exists( m_filename ) );
 
             Assert.Equal( 33, i );
+
+            // Cleanup
+
+            fileLog.Close();
+        }
+
+        [Fact]
+        public void AddLogEntry_InfoGenerator_EntryTypeEnabled()
+        {
+            // Prepare
+
+            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.One );
+
+            int i = 33;
+            int j = 54;
+
+            // Execute
+
+            var currentTime = DateTime.Now;
+            fileLog.AddLogEntry( ELogEntryType.One, () => ($"Category {j++}", $"Message {i++}") );
+
+            // Check
+
+            Assert.True( File.Exists( m_filename ) );
+
+            var fileContents = ReadFileContents( m_filename );
+
+            var matches = Regex.Match( fileContents, "^TIME,TYPE,CATEGORY,MESSAGE" + Environment.NewLine +
+                            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}),One,Category 54,Message 33" + Environment.NewLine + "$" );
+
+            Assert.True( matches.Success );
+
+            var loggedTime = DateTime.ParseExact( matches.Groups[ 1 ].Value, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture );
+
+            Assert.True( ( loggedTime - currentTime ).TotalMilliseconds < 1000 );
+
+            Assert.Equal( 34, i );
+            Assert.Equal( 55, j );
+
+            // Cleanup
+
+            fileLog.Close();
+        }
+
+        [Fact]
+        public void AddLogEntry_InfoGenerator_EntryTypeDisabled()
+        {
+            // Prepare
+
+            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.Two );
+
+            int i = 33;
+            int j = 54;
+
+            // Execute
+
+            fileLog.AddLogEntry( ELogEntryType.One, () => ($"Category {j++}", $"Message {i++}") );
+
+            // Check
+
+            Assert.True( File.Exists( m_filename ) );
+
+            var fileContents = ReadFileContents( m_filename );
+
+            Assert.Equal( "TIME,TYPE,CATEGORY,MESSAGE" + Environment.NewLine, fileContents );
+
+            Assert.Equal( 33, i );
+            Assert.Equal( 54, j );
+
+            // Cleanup
+
+            fileLog.Close();
+        }
+
+        [Fact]
+        public void AddLogEntry_InfoGenerator_FileClosed()
+        {
+            // Prepare
+
+            using var fileLog = new FileLog<ELogEntryType>();
+            fileLog.EnabledEntryTypes = ELogEntryType.One;
+
+            int i = 33;
+            int j = 54;
+
+            // Execute
+
+            fileLog.AddLogEntry( ELogEntryType.One, () => ($"Category {j++}", $"Message {i++}") );
+
+            // Check
+
+            Assert.False( File.Exists( m_filename ) );
+
+            Assert.Equal( 33, i );
+            Assert.Equal( 54, j );
+
+            // Cleanup
+
+            fileLog.Close();
+        }
+
+        [Fact]
+        public void MessageEscaped()
+        {
+            // Prepare
+
+            using var fileLog = new FileLog<ELogEntryType>( m_filename, ELogEntryType.One | ELogEntryType.Two );
+
+            // Execute
+
+            var currentTime = DateTime.Now;
+            fileLog.AddLogEntry( ELogEntryType.One, "Category X", "Message Y, Z" );
+
+            // Check
+
+            Assert.True( File.Exists( m_filename ) );
+
+            var fileContents = ReadFileContents( m_filename );
+
+            var matches = Regex.Match( fileContents, "^TIME,TYPE,CATEGORY,MESSAGE" + Environment.NewLine +
+                            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}),One,Category X,\"Message Y, Z\"" + Environment.NewLine + "$" );
+
+            Assert.True( matches.Success );
+
+            var loggedTime = DateTime.ParseExact( matches.Groups[ 1 ].Value, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture );
+
+            Assert.True( ( loggedTime - currentTime ).TotalMilliseconds < 1000 );
 
             // Cleanup
 

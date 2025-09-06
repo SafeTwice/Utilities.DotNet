@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2023-2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System;
@@ -49,5 +49,15 @@ namespace Utilities.DotNet.Logs
         /// <param name="category">Category of the entry.</param>
         /// <param name="messageGenerator">Function that generates the message for the entry.</param>
         void AddLogEntry( TLogEntryType entryType, string category, Func<string> messageGenerator );
+
+        /// <summary>
+        /// Adds an entry to the log if the entry type is enabled.
+        /// </summary>
+        /// <remarks>
+        /// The generation function is only called if the entry type is enabled. 
+        /// </remarks>
+        /// <param name="entryType">Type of the entry.</param>
+        /// <param name="infoGenerator">Function that generates the category and message for the entry.</param>
+        void AddLogEntry( TLogEntryType entryType, Func<(string category, string message)> infoGenerator );
     }
 }
