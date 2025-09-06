@@ -26,8 +26,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>11</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.5-rc5</Version>
-    <AssemblyVersion>1.5.0.5</AssemblyVersion>
+    <Version>1.5-rc6</Version>
+    <AssemblyVersion>1.5.0.6</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
