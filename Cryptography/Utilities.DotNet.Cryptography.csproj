@@ -26,8 +26,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.0-rc3</Version>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
+    <Version>1.0-rc4</Version>
+    <AssemblyVersion>1.0.0.4</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
@@ -62,7 +62,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Exceptions\Utilities.DotNet.Exceptions.csproj" />
     <ProjectReference Include="..\Lib\Utilities.DotNet.csproj" />
   </ItemGroup>
 

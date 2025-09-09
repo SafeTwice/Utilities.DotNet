@@ -21,8 +21,8 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
-    <Version>1.5-rc3</Version>
-    <AssemblyVersion>1.5.0.3</AssemblyVersion>
+    <Version>1.5-rc4</Version>
+    <AssemblyVersion>1.5.0.4</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
