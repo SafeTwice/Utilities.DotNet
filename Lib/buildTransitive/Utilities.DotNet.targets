@@ -16,9 +16,41 @@
     </Otherwise>
   </Choose>
 
+  <PropertyGroup>
+    <UtilitiesDotNetTargetFrameworkVersion>$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)'))</UtilitiesDotNetTargetFrameworkVersion>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$([MSBuild]::VersionGreaterThanOrEquals(`$(UtilitiesDotNetTargetFrameworkVersion)`,`8.0`))' == 'true'">
+      <PropertyGroup>
+        <UtilitiesDotNetTargetFrameworkVersion>net8.0</UtilitiesDotNetTargetFrameworkVersion>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$([MSBuild]::VersionGreaterThanOrEquals(`$(UtilitiesDotNetTargetFrameworkVersion)`,`7.0`))' == 'true'">
+      <PropertyGroup>
+        <UtilitiesDotNetTargetFrameworkVersion>net7.0</UtilitiesDotNetTargetFrameworkVersion>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$([MSBuild]::VersionGreaterThanOrEquals(`$(UtilitiesDotNetTargetFrameworkVersion)`,`6.0`))' == 'true'">
+      <PropertyGroup>
+        <UtilitiesDotNetTargetFrameworkVersion>net6.0</UtilitiesDotNetTargetFrameworkVersion>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$([MSBuild]::VersionGreaterThanOrEquals(`$(UtilitiesDotNetTargetFrameworkVersion)`,`4.8`))' == 'true'">
+      <PropertyGroup>
+        <UtilitiesDotNetTargetFrameworkVersion>net48</UtilitiesDotNetTargetFrameworkVersion>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <UtilitiesDotNetTargetFrameworkVersion>net472</UtilitiesDotNetTargetFrameworkVersion>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
   <ItemGroup>
     <Reference Include="Utilities.DotNet">
-      <HintPath>$(MSBuildThisFileDirectory)..\lib\$(TargetFramework.Replace("-windows",""))\$(UtilitiesDotNetConfiguration)\Utilities.DotNet.dll</HintPath>
+      <HintPath>$(MSBuildThisFileDirectory)..\lib\$(UtilitiesDotNetTargetFrameworkVersion)\$(UtilitiesDotNetConfiguration)\Utilities.DotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
 
