@@ -22,8 +22,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.0-rc4</Version>
-    <AssemblyVersion>1.0.0.4</AssemblyVersion>
+    <Version>1.0-rc5</Version>
+    <AssemblyVersion>1.0.0.5</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -46,7 +46,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.7" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.9" />
   </ItemGroup>
 
   <ItemGroup>

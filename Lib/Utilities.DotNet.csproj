@@ -26,8 +26,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>11</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.5-rc7</Version>
-    <AssemblyVersion>1.5.0.7</AssemblyVersion>
+    <Version>1.5-rc8</Version>
+    <AssemblyVersion>1.5.0.8</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
@@ -55,7 +55,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
