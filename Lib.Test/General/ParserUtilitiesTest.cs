@@ -414,5 +414,196 @@ namespace Utilities.DotNet.Test
             Assert.Equal( expectedResult, result );
             Assert.Equal( expectedValue, parsedValue );
         }
+
+        //***************************************************************************
+        //                              Decimal
+        //***************************************************************************
+
+        [Theory]
+        [InlineData( "9234", EDecimalParseOptions.Default, "en-us", 9234 )]
+        [InlineData( "273   ", EDecimalParseOptions.Default, "en-us", 273 )]
+        [InlineData( "   62346   ", EDecimalParseOptions.Default, "en-us", 62346 )]
+        [InlineData( "43566.35", EDecimalParseOptions.Default, "en-us", 43566.35d )]
+        [InlineData( "-8878234,235", EDecimalParseOptions.Default, "es", -8878234.235d )]
+        [InlineData( "5453.3-", EDecimalParseOptions.Default, "en-us", -5453.3d )]
+        [InlineData( "345,446.33", EDecimalParseOptions.Default, "en-us", 345446.33d )]
+        [InlineData( "345.446,33", EDecimalParseOptions.Default, "es", 345446.33d )]
+        [InlineData( "9234", EDecimalParseOptions.AnyNumber, "en-us", 9234 )]
+        [InlineData( "-7734", EDecimalParseOptions.AnyNumber, "en-us", -7734 )]
+        [InlineData( "0xCAFE1234", EDecimalParseOptions.AnyNumber, "en-us", 0xCAFE1234u )]
+        [InlineData( "0XBEEF", EDecimalParseOptions.AnyNumber, "en-us", 0XBEEF )]
+#if NET8_0_OR_GREATER
+        [InlineData( "0b100101", EDecimalParseOptions.AnyNumber, "en-us", 0b100101 )]
+        [InlineData( "0B1100010100101", EDecimalParseOptions.AnyNumber, "en-us", 0b1100010100101 )]
+#endif
+        public void ParseDecimal_Valid( string input, EDecimalParseOptions parseOptions, string cultureName, decimal expectedResult )
+        {
+            // Arrange
+
+            var culture = CultureInfo.GetCultureInfo( cultureName );
+
+            // Act
+
+            var result = ParserUtilities.ParseDecimal( input, parseOptions, culture );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+        }
+
+        [Theory]
+        [InlineData( "", EDecimalParseOptions.Default, "en-us" )]
+        [InlineData( "ABC", EDecimalParseOptions.Default, "en-us" )]
+        [InlineData( "(345)", EDecimalParseOptions.Default, "en-us" )]
+        [InlineData( "0x1234", EDecimalParseOptions.Default, "en-us" )]
+        [InlineData( "0b1001", EDecimalParseOptions.Default, "en-us" )]
+        public void ParseDecimal_InvalidFormat( string input, EDecimalParseOptions parseOptions, string cultureName )
+        {
+            // Arrange
+
+            var culture = CultureInfo.GetCultureInfo( cultureName );
+
+            // Act
+
+            Assert.Throws<FormatException>( () => ParserUtilities.ParseDecimal( input, parseOptions, culture ) );
+        }
+
+        [Theory]
+        [InlineData( "9983485834858348583417235542712", EDecimalParseOptions.Default, "en-us" )]
+        public void ParseDecimal_Overflow( string input, EDecimalParseOptions parseOptions, string cultureName )
+        {
+            // Arrange
+
+            var culture = CultureInfo.GetCultureInfo( cultureName );
+
+            // Act
+
+            Assert.Throws<OverflowException>( () => ParserUtilities.ParseDecimal( input, parseOptions, culture ) );
+        }
+
+        [Theory]
+        [InlineData( "9234", EDecimalParseOptions.Default, "fr", 9234 )]
+        [InlineData( "345,446", EDecimalParseOptions.Default, "en-us", 345446 )]
+        [InlineData( "764.542", EDecimalParseOptions.Default, "es", 764542 )]
+        public void ParseDecimal_CurrentCulture( string input, EDecimalParseOptions parseOptions, string cultureName, decimal expectedResult )
+        {
+            // Arrange
+
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo( cultureName );
+
+            // Act
+
+            var result = ParserUtilities.ParseDecimal( input, parseOptions );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+        }
+
+        [Theory]
+        [InlineData( "9234", EDecimalParseOptions.Default, 9234 )]
+        [InlineData( "345,446.23", EDecimalParseOptions.Default, 345446.23d )]
+        public void ParseInvariantDecimal( string input, EDecimalParseOptions parseOptions, decimal expectedResult )
+        {
+            // Act
+
+            var result = ParserUtilities.ParseInvariantDecimal( input, parseOptions );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+        }
+
+        [Theory]
+        [InlineData( "9234", EDecimalParseOptions.Default, "en-us", 9234 )]
+        [InlineData( "273   ", EDecimalParseOptions.Default, "en-us", 273 )]
+        [InlineData( "   62346   ", EDecimalParseOptions.Default, "en-us", 62346 )]
+        [InlineData( "43566.35", EDecimalParseOptions.Default, "en-us", 43566.35d )]
+        [InlineData( "-8878234,235", EDecimalParseOptions.Default, "es", -8878234.235d )]
+        [InlineData( "5453.3-", EDecimalParseOptions.Default, "en-us", -5453.3d )]
+        [InlineData( "345,446.33", EDecimalParseOptions.Default, "en-us", 345446.33d )]
+        [InlineData( "345.446,33", EDecimalParseOptions.Default, "es", 345446.33d )]
+        [InlineData( "9234", EDecimalParseOptions.AnyNumber, "en-us", 9234 )]
+        [InlineData( "-7734", EDecimalParseOptions.AnyNumber, "en-us", -7734 )]
+        [InlineData( "0xCAFE1234", EDecimalParseOptions.AnyNumber, "en-us", 0xCAFE1234u )]
+        [InlineData( "0XBEEF", EDecimalParseOptions.AnyNumber, "en-us", 0XBEEF )]
+#if NET8_0_OR_GREATER
+        [InlineData( "0b100101", EDecimalParseOptions.AnyNumber, "en-us", 0b100101 )]
+        [InlineData( "0B1100010100101", EDecimalParseOptions.AnyNumber, "en-us", 0b1100010100101 )]
+#endif
+        public void TryParseDecimal_Valid( string input, EDecimalParseOptions parseOptions, string cultureName, decimal expectedValue )
+        {
+            // Arrange
+
+            var culture = CultureInfo.GetCultureInfo( cultureName );
+
+            // Act
+
+            var result = ParserUtilities.TryParseDecimal( input, parseOptions, culture, out var parsedValue );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( expectedValue, parsedValue );
+        }
+
+        [Theory]
+        [InlineData( "", EDecimalParseOptions.Default, "en-us" )]
+        [InlineData( "9983485834858348583417235542712", EDecimalParseOptions.Default, "en-us" )]
+        [InlineData( "ABC", EDecimalParseOptions.Default, "en-us" )]
+        [InlineData( "(345)", EDecimalParseOptions.Default, "en-us" )]
+        [InlineData( "0x1234", EDecimalParseOptions.Default, "en-us" )]
+        [InlineData( "0b1001", EDecimalParseOptions.Default, "en-us" )]
+        public void TryParseDecimal_Invalid( string input, EDecimalParseOptions parseOptions, string cultureName )
+        {
+            // Arrange
+
+            var culture = CultureInfo.GetCultureInfo( cultureName );
+
+            // Act
+
+            var result = ParserUtilities.TryParseDecimal( input, parseOptions, culture, out var parsedValue );
+
+            // Assert
+
+            Assert.False( result );
+            Assert.Equal( 0u, parsedValue );
+        }
+
+        [Theory]
+        [InlineData( "9234", EDecimalParseOptions.Default, "fr", 9234 )]
+        [InlineData( "345,446", EDecimalParseOptions.AllowThousands, "en-us", 345446 )]
+        [InlineData( "764.542", EDecimalParseOptions.AllowThousands, "es", 764542 )]
+        public void TryParseDecimal_CurrentCulture( string input, EDecimalParseOptions parseOptions, string cultureName, decimal expectedValue )
+        {
+            // Arrange
+
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo( cultureName );
+
+            // Act
+
+            var result = ParserUtilities.TryParseDecimal( input, parseOptions, out var parsedValue );
+
+            // Assert
+
+            Assert.True( result );
+            Assert.Equal( expectedValue, parsedValue );
+        }
+
+        [Theory]
+        [InlineData( "9234", EDecimalParseOptions.Default, true, 9234 )]
+        [InlineData( "345,446", EDecimalParseOptions.AllowThousands, true, 345446 )]
+        [InlineData( "345.446", EDecimalParseOptions.AllowThousands, false, 0 )]
+        public void TryParseInvariantDecimal( string input, EDecimalParseOptions parseOptions, bool expectedResult, decimal expectedValue )
+        {
+            // Act
+
+            var result = ParserUtilities.TryParseInvariantDecimal( input, parseOptions, out var parsedValue );
+
+            // Assert
+
+            Assert.Equal( expectedResult, result );
+            Assert.Equal( expectedValue, parsedValue );
+        }
     }
 }
