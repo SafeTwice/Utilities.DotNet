@@ -21,7 +21,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
-    <Version>1.5-rc1</Version>
+    <Version>1.5-rc.1</Version>
     <AssemblyVersion>1.5.0.1</AssemblyVersion>
   </PropertyGroup>
 

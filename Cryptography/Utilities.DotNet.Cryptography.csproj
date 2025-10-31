@@ -26,7 +26,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.0-rc4</Version>
+    <Version>1.0-rc.4</Version>
     <AssemblyVersion>1.0.0.4</AssemblyVersion>
   </PropertyGroup>
 
