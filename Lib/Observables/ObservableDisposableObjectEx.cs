@@ -31,7 +31,21 @@ namespace Utilities.DotNet.Observables
         ~ObservableDisposableObjectEx()
         {
 #if DEBUG || PROFILE
-            Trace.WriteLine( $"Finalizing {GetType().GetPrettyName()} [{TraceInfo}]" );
+            try
+            {
+                Trace.WriteLine( $"Finalizing {GetType().GetPrettyName()} [{TraceInfo}]" );
+            }
+            catch( Exception ex ) // TraceInfo may throw an exception if the object is in an inconsistent state during finalization.
+            {
+                try
+                {
+                    Trace.WriteLine( $"Exception while finalizing {GetType().GetPrettyName()}: {ex}" );
+                }
+                catch
+                {
+                    // Ignore any exception thrown while trying to log the exception during finalization.
+                }
+            }
 #endif
 
             Dispose( false );
