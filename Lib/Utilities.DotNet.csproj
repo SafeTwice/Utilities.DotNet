@@ -19,15 +19,15 @@
     <PackageTags>.net;dotnet;utilities</PackageTags>
     <Company>www.safetwice.com</Company>
     <Description>Utilities library for .NET</Description>
-    <Copyright>Copyright © 2025 SafeTwice S.L.</Copyright>
+    <Copyright>Copyright © 2026 SafeTwice S.L.</Copyright>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Nullable>enable</Nullable>
     <LangVersion>11</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <Version>1.5-rc.8</Version>
-    <AssemblyVersion>1.5.0.8</AssemblyVersion>
+    <Version>1.5-rc.9</Version>
+    <AssemblyVersion>1.5.0.9</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">

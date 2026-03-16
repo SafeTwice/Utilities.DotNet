@@ -24,7 +24,7 @@ namespace Utilities.DotNet.Test
                 m_onDispose = onDisposeAction;
             }
 
-            private Action<bool> m_onDispose;
+            private readonly Action<bool> m_onDispose;
         }
 
         [Fact]
