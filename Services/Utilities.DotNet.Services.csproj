@@ -15,14 +15,14 @@
     <PackageTags>.net;dotnet;utilities;util;service;services</PackageTags>
     <Company>www.safetwice.com</Company>
     <Description>Services utilities library for .NET</Description>
-    <Copyright>Copyright © 2025 SafeTwice S.L.</Copyright>
+    <Copyright>Copyright © 2026 SafeTwice S.L.</Copyright>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
-    <Version>1.5-rc.4</Version>
-    <AssemblyVersion>1.5.0.4</AssemblyVersion>
+    <Version>1.5-rc.5</Version>
+    <AssemblyVersion>1.5.0.5</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_EVENT_NAME)' == 'release'">
