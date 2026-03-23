@@ -4,7 +4,7 @@
 
 using System;
 using System.ComponentModel;
-using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace Utilities.DotNet.Collections.Test
 {
@@ -101,7 +101,7 @@ namespace Utilities.DotNet.Collections.Test
 
         public void Deserialize( IXunitSerializationInfo info )
         {
-            m_name = info.GetValue<string>( nameof( Name ) );
+            m_name = info.GetValue<string>( nameof( Name ) )!;
             m_value = info.GetValue<int>( nameof( Value ) );
         }
 

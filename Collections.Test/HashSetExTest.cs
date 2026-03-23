@@ -244,7 +244,7 @@ namespace Utilities.DotNet.Collections.Test
 
         [Theory]
         [ClassData( typeof( Add_Class_Nullable_TestData ) )]
-        public void Add_Class_Nullable( IEnumerable<TestClass?> initialState, TestClass addedItem, bool expectedResult, IEnumerable expectedState )
+        public void Add_Class_Nullable( IEnumerable<TestClass?> initialState, TestClass? addedItem, bool expectedResult, IEnumerable expectedState )
         {
             // Arrange
 

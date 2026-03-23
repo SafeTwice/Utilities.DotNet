@@ -21,19 +21,14 @@
   </PropertyGroup>
 
   <Choose>
-    <When Condition="'$([MSBuild]::VersionGreaterThanOrEquals(`$(UtilitiesDotNetTargetFrameworkVersion)`,`8.0`))' == 'true'">
+    <When Condition="'$([MSBuild]::VersionGreaterThanOrEquals(`$(UtilitiesDotNetTargetFrameworkVersion)`,`10.0`))' == 'true'">
       <PropertyGroup>
         <UtilitiesDotNetTargetFrameworkVersion>net8.0</UtilitiesDotNetTargetFrameworkVersion>
       </PropertyGroup>
     </When>
-    <When Condition="'$([MSBuild]::VersionGreaterThanOrEquals(`$(UtilitiesDotNetTargetFrameworkVersion)`,`7.0`))' == 'true'">
+    <When Condition="'$([MSBuild]::VersionGreaterThanOrEquals(`$(UtilitiesDotNetTargetFrameworkVersion)`,`8.0`))' == 'true'">
       <PropertyGroup>
-        <UtilitiesDotNetTargetFrameworkVersion>net7.0</UtilitiesDotNetTargetFrameworkVersion>
-      </PropertyGroup>
-    </When>
-    <When Condition="'$([MSBuild]::VersionGreaterThanOrEquals(`$(UtilitiesDotNetTargetFrameworkVersion)`,`6.0`))' == 'true'">
-      <PropertyGroup>
-        <UtilitiesDotNetTargetFrameworkVersion>net6.0</UtilitiesDotNetTargetFrameworkVersion>
+        <UtilitiesDotNetTargetFrameworkVersion>net8.0</UtilitiesDotNetTargetFrameworkVersion>
       </PropertyGroup>
     </When>
     <When Condition="'$([MSBuild]::VersionGreaterThanOrEquals(`$(UtilitiesDotNetTargetFrameworkVersion)`,`4.8`))' == 'true'">
